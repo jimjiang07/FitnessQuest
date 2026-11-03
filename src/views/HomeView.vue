@@ -11,26 +11,35 @@ import {useSettingsApi} from './player';
 import {anchorShort, formatMinutes, summariseDay} from './viewModel';
 import '@/styles/components.css';
 
-const plan = plans[0];
 const layout = useLayout();
 const route = useRoute();
 const router = useRouter();
 const settings = useSettingsApi();
 
 const split = computed(() => layout.value === 'book' || layout.value === 'tabletop');
-const nextId = computed(() => plan.days.find((d) => d.id === settings.nextDayId)?.id ?? plan.days[0].id);
-const minutes = plan.days.map((d) => summariseDay(d, plan, coach).totalSeconds);
-const avg = formatMinutes(minutes.reduce((a, b) => a + b, 0) / minutes.length);
+// ?plan= picks the plan; otherwise the one the selected or next day belongs to, else the first
+const planFor = (dayId: unknown) => plans.find((p) => p.days.some((d) => d.id === dayId));
+const planId = ref((typeof route.query.plan === 'string' && plans.some((p) => p.id === route.query.plan) ? route.query.plan : undefined)
+  ?? planFor(route.query.day)?.id ?? plans[0].id);
+watch(() => route.query.day, (d) => { const p = planFor(d); if (p) planId.value = p.id; });
+const plan = computed(() => plans.find((p) => p.id === planId.value) ?? plans[0]);
+function choosePlan(id: string) { planId.value = id; picked.value = null; router.replace({query: {plan: id}}); }
+
+const nextId = computed(() => (plan.value.rotate ? plan.value.days.find((d) => d.id === settings.nextDayId)?.id ?? plan.value.days[0].id : null));
+const minutes = computed(() => plan.value.days.map((d) => summariseDay(d, plan.value, coach).totalSeconds));
+const avg = computed(() => formatMinutes(minutes.value.reduce((a, b) => a + b, 0) / minutes.value.length));
 
 const picked = ref<string | null>(typeof route.query.day === 'string' ? route.query.day : null);
 watch(() => route.query.day, (d) => { if (typeof d === 'string') picked.value = d; });
-const selected = computed(() => plan.days.find((d) => d.id === picked.value) ?? plan.days.find((d) => d.id === nextId.value)!);
+const selected = computed(() => plan.value.days.find((d) => d.id === picked.value)
+  ?? plan.value.days.find((d) => d.id === nextId.value) ?? plan.value.days[0]);
 
 function choose(id: string) {
   if (split.value) picked.value = id;
   else router.push(`/day/${id}`);
 }
-const detailLine = (i: number) => [anchorShort(plan.days[i]), formatMinutes(minutes[i])].filter(Boolean).join(' · ');
+const detailLine = (i: number) => [anchorShort(plan.value.days[i]), formatMinutes(minutes.value[i])].filter(Boolean).join(' · ');
+const subtitle = computed(() => `${plan.value.days.length} ${plan.value.dayLabel.toLowerCase()}s · ~${avg.value} each · L4–S1 safe`);
 </script>
 
 <template>
@@ -41,8 +50,12 @@ const detailLine = (i: number) => [anchorShort(plan.days[i]), formatMinutes(minu
           <header class="top">
             <span class="fq-tag fq-muted">Your plan</span>
             <h1 class="name">{{ plan.name }}</h1>
-            <span class="fq-mini fq-muted">{{ plan.days.length }} days · ~{{ avg }} each · L4–S1 safe</span>
+            <span class="fq-mini fq-muted">{{ subtitle }}</span>
           </header>
+          <div v-if="plans.length > 1" class="plan-switch" role="tablist" aria-label="Plan">
+            <button v-for="p in plans" :key="p.id" type="button" role="tab" :aria-selected="p.id === plan.id"
+              :class="{on: p.id === plan.id}" @click="choosePlan(p.id)">{{ p.name }}</button>
+          </div>
           <ol class="days" :class="{grid: layout === 'tabletop'}">
             <li v-for="(d, i) in plan.days" :key="d.id">
               <DayCard :dense="layout === 'tabletop'" :number="i + 1" :title="d.title" :detail="detailLine(i)" :next="d.id === nextId"
@@ -72,8 +85,12 @@ const detailLine = (i: number) => [anchorShort(plan.days[i]), formatMinutes(minu
           </svg>
         </button>
       </div>
-      <span class="fq-mini fq-muted">{{ plan.days.length }} days · ~{{ avg }} each · L4–S1 safe</span>
+      <span class="fq-mini fq-muted">{{ subtitle }}</span>
     </header>
+    <div v-if="plans.length > 1" class="plan-switch" role="tablist" aria-label="Plan">
+      <button v-for="p in plans" :key="p.id" type="button" role="tab" :aria-selected="p.id === plan.id"
+        :class="{on: p.id === plan.id}" @click="choosePlan(p.id)">{{ p.name }}</button>
+    </div>
     <ol class="days">
       <li v-for="(d, i) in plan.days" :key="d.id">
         <DayCard :number="i + 1" :title="d.title" :detail="detailLine(i)" :next="d.id === nextId" @select="choose(d.id)" />
@@ -99,5 +116,8 @@ const detailLine = (i: number) => [anchorShort(plan.days[i]), formatMinutes(minu
 .voice { width: var(--tap-min); height: var(--tap-min); border-radius: 50%; border: 0; background: var(--surface-2); color: var(--fg); display: grid; place-items: center; flex: none; cursor: pointer; }
 .voice svg { width: 22px; height: 22px; }
 .foot { margin: 0; text-align: center; }
+.plan-switch { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line); }
+.plan-switch button { min-height: 44px; padding: 0 10px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--muted); font-weight: 700; font-size: 13.5px; cursor: pointer; }
+.plan-switch button.on { background: var(--work); color: var(--on-work); }
 .foot a { color: var(--fg); display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; padding: 0 4px; }
 </style>

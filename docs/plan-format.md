@@ -18,6 +18,9 @@ npm run voice          # records coach clips for any new or changed lines (optio
 id: spine-rehab                 # unique, lower-case, hyphens
 name: Spine Rehab Split
 summary: One sentence for the home screen.
+order: 1                        # optional: position in the plan switch on Home (lowest first)
+rotate: true                    # optional: false = sessions are picked freely; finishing one doesn't move "next day"
+dayLabel: Day                   # optional: what each day is called on screen, e.g. Session
 
 exercises:                      # library: define each move once
   b-stance-hinge:               # key, used by days below

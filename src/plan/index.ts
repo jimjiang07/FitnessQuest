@@ -19,7 +19,7 @@ export const plans: Plan[] = Object.entries(planFiles).map(([path, raw]) => {
   if (!result.ok) throw new PlanError(result.errors, result.warnings, `data/plans/${fileName(path)}`);
   if (import.meta.env.DEV) for (const w of result.warnings) console.warn(`data/plans/${fileName(path)}: ${w}`);
   return result.plan;
-});
+}).sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
 
 export const coach: CoachConfig = (() => {
   const parsed = coachSchema.safeParse(coachYaml);

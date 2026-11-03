@@ -8,7 +8,7 @@ export const synthetic: Plan = {
   id: 'synthetic',
   name: 'Synthetic',
   summary: 'Test plan',
-  equipment: ['dumbbells'],
+  equipment: ['dumbbells'], order: 1, rotate: true, dayLabel: 'Day',
   exercises: {
     march: ex('march', 'March', ['mat'], ['Knees high']),
     'bird-dog': ex('bird-dog', 'Bird-dog', ['mat'], ['Reach long.'], 'bird dog'),

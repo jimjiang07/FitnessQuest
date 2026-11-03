@@ -115,6 +115,12 @@ const moves = {
     a: { hip: [350, BENCH_TOP - 22], torso: 180, headFwd: 2, legN: { foot: [404, A], bend: -1 }, legF: { foot: [396, A - 2], bend: -1 }, footN: F, footF: F, armN: { hand: [252, BENCH_TOP - 128], bend: -1 }, armF: { hand: [248, BENCH_TOP - 126], bend: -1 }, dbN: true, dbScale: 1.2, propsBack: bench(140, 400), shadowX: 290, shadowW: 150 },
     b: { hip: [350, BENCH_TOP - 22], torso: 180, headFwd: 2, legN: { foot: [404, A], bend: -1 }, legF: { foot: [396, A - 2], bend: -1 }, footN: F, footF: F, armN: { hand: [150, BENCH_TOP - 52], bend: 1 }, armF: { hand: [146, BENCH_TOP - 50], bend: 1 }, dbN: true, dbScale: 1.2, propsBack: bench(140, 400), shadowX: 290, shadowW: 150 },
   },
+  // head and shoulders lift a few centimetres; the lower back never moves
+  'mcgill-curl-up': {
+    label: 'McGill curl-up', view: LIE,
+    a: { hip: [330, FLOOR - 22], torso: 180, headFwd: 2, legN: { foot: [476, FLOOR - 12], bend: -1 }, legF: { foot: [396, FLOOR - 12], bend: -1 }, footN: [4, -18], footF: [20, 0], armN: { hand: [302, FLOOR - 14], bend: -1 }, armF: { hand: [296, FLOOR - 16], bend: -1 }, propsBack: mat(120, 490), shadowX: 290, shadowW: 150 },
+    b: { hip: [330, FLOOR - 22], torso: 189, headFwd: 2, legN: { foot: [476, FLOOR - 12], bend: -1 }, legF: { foot: [396, FLOOR - 12], bend: -1 }, footN: [4, -18], footF: [20, 0], armN: { hand: [302, FLOOR - 14], bend: -1 }, armF: { hand: [296, FLOOR - 16], bend: -1 }, propsBack: mat(120, 490), shadowX: 290, shadowW: 150 },
+  },
   'plank-shoulder-tap': {
     label: 'Plank shoulder taps', view: '60 130 450 300',
     a: { hip: [250, FLOOR - 71], torso: -23, headFwd: 4, legN: { foot: [110, FLOOR - 12] }, legF: { foot: [104, FLOOR - 13] }, footN: [8, 10], footF: [8, 10], armN: { hand: [346, FLOOR - 6], bend: 1 }, armF: { hand: [338, FLOOR - 6], bend: 1 }, propsBack: mat(80, 420), shadowX: 230, shadowW: 140 },

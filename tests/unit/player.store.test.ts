@@ -22,7 +22,7 @@ const blocks: Block[] = [
 ];
 const days: Day[] = [1, 2, 3, 4].map((n) => ({id: `day-${n}`, title: `Day ${n}`, blocks}));
 const plan: Plan = {
-  id: 'test', name: 'Test', summary: '', equipment: ['dumbbells'],
+  id: 'test', name: 'Test', summary: '', equipment: ['dumbbells'], order: 1, rotate: true, dayLabel: 'Day',
   exercises: {
     march: ex('march', 'March', ['mat'], ['Knees high.']),
     'db-press': ex('db-press', 'DB press', ['dumbbells'], ['Press straight up.']),

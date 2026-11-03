@@ -18,7 +18,7 @@ const router = useRouter();
 const summary = computed(() => summariseDay(props.day, props.plan, coach));
 const timeline = computed(() => dayTimeline(props.day, props.plan, summary.value.blockSeconds));
 const gear = computed(() => dayGear(props.day, props.plan));
-const eyebrow = computed(() => [`Day ${dayNumber(props.plan, props.day.id)}`, formatMinutes(summary.value.totalSeconds),
+const eyebrow = computed(() => [`${props.plan.dayLabel} ${dayNumber(props.plan, props.day.id)}`, formatMinutes(summary.value.totalSeconds),
   props.next ? 'Next up' : ''].filter(Boolean).join(' · '));
 </script>
 

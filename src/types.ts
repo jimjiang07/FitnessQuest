@@ -49,6 +49,9 @@ export interface Plan {
   name: string;
   summary: string;
   equipment: string[];
+  order: number;          // position in the plan switch on Home
+  rotate: boolean;        // false: sessions are picked freely, finishing one doesn't move "next day"
+  dayLabel: string;       // "Day" or "Session"
   exercises: Record<string, Exercise>;
   days: Day[];
 }

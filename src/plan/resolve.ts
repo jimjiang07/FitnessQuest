@@ -192,7 +192,8 @@ function build(raw: RawPlan, opts: ResolveOptions, warnings: string[]): Plan {
     const blocks = day.blocks.map((b) => toBlock('use' in b ? raw.blocks![b.use] : b, ids));
     return omitUndefined({id: day.id, title: day.title, anchor: day.anchor, why: day.why, blocks});
   });
-  return {id: raw.id, name: raw.name, summary: raw.summary, equipment: raw.equipment, exercises, days};
+  return {id: raw.id, name: raw.name, summary: raw.summary, equipment: raw.equipment, order: raw.order, rotate: raw.rotate,
+    dayLabel: raw.dayLabel, exercises, days};
 }
 
 function toExercise(key: string, ex: RawExercise, opts: ResolveOptions, warnings: string[]): Exercise {

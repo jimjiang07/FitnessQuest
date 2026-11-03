@@ -29,7 +29,7 @@ const sets = computed(() => (finished.value ? String(player.setsDone) : '–'));
 const timeline = computed(() => (day.value && plan.value
   ? dayTimeline(day.value, plan.value, summariseDay(day.value, plan.value, coach).blockSeconds, {complete: true}) : []));
 const nextDay = computed(() => {
-  if (!plan.value) return undefined;
+  if (!plan.value?.rotate) return undefined;   // quick sessions are picked freely
   return plan.value.days.find((d) => d.id === settings.nextDayId) ?? nextDayAfter(plan.value, props.dayId);
 });
 </script>
@@ -39,7 +39,7 @@ const nextDay = computed(() => {
     <Panes :layout="layout">
       <template #now>
         <div class="col">
-          <span class="fq-tag" style="color: var(--work)">Day {{ dayNumber(plan, day.id) }} complete</span>
+          <span class="fq-tag" style="color: var(--work)">{{ plan.dayLabel }} {{ dayNumber(plan, day.id) }} complete</span>
           <h1 class="fq-big nice">Nice<br />work.</h1>
           <div class="stats">
             <div class="stat"><div class="fq-big fq-num v">{{ time }}</div><div class="fq-mini fq-muted">time</div></div>
@@ -50,7 +50,7 @@ const nextDay = computed(() => {
       <template #context>
         <div class="col">
           <div class="fq-panel tl"><BlockTimeline :items="timeline" dense /></div>
-          <p v-if="nextDay" class="fq-mini fq-muted next">Next time: Day {{ dayNumber(plan, nextDay.id) }} · {{ nextDay.title }}</p>
+          <p v-if="nextDay" class="fq-mini fq-muted next">Next time: {{ plan.dayLabel }} {{ dayNumber(plan, nextDay.id) }} · {{ nextDay.title }}</p>
           <BigButton variant="ghost" size="lg" class="back" @click="router.push('/')">Back to plan</BigButton>
         </div>
       </template>

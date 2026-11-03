@@ -84,6 +84,9 @@ export const planSchema = z.strictObject({
   name: text('name'),
   summary: text('summary'),
   equipment: z.array(text('equipment'), {error: 'equipment must be a list'}).default([]),
+  order: z.number({error: 'order must be a number'}).int().default(100),       // position in the plan switch on Home
+  rotate: z.boolean({error: 'rotate must be true or false'}).default(true),   // false: finishing a session doesn't move "next day"
+  dayLabel: text('dayLabel').default('Day'),                                  // "Day 1" / "Session 1"
   exercises: z.record(z.string(), exerciseSchema, {error: 'exercises must be a map of key: exercise'}),
   blocks: z.record(z.string(), blockSchema, {error: 'blocks must be a map of key: block'}).optional(),
   days: z.array(daySchema, {error: 'days must be a list'}).min(1, {error: 'a plan needs at least one day'}),

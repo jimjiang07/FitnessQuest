@@ -122,7 +122,7 @@ function endWorkout() { player.end(); router.replace('/'); }
     <Panes :layout="layout">
       <template #now>
         <div class="col center">
-          <span class="fq-tag" style="color: var(--ready)">Day {{ dayNumber(plan, day.id) }} · {{ Math.round(estimateMs / 60000) }} min</span>
+          <span class="fq-tag" style="color: var(--ready)">{{ plan.dayLabel }} {{ dayNumber(plan, day.id) }} · {{ Math.round(estimateMs / 60000) }} min</span>
           <h1 class="fq-big begin-title">{{ day.title }}</h1>
           <p class="fq-muted hint">Turn your sound up and put the phone where you can see it.</p>
           <div class="music" @click.stop>

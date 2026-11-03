@@ -6,6 +6,7 @@ name: Spine Rehab Split
 summary: Four ~60-minute days built around L4–S1 safety. Every day has a spine rehab anchor.
 # Equipment: dumbbells, a flat/incline bench and a Swiss ball. No bands.
 equipment: [dumbbells, bench, swiss ball]
+order: 1
 
 # ── Exercise library ─────────────────────────────────────────────
 # key: used by days below. name: shown on screen. say: how the coach pronounces it (optional).

@@ -49,7 +49,7 @@ export const day2Plan: Plan = {
   id: 'spine-rehab',
   name: 'Spine Rehab Split',
   summary: 'Four ~60-minute days built around L4–S1 safety. Every day has a spine rehab anchor.',
-  equipment: ['dumbbells', 'bench', 'swiss ball'],
+  equipment: ['dumbbells', 'bench', 'swiss ball'], order: 1, rotate: true, dayLabel: 'Day',
   exercises,
   days: [{
     id: 'day-2',

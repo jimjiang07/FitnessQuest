@@ -1,0 +1,146 @@
+# Quick back rehab: short standalone sessions for a herniated disc. No warm-up or cool-down; pick one when you need it.
+# Format: docs/plan-format.md. Check with `npm run check-plan`.
+
+id: quick-back
+name: Quick back rehab
+summary: Three 10–15 minute sessions for a herniated disc. Spine stays neutral; nothing bends you forward under load.
+# Equipment: dumbbells, a flat/incline bench and a Swiss ball. No bands.
+equipment: [dumbbells, bench, swiss ball]
+order: 2
+rotate: false        # sessions are picked freely; doing one doesn't change the 4-day split's next day
+dayLabel: Session
+
+exercises:
+  mcgill-curl-up:
+    name: McGill curl-up
+    say: McGill curl up
+    gear: [mat]
+    note: One knee bent, one leg straight, hands under your lower back
+    cues:
+      - "Lift your head and shoulders just off the floor. Keep your lower back still."
+      - "Chin stays tucked. Breathe while you hold."
+  side-plank-knees:
+    name: Side plank from the knees
+    gear: [mat]
+    images: [side-plank-a.jpg, side-plank-b.jpg]
+    note: Knees bent, hips in line with your shoulders
+    cues:
+      - "Hips forward and up. Make a straight line from knees to head."
+      - "Shoulder over elbow. Breathe."
+  bird-dog:
+    name: McGill bird-dog
+    say: McGill bird dog
+    gear: [mat]
+    cues:
+      - "Reach long, hips square."
+      - "Make a fist and squeeze the glute."
+  glute-bridge:
+    name: Glute bridge
+    gear: [mat]
+    cues:
+      - "Squeeze the glutes and hold at the top."
+      - "Ribs down. Don't arch your back."
+  swiss-ball-dead-bug:
+    name: Swiss ball dead bug
+    gear: [swiss ball, mat]
+    cues:
+      - "Press the ball hard with the opposite hand and knee."
+      - "Lower back stays down."
+  swiss-ball-wall-squat:
+    name: Swiss ball wall squat
+    gear: [swiss ball]
+    cues:
+      - "Ball in your lower back."
+      - "Sit down and back."
+  single-leg-glute-bridge:
+    name: Single-leg glute bridge
+    gear: [mat]
+    cues:
+      - "Drive through the heel. Hips stay level."
+      - "Lower slowly. Don't let the hip drop."
+  standing-hip-abduction:
+    name: Standing hip abduction
+    gear: [bench]
+    note: Hold the bench for balance
+    cues:
+      - "Lift the leg out to the side, toes forward."
+      - "Stand tall. Don't lean away."
+  psoas-90-90:
+    name: 90/90 psoas relief on Swiss ball
+    say: ninety ninety psoas relief
+    gear: [swiss ball, mat]
+    cues:
+      - "Lower legs on the ball, knees and hips at ninety degrees."
+      - "Breathe deep into your belly."
+  sphinx:
+    name: Prone sphinx pose
+    gear: [mat]
+    cues:
+      - "Let your glutes and lower back hang loose."
+      - "If it pinches, lie flat on your stomach instead."
+  cat-camel:
+    name: Cat-camel
+    gear: [mat]
+    cues:
+      - "Small and slow. Mid-range only."
+      - "Don't force the end of the range."
+  hip-flexor-squeeze:
+    name: Half-kneeling hip flexor squeeze
+    gear: [mat]
+    cues:
+      - "Squeeze the back glute."
+      - "Feel the front of the hip open."
+  figure-4:
+    name: Supine figure-4 stretch
+    say: figure four stretch
+    gear: [mat]
+    cues:
+      - "Ankle over the opposite knee."
+      - "Gently draw the leg toward your chest."
+
+days:
+  - id: quick-1
+    title: McGill big 3
+    anchor: Curl-up, side plank and bird-dog
+    why: Dr Stuart McGill's three exercises build core stiffness around the disc without bending the spine. Pain that moves toward your back is fine; stop if it spreads further down your leg.
+    blocks:
+      - name: Big 3
+        kind: circuit
+        rounds: 3
+        items:
+          - { exercise: mcgill-curl-up, guided: { reps: 5, hold: 8 }, rest: 15 }
+          - { exercise: side-plank-knees, time: 20, perSide: true, restBetweenSides: 10, rest: 15 }
+          - { exercise: bird-dog, guided: { reps: 4, hold: 8 }, perSide: true, rest: 30 }
+
+  - id: quick-2
+    title: Glutes and core
+    anchor: Bridges, dead bug and wall squats
+    why: Strong glutes take load off the lower back, and the dead bug trains your abs to stop the back arching. Pain that moves toward your back is fine; stop if it spreads further down your leg.
+    blocks:
+      - name: Glutes and core
+        kind: circuit
+        rounds: 2
+        items:
+          - { exercise: glute-bridge, guided: { reps: 10, hold: 3 }, rest: 15 }
+          - { exercise: swiss-ball-dead-bug, guided: { reps: 6, tempo: 5 }, perSide: true, rest: 20 }
+          - { exercise: swiss-ball-wall-squat, reps: 10-12, rest: 20 }
+          - { exercise: single-leg-glute-bridge, reps: 8, perSide: true, rest: 20 }
+          - { exercise: standing-hip-abduction, reps: 12, perSide: true, rest: 20 }
+
+  - id: quick-3
+    title: Calm and decompress
+    anchor: For flare-up days
+    why: Gentle positions that unload the disc and settle a tight psoas and glutes. Use it when your back is grumpy. Pain that moves toward your back is fine; stop if it spreads further down your leg.
+    blocks:
+      - name: Decompress
+        kind: cooldown
+        rounds: 1
+        rest: 10
+        items:
+          - { exercise: psoas-90-90, time: 150 }
+          - { exercise: sphinx, time: 90, rest: 15 }
+          - { exercise: cat-camel, guided: { reps: 8, tempo: 6 } }
+          - { exercise: bird-dog, guided: { reps: 4, hold: 6 }, perSide: true, rest: 15 }
+          - { exercise: glute-bridge, guided: { reps: 10, hold: 3 }, rest: 15 }
+          - { exercise: hip-flexor-squeeze, time: 30, perSide: true }
+          - { exercise: figure-4, time: 45, perSide: true }

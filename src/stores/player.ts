@@ -164,7 +164,7 @@ export const usePlayerStore = defineStore('player', () => {
     const {device} = deps();
     void Promise.resolve(device.release()).catch(() => {});
     device.setNowPlaying(null);
-    if (plan && day.value) {
+    if (plan && day.value && plan.rotate) {
       const days = plan.days;
       const i = days.findIndex((d) => d.id === day.value!.id);
       settings.nextDayId = days[(i + 1) % days.length]?.id ?? null;
