@@ -1,0 +1,691 @@
+<title>Fitness Quest Design</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a dark gym-studio board; phones in a wrapping row, each screen colour-coded by phase (work / rest / ready / cool-down). */
+:root{
+  --bg:#0d1016; --surface:#161b24; --surface-2:#1f2531; --line:#2a3242;
+  --fg:#eef1f6; --muted:#8b94a7;
+  --work:#ff5c39; --rest:#27c4b0; --ready:#ffb627; --cool:#9d8cff;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:64px}
+h1,h2,h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.02em;line-height:1;margin:0;text-wrap:balance}
+h1{font-size:clamp(44px,7vw,84px);font-weight:800}
+h2{font-size:34px;font-weight:700}
+h3{font-size:20px;font-weight:700}
+p{margin:0;max-width:68ch}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lede{color:var(--muted);font-size:17px}
+header{display:flex;flex-direction:column;gap:14px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+.dot{width:10px;height:10px;border-radius:50%}
+section{display:flex;flex-direction:column;gap:22px}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+
+/* phones */
+.phones{display:flex;flex-wrap:wrap;gap:36px 28px;justify-content:flex-start}
+.screen{display:flex;flex-direction:column;gap:12px;width:300px;max-width:100%}
+.screen figcaption{display:flex;flex-direction:column;gap:2px}
+.screen figcaption b{font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.03em}
+.screen figcaption span{color:var(--muted);font-size:13px;line-height:1.45}
+figure{margin:0}
+.phone{width:300px;max-width:100%;aspect-ratio:300/640;border-radius:40px;background:#07090d;padding:10px;border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(0,0,0,.8)}
+.ph{position:relative;height:100%;border-radius:31px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;padding:38px 18px 18px;gap:12px}
+.ph::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);width:86px;height:24px;border-radius:14px;background:#000}
+.ph .status{position:absolute;top:12px;left:24px;right:24px;display:flex;justify-content:space-between;font-size:11px;font-weight:700}
+.tag{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.big{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.95}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:8px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;font-weight:800;font-size:15px;height:52px;letter-spacing:.02em}
+.btn.primary{background:var(--work);color:#1a0904}
+.btn.ghost{background:var(--surface-2);color:var(--fg)}
+.icon{width:38px;height:38px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;flex:none}
+.icon svg{width:18px;height:18px}
+svg{display:block}
+.seg{display:flex;gap:3px}
+.seg i{flex:1;height:4px;border-radius:2px;background:var(--surface-2)}
+.mini{font-size:11px}
+.pill{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+
+/* day cards */
+.day{display:flex;gap:12px;align-items:stretch;padding:12px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.day .num{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;width:34px;color:var(--work)}
+.day h4{margin:0;font-family:var(--display);font-size:17px;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}
+.day p{font-size:11px;color:var(--muted);line-height:1.35;margin-top:4px}
+.day.next{border-color:var(--work);background:linear-gradient(180deg,rgba(255,92,57,.12),transparent 70%),var(--surface)}
+
+/* timeline on day detail */
+.tl{display:flex;flex-direction:column;gap:0}
+.tl-item{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:start;padding:4px 0}
+.tl-item .bar{width:4px;border-radius:2px;margin:3px auto 0;height:26px}
+.tl-item b{font-size:13px;display:block;line-height:1.2}
+.tl-item span{font-size:11px;color:var(--muted);line-height:1.3;display:block}
+.tl-item em{font-style:normal;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+
+/* ring */
+.ring{position:relative;width:200px;height:200px;margin:0 auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .t .big{font-size:68px;font-variant-numeric:tabular-nums}
+.cue{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border-radius:14px;padding:10px 12px;font-size:12.5px;line-height:1.4}
+.cue .wave{display:flex;gap:2px;align-items:center;height:16px;flex:none;margin-top:1px}
+.cue .wave i{width:3px;border-radius:2px;background:currentColor}
+.upnext{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.upnext .thumb{width:40px;height:40px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;flex:none}
+.controls{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:auto}
+.controls .icon{width:46px;height:46px}
+.controls .play{width:66px;height:66px;background:var(--fg);color:var(--bg)}
+
+/* phase tints */
+.ph.work{background:radial-gradient(120% 60% at 50% 0%,rgba(255,92,57,.22),transparent 60%),var(--bg)}
+.ph.rest{background:radial-gradient(120% 60% at 50% 0%,rgba(39,196,176,.22),transparent 60%),var(--bg)}
+.ph.ready{background:radial-gradient(120% 70% at 50% 30%,rgba(255,182,39,.25),transparent 60%),var(--bg)}
+.ph.cool{background:radial-gradient(120% 60% at 50% 0%,rgba(157,140,255,.22),transparent 60%),var(--bg)}
+
+/* sheet */
+.dim{position:absolute;inset:0;background:rgba(5,7,10,.62)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:26px 26px 0 0;padding:14px 16px 20px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 4px}
+.opt{display:flex;align-items:center;gap:12px;padding:10px 4px;font-weight:600;font-size:14px;border-bottom:1px solid var(--line)}
+.opt:last-child{border-bottom:0}
+.toggle{margin-left:auto;width:40px;height:24px;border-radius:12px;background:var(--rest);position:relative}
+.toggle::after{content:"";position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:#fff}
+.toggle.off{background:var(--surface-2)}
+.toggle.off::after{right:auto;left:3px}
+
+/* flow */
+.flow-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:22px}
+.flow{min-width:1100px}
+.flow svg text{font-family:var(--body)}
+
+/* voice script table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:18px}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
+td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700}
+tr:last-child td{border-bottom:0}
+td q{quotes:"“" "”";color:var(--fg)}
+.k{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:1px}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.note ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px;display:flex;flex-direction:column;gap:4px}
+.note ul b{color:var(--fg);font-weight:600}
+
+/* iPhone Duo frames: sizes are reported points x 0.72 */
+.duo-row{display:flex;flex-wrap:wrap;gap:36px 28px;align-items:flex-end}
+.screen.w-outer{width:336px}.screen.w-inner{width:450px}.screen.w-land{width:641px}
+.phone.outer{width:336px;aspect-ratio:466/678;border-radius:38px}
+.phone.inner{width:450px;aspect-ratio:626/890;border-radius:34px}
+.phone.land{width:641px;aspect-ratio:890/626;border-radius:34px}
+.phone.inner .ph,.phone.land .ph{border-radius:26px}
+.phone.inner .ph::before,.phone.land .ph::before{width:10px;height:10px;top:12px;border-radius:50%}
+.phone.land .ph::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.12) 10%,rgba(255,255,255,.12) 90%,transparent);pointer-events:none;z-index:5}
+.phone.inner .ph::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12) 10%,rgba(255,255,255,.12) 90%,transparent);pointer-events:none;z-index:5}
+.phone.land .ph::before{left:75%;top:9px}
+.land-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(641px,100%),641px));gap:40px 28px}
+.fold-tag{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);font-size:8px;letter-spacing:.2em;color:rgba(255,255,255,.18);font-weight:800;z-index:6;white-space:nowrap}
+.dimmed{opacity:.28}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px;height:100%}
+.list-row{display:flex;align-items:center;gap:10px;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)}
+.list-row:last-child{border-bottom:0}
+.list-row .st{margin-left:auto;font-size:11px;color:var(--muted)}
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:28px;flex:1;min-height:0}
+.pane{display:flex;flex-direction:column;gap:10px;min-width:0}
+.crease-note{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rounds{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;align-items:center;font-size:11px}
+.rounds .c{height:26px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;font-weight:800;font-size:11px;color:var(--muted)}
+.rounds .c.done{background:rgba(39,196,176,.18);color:var(--rest)}
+.rounds .c.now{background:var(--work);color:#1a0904}
+.bp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.bp .note{gap:6px}
+.bp code{font-size:12px;color:var(--fg);background:var(--surface-2);padding:1px 6px;border-radius:6px}
+
+/* exercise pictures: A/B photos crossfade to suggest the movement */
+.pic{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:3/2;background:var(--surface-2);flex:none}
+.pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#1a1f29}
+.pic img+img{opacity:0}
+@media (prefers-reduced-motion:no-preference){.pic img+img{animation:ab 3.2s ease-in-out infinite}}
+@keyframes ab{0%,38%{opacity:0}50%,88%{opacity:1}100%{opacity:0}}
+.pic.missing{display:grid;place-items:center;border:2px dashed var(--line);background:transparent}
+.pic.missing span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.excard{display:flex;flex-direction:column;gap:6px;min-width:0}
+.excard b{font-size:14px;line-height:1.25}
+.excard .st{font-size:11px;font-weight:700;letter-spacing:.04em}
+.excard .n{font-size:12px;color:var(--muted);line-height:1.35}
+@media (prefers-reduced-motion:no-preference){.live i{animation:w 1s ease-in-out infinite alternate}.live i:nth-child(2){animation-delay:.2s}.live i:nth-child(3){animation-delay:.4s}.live i:nth-child(4){animation-delay:.1s}}
+@keyframes w{from{transform:scaleY(.4)}to{transform:scaleY(1)}}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Fitness Quest · design board · v0.1</span>
+  <h1>Press start.<br>The coach does the rest.</h1>
+  <p class="lede">A no-login web app for the 4-day Spine Rehab split. Pick a day, press start, and a voice coach calls every exercise, set, rest and side switch, one after another, the way an F45 or Fitstop class runs. No accounts and no tracking. Each screen is colour-coded by phase so you can read it from across the room.</p>
+  <div class="legend">
+    <span class="chip"><span class="dot" style="background:var(--work)"></span>Work</span>
+    <span class="chip"><span class="dot" style="background:var(--rest)"></span>Rest</span>
+    <span class="chip"><span class="dot" style="background:var(--ready)"></span>Get ready / transition</span>
+    <span class="chip"><span class="dot" style="background:var(--cool)"></span>Warm-up &amp; cool-down</span>
+  </div>
+</header>
+
+<!-- ============ USER FLOW ============ -->
+<section id="flow">
+  <div class="sec-head">
+    <span class="eyebrow">01 · User flow</span>
+    <h2>Two taps to start, then hands-free</h2>
+    <p class="muted">Home and day detail are the only screens you browse. From Start on, the player runs a fixed list of steps. Timed steps move on by themselves; rep sets wait for you to tap Done, then rest starts by itself. You can pause from any player screen.</p>
+  </div>
+  <div class="flow-wrap"><div class="flow">
+  <svg viewBox="0 0 1100 330" width="1100" height="330" style="overflow:visible" role="img" aria-label="User flow diagram">
+    <defs>
+      <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b94a7"/></marker>
+    </defs>
+    <g font-size="13" fill="#eef1f6">
+      <!-- browse -->
+      <rect x="10" y="40" width="120" height="58" rx="14" fill="#1f2531" stroke="#2a3242"/>
+      <text x="70" y="65" text-anchor="middle" font-weight="700">Home</text><text x="70" y="83" text-anchor="middle" fill="#8b94a7" font-size="11">pick a day</text>
+      <rect x="170" y="40" width="120" height="58" rx="14" fill="#1f2531" stroke="#2a3242"/>
+      <text x="230" y="65" text-anchor="middle" font-weight="700">Day detail</text><text x="230" y="83" text-anchor="middle" fill="#8b94a7" font-size="11">blocks · why · gear</text>
+      <rect x="330" y="40" width="120" height="58" rx="14" fill="#ff5c39"/>
+      <text x="390" y="65" text-anchor="middle" font-weight="800" fill="#1a0904">Start</text><text x="390" y="83" text-anchor="middle" fill="#1a0904" font-size="11">audio on · screen on</text>
+      <rect x="490" y="40" width="120" height="58" rx="14" fill="#1f2531" stroke="#ffb627"/>
+      <text x="550" y="65" text-anchor="middle" font-weight="700">Get ready</text><text x="550" y="83" text-anchor="middle" fill="#8b94a7" font-size="11">10 s countdown</text>
+      <line x1="130" y1="69" x2="168" y2="69" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="290" y1="69" x2="328" y2="69" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="450" y1="69" x2="488" y2="69" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <line x1="230" y1="40" x2="230" y2="22" stroke="#8b94a7" stroke-width="1.5"/><line x1="230" y1="22" x2="70" y2="22" stroke="#8b94a7" stroke-width="1.5"/><line x1="70" y1="22" x2="70" y2="38" stroke="#8b94a7" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="150" y="16" text-anchor="middle" fill="#8b94a7" font-size="11">back</text>
+
+      <!-- player loop -->
+      <rect x="650" y="10" width="440" height="190" rx="20" fill="none" stroke="#2a3242" stroke-dasharray="5 6"/>
+      <text x="670" y="34" fill="#8b94a7" font-size="11" font-weight="700" letter-spacing="1.5">PLAYER · REPEATS FOR EVERY BLOCK</text>
+      <rect x="670" y="50" width="130" height="58" rx="14" fill="#1f2531" stroke="#ff5c39" stroke-width="1.5"/>
+      <text x="735" y="75" text-anchor="middle" font-weight="700">Work</text><text x="735" y="93" text-anchor="middle" fill="#8b94a7" font-size="11">timed or reps</text>
+      <rect x="940" y="50" width="130" height="58" rx="14" fill="#1f2531" stroke="#27c4b0" stroke-width="1.5"/>
+      <text x="1005" y="75" text-anchor="middle" font-weight="700">Rest</text><text x="1005" y="93" text-anchor="middle" fill="#8b94a7" font-size="11">“Up next” at 10 s</text>
+      <path d="M800 70 L938 70" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="869" y="62" text-anchor="middle" fill="#8b94a7" font-size="11">timer ends / Done</text>
+      <path d="M1005 108 C1005 150 735 150 735 110" fill="none" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="870" y="160" text-anchor="middle" fill="#8b94a7" font-size="11">3·2·1 → next exercise / side / round</text>
+      <line x1="610" y1="69" x2="668" y2="76" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+
+      <!-- transitions row -->
+      <rect x="670" y="236" width="130" height="58" rx="14" fill="#1f2531" stroke="#ffb627"/>
+      <text x="735" y="261" text-anchor="middle" font-weight="700">Block change</text><text x="735" y="279" text-anchor="middle" fill="#8b94a7" font-size="11">“Grab your dumbbells”</text>
+      <rect x="840" y="236" width="110" height="58" rx="14" fill="#1f2531" stroke="#9d8cff"/>
+      <text x="895" y="261" text-anchor="middle" font-weight="700">Cool-down</text><text x="895" y="279" text-anchor="middle" fill="#8b94a7" font-size="11">8 min, all timed</text>
+      <rect x="980" y="236" width="110" height="58" rx="14" fill="#ff5c39"/>
+      <text x="1035" y="261" text-anchor="middle" font-weight="800" fill="#1a0904">Done</text><text x="1035" y="279" text-anchor="middle" fill="#1a0904" font-size="11">summary → Home</text>
+      <path d="M720 160 L720 234" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <text x="770" y="222" fill="#8b94a7" font-size="11">end of block</text>
+      <path d="M760 234 L760 196" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M800 265 L838 265" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+      <path d="M950 265 L978 265" stroke="#8b94a7" stroke-width="2" marker-end="url(#ar)"/>
+
+      <!-- pause -->
+      <rect x="400" y="236" width="210" height="58" rx="14" fill="#161b24" stroke="#2a3242"/>
+      <text x="505" y="261" text-anchor="middle" font-weight="700">Pause sheet</text><text x="505" y="279" text-anchor="middle" fill="#8b94a7" font-size="11">resume · back · skip · voice · end</text>
+      <path d="M612 250 C640 240 650 205 662 196" fill="none" stroke="#8b94a7" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ar)" marker-start="url(#ar)"/>
+      <text x="505" y="312" text-anchor="middle" fill="#8b94a7" font-size="11">opens from any player screen</text>
+      <path d="M400 265 L130 265 L70 100" fill="none" stroke="#8b94a7" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+      <text x="250" y="256" text-anchor="middle" fill="#8b94a7" font-size="11">End workout (asks once)</text>
+    </g>
+  </svg>
+  </div></div>
+</section>
+
+
+<!-- ============ DUO LANDSCAPE (PRIMARY) ============ -->
+<section id="duo-landscape">
+  <div class="sec-head">
+    <span class="eyebrow">02 · Main layout · iPhone Duo open, landscape</span>
+    <h2>Two halves, split at the fold</h2>
+    <p class="muted">Opened flat and held sideways, the inner screen (about 890 × 626 pt) is like an open book: the fold runs top to bottom down the middle, and each half is about the size of the outer screen. Every workout screen uses that split the same way. The <b style="color:var(--fg)">left half is now</b>: the exercise, the timer or rep target, and Done. The <b style="color:var(--fg)">right half is context</b>: where you are, what’s next, the coach’s line and the controls. A 28 pt gap covers the fold, so no text or button sits on it.</p>
+  </div>
+  <div class="land-row">
+  <figure class="screen w-land" id="l-home">
+    <div class="phone land"><div class="ph " style="padding:40px 22px 16px">
+      <div class="status"><span>7:03</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><div><div class="tag muted">Your plan</div><div class="big" style="font-size:28px">Spine Rehab Split</div></div>
+ <div class="mini muted">4 days · ~60 min each · L4–S1 safe</div>
+ <div class="day" style="padding:8px 10px;gap:10px"><div class="num" style="font-size:26px;width:20px">1</div><div><h4 style="font-size:13.5px">Upper push/pull</h4><p style="margin-top:2px">Anchor: Plank shoulder taps</p></div></div><div class="day next" style="padding:8px 10px;gap:10px"><div class="num" style="font-size:26px;width:20px">2</div><div><h4 style="font-size:13.5px">Posterior chain</h4><p style="margin-top:2px">Anchor: B-stance hinge</p></div></div><div class="day" style="padding:8px 10px;gap:10px"><div class="num" style="font-size:26px;width:20px">3</div><div><h4 style="font-size:13.5px">Upper vertical &amp; arms</h4><p style="margin-top:2px">Anchor: Swiss ball dead bug</p></div></div><div class="day" style="padding:8px 10px;gap:10px"><div class="num" style="font-size:26px;width:20px">4</div><div><h4 style="font-size:13.5px">Quads + lateral hip</h4><p style="margin-top:2px">Anchor: Suitcase carry</p></div></div></div>
+        <div class="pane"><span class="tag muted">Day 2 · 58 min · next up</span>
+ <div class="big" style="font-size:22px">Posterior chain + anti-shear glutes</div>
+ <p class="mini muted" style="line-height:1.4">The B-stance hinge moves most of the load to one leg, so the spine stays neutral.</p>
+ <div class="tl"><div class="tl-item" style="padding:3px 0"><div class="bar" style="background:var(--cool);height:16px"></div><div><b style="font-size:12.5px">Warm-up</b></div><em>10:00</em></div><div class="tl-item" style="padding:3px 0"><div class="bar" style="background:var(--work);height:16px"></div><div><b style="font-size:12.5px">Superset A × 3</b></div><em>14:00</em></div><div class="tl-item" style="padding:3px 0"><div class="bar" style="background:var(--work);height:16px"></div><div><b style="font-size:12.5px">Superset B × 3</b></div><em>14:00</em></div><div class="tl-item" style="padding:3px 0"><div class="bar" style="background:var(--ready);height:16px"></div><div><b style="font-size:12.5px">Finisher × 3</b></div><em>10:00</em></div><div class="tl-item" style="padding:3px 0"><div class="bar" style="background:var(--cool);height:16px"></div><div><b style="font-size:12.5px">Cool-down</b></div><em>8:00</em></div></div>
+ <div class="mini muted">Gear: dumbbells · Swiss ball · bench</div>
+ <div class="btn primary" style="margin-top:auto;height:46px"><svg width="14" height="14" viewBox="0 0 24 24" fill="#1a0904"><path d="M7 4v16l13-8z"/></svg>Start workout</div></div>
+      </div>
+    </div></div>
+    <figcaption><b>1 · Home + day detail</b><span>The day list sits on the left and the selected day on the right, so there’s no separate detail screen. The next day is picked for you: open the app, tap Start.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-ready">
+    <div class="phone land"><div class="ph ready" style="padding:40px 22px 16px">
+      <div class="status"><span>7:04</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><span class="tag" style="color:var(--ready)">Get ready</span><div style="flex:1;display:grid;place-items:center"><div class="big" style="font-size:200px;color:var(--ready)">7</div></div></div>
+        <div class="pane"><span class="tag muted">First up</span>
+ <div class="big" style="font-size:32px">Cat-camel</div>
+ <div class="mini muted">Mid-range only · 8 slow cycles</div>
+ <div class="panel" style="height:auto;gap:4px"><span class="tag muted">Have ready for the warm-up</span><div class="list-row">Mat<span class="st">✓</span></div><div class="list-row">Swiss ball + dumbbells<span class="st">for Superset A</span></div></div>
+ <div class="cue live" style="color:var(--ready)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Welcome to day two. Grab a mat. We start with cat-camel, small and slow.”</span></div>
+ <div class="mini muted" style="margin-top:auto;text-align:center">Tap anywhere to pause</div></div>
+      </div>
+    </div></div>
+    <figcaption><b>2 · Get ready</b><span>A huge countdown on the left, readable from the mat. The right side lists what to grab for the first block while the coach talks.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-timed">
+    <div class="phone land"><div class="ph cool" style="padding:40px 22px 16px">
+      <div class="status"><span>7:11</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><span class="tag" style="color:var(--cool)">Warm-up · 4 of 4</span>
+ <div class="big" style="font-size:26px">Half-kneeling hip flexor squeeze</div>
+ <span class="pill" style="background:var(--cool);color:#120d2b;align-self:flex-start">Left side · then right</span>
+ <div style="flex:1;display:grid;place-items:center"><div class="ring" style="width:180px;height:180px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#1f2531" stroke-width="8"/><circle cx="50" cy="50" r="44" fill="none" stroke="#9d8cff" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="110"/></svg><div class="t"><div class="big" style="font-size:62px">0:18</div><div class="mini muted">of 0:30</div></div></div></div></div>
+        <div class="pane"><div class="between"><span class="tag muted">Warm-up</span><span class="mini muted" style="font-variant-numeric:tabular-nums">08:42 / 58:00</span></div>
+ <div class="panel" style="height:auto;gap:0;padding:6px 14px"><div class="list-row">Cat-camel<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">McGill bird-dog<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">Glute bridge<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row"><b>Hip flexor squeeze</b><span class="st" style="color:var(--cool)">now</span></div></div>
+ <div class="cue live" style="color:var(--cool)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Squeeze the back glute. Feel the front of the hip open.”</span></div>
+ <div class="controls" style="gap:16px"><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M18 5v14L8 12zM6 5h2v14H6z"/></svg></div><div class="icon play" style="width:58px;height:58px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg></div></div></div>
+      </div>
+    </div></div>
+    <figcaption><b>3 · Timed exercise</b><span>The ring timer gets the whole left half. The right half shows where you are in the block, the coach’s line and playback controls.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-reps">
+    <div class="phone land"><div class="ph work" style="padding:40px 22px 16px">
+      <div class="status"><span>7:24</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><div class="pic" style="height:150px;aspect-ratio:auto"><img src="exercises/swiss-ball-ham-curl-a.jpg" alt=""><img src="exercises/swiss-ball-ham-curl-b.jpg" alt=""></div>
+ <span class="tag" style="color:var(--work)">Superset A · A1 · Round 2 of 3</span>
+ <div class="between" style="align-items:flex-end"><div class="big" style="font-size:24px">Swiss ball<br>hamstring curl</div><div style="text-align:right"><div class="big" style="font-size:56px;color:var(--work)">10–12</div><div class="mini muted">reps · set 0:34</div></div></div>
+ <div class="btn primary" style="margin-top:auto;height:54px;font-size:17px">Done set</div></div>
+        <div class="pane"><div class="between"><span class="tag muted">Rounds</span><span class="mini muted" style="font-variant-numeric:tabular-nums">21:06 / 58:00</span></div>
+ <div class="rounds"><span></span><span class="mini muted" style="text-align:center">1</span><span class="mini muted" style="text-align:center">2</span><span class="mini muted" style="text-align:center">3</span><b>A1</b><span class="c done">✓</span><span class="c now">now</span><span class="c">·</span><b>A2</b><span class="c done">✓</span><span class="c">·</span><span class="c">·</span></div>
+ <div class="upnext" style="padding:8px 10px"><div class="thumb" style="width:34px;height:34px"><span class="big" style="font-size:14px;color:var(--rest)">45s</span></div><div><b style="font-size:12.5px;display:block;line-height:1.2">Rest, then A2</b><span class="mini muted">DB Bulgarian split squat</span></div></div>
+ <div class="cue live" style="color:var(--work)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Hips up, heels drive the ball in. Slow on the way out.”</span></div>
+ <div class="controls" style="gap:16px"><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M18 5v14L8 12zM6 5h2v14H6z"/></svg></div><div class="icon play" style="width:58px;height:58px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg></div></div></div>
+      </div>
+    </div></div>
+    <figcaption><b>4 · Rep set</b><span>Left: the move’s picture, the rep target and a big Done button. Right: a 3-round tracker for the superset, what’s next, and the coach.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-rest">
+    <div class="phone land"><div class="ph rest" style="padding:40px 22px 16px">
+      <div class="status"><span>7:25</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><span class="tag" style="color:var(--rest)">Rest · Superset A · Round 2 of 3</span>
+ <div style="flex:1;display:grid;place-items:center"><div class="ring" style="width:180px;height:180px"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#1f2531" stroke-width="8"/><circle cx="50" cy="50" r="44" fill="none" stroke="#27c4b0" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="190"/></svg><div class="t"><div class="big" style="font-size:62px">0:09</div><div class="mini muted">of 0:45</div></div></div></div>
+ <div class="row" style="gap:10px"><div class="btn ghost" style="flex:1;height:44px;font-size:14px">+15 s</div><div class="btn ghost" style="flex:1;height:44px;font-size:14px">Skip rest</div></div></div>
+        <div class="pane"><div class="between"><span class="tag muted">Up next</span><span class="pill" style="background:var(--work);color:#1a0904">A2</span></div>
+ <div class="pic" style="height:150px;aspect-ratio:auto"><img src="exercises/db-bulgarian-split-squat-a.jpg" alt=""><img src="exercises/db-bulgarian-split-squat-b.jpg" alt=""></div>
+ <div class="big" style="font-size:26px">DB Bulgarian split squat</div>
+ <div class="mini muted">8–10 reps each leg · back foot on the bench</div>
+ <div class="cue live" style="color:var(--rest)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Up next, dumbbell Bulgarian split squats. Grab your dumbbells.”</span></div></div>
+      </div>
+    </div></div>
+    <figcaption><b>5 · Rest + up next</b><span>The rest timer stays on the left. The right side previews the next exercise with its picture, so you know the move before the 3·2·1.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-pause">
+    <div class="phone land"><div class="ph work" style="padding:40px 22px 16px">
+      <div class="status"><span>7:31</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><div class="dimmed" style="display:flex;flex-direction:column;gap:10px;height:100%"><span class="tag" style="color:var(--work)">Superset A · A2 · Round 2 of 3</span><div class="big" style="font-size:28px">DB Bulgarian split squat</div><div class="big" style="font-size:90px;color:var(--work)">8–10</div></div></div>
+        <div class="pane"><div class="panel"><div class="between"><span class="big" style="font-size:24px">Paused</span><span class="mini muted" style="font-variant-numeric:tabular-nums">24:51 in</span></div>
+ <div class="btn primary" style="height:46px"><svg width="14" height="14" viewBox="0 0 24 24" fill="#1a0904"><path d="M7 4v16l13-8z"/></svg>Resume</div>
+ <div><div class="list-row">Previous exercise</div><div class="list-row">Skip exercise</div><div class="list-row">Voice coach<span class="toggle" style="margin-left:auto"></span></div><div class="list-row">Countdown beeps<span class="toggle" style="margin-left:auto"></span></div><div class="list-row" style="color:var(--work)">End workout</div></div></div></div>
+      </div>
+    </div></div>
+    <figcaption><b>6 · Paused</b><span>The pause panel opens in the right half instead of across the middle, so it never crosses the fold. The current exercise stays visible on the left, dimmed.</span></figcaption>
+  </figure>
+  <figure class="screen w-land" id="l-done">
+    <div class="phone land"><div class="ph " style="padding:40px 22px 16px">
+      <div class="status"><span>8:02</span><span>●●● 79%</span></div>
+      <div class="panes">
+        <div class="pane"><span class="tag" style="color:var(--work)">Day 2 complete</span><div class="big" style="font-size:64px">Nice<br>work.</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><div class="card" style="text-align:center"><div class="big" style="font-size:28px;font-variant-numeric:tabular-nums">57:48</div><div class="mini muted">time</div></div><div class="card" style="text-align:center"><div class="big" style="font-size:28px">27</div><div class="mini muted">sets done</div></div></div></div>
+        <div class="pane"><div class="panel" style="height:auto;gap:0;padding:6px 14px"><div class="list-row">Warm-up<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">Superset A × 3<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">Superset B × 3<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">Finisher × 3<span class="st" style="color:var(--rest)">✓</span></div><div class="list-row">Cool-down<span class="st" style="color:var(--rest)">✓</span></div></div>
+ <p class="mini muted">Next time: Day 3 · Upper vertical &amp; arms</p>
+ <div class="btn ghost" style="margin-top:auto;height:46px">Back to plan</div></div>
+      </div>
+    </div></div>
+    <figcaption><b>7 · Complete</b><span>The summary on the left, the blocks you finished and the next day on the right. Nothing is saved except which day comes next.</span></figcaption>
+  </figure>
+  </div>
+</section>
+
+
+<!-- ============ EXERCISE PICTURES ============ -->
+<section id="pictures">
+  <div class="sec-head">
+    <span class="eyebrow">03 · Exercise pictures</span>
+    <h2>Every move has a picture</h2>
+    <p class="muted">Each exercise has a start and an end picture that fade back and forth to show the movement. 21 are free-licence photos (free-exercise-db, public domain; PTPioneer on Flickr, CC BY 2.0; Wikimedia Commons, CC BY-SA 3.0). The 6 moves with no suitable open photo are illustrations drawn by <code>scripts/make-figures.mjs</code>. Any picture can be swapped later by dropping a file with the same name into the folder.</p>
+  </div>
+  <div class="exgrid">
+<div class="excard"><div class="pic"><img src="exercises/cat-camel-a.jpg" alt=""><img src="exercises/cat-camel-b.jpg" alt=""></div><b>Cat-camel</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/hip-flexor-squeeze-a.jpg" alt=""><img src="exercises/hip-flexor-squeeze-b.jpg" alt=""></div><b>Half-kneeling hip flexor squeeze</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/chest-supported-db-row-a.jpg" alt=""><img src="exercises/chest-supported-db-row-b.jpg" alt=""></div><b>Chest-supported DB row</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/flat-db-bench-a.jpg" alt=""><img src="exercises/flat-db-bench-b.jpg" alt=""></div><b>Flat DB bench press</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/incline-db-press-a.jpg" alt=""><img src="exercises/incline-db-press-b.jpg" alt=""></div><b>Incline DB press</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/swiss-ball-ham-curl-a.jpg" alt=""><img src="exercises/swiss-ball-ham-curl-b.jpg" alt=""></div><b>Swiss ball hamstring curl</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/single-arm-db-row-a.jpg" alt=""><img src="exercises/single-arm-db-row-b.jpg" alt=""></div><b>Single-arm bench-supported DB row</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/incline-bicep-curl-a.jpg" alt=""><img src="exercises/incline-bicep-curl-b.jpg" alt=""></div><b>Incline DB bicep curl</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/side-plank-a.jpg" alt=""><img src="exercises/side-plank-b.jpg" alt=""></div><b>Side plank</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/db-step-up-a.jpg" alt=""><img src="exercises/db-step-up-b.jpg" alt=""></div><b>DB step-up on bench</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/bird-dog-a.jpg" alt=""><img src="exercises/bird-dog-b.jpg" alt=""></div><b>McGill bird-dog</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/glute-bridge-a.jpg" alt=""><img src="exercises/glute-bridge-b.jpg" alt=""></div><b>Glute bridge</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/incline-rear-delt-fly-a.jpg" alt=""><img src="exercises/incline-rear-delt-fly-b.jpg" alt=""></div><b>Chest-supported DB reverse fly</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/single-leg-glute-bridge-a.jpg" alt=""><img src="exercises/single-leg-glute-bridge-b.jpg" alt=""></div><b>Single-leg glute bridge</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/standing-hip-abduction-a.jpg" alt=""><img src="exercises/standing-hip-abduction-b.jpg" alt=""></div><b>Standing hip abduction</b><span class="st" style="color:var(--rest)">● Photo matches</span><span class=n>Holding a chair here; you hold the bench</span></div>
+<div class="excard"><div class="pic"><img src="exercises/swiss-ball-wall-squat-a.jpg" alt=""><img src="exercises/swiss-ball-wall-squat-b.jpg" alt=""></div><b>Swiss ball wall squat</b><span class="st" style="color:var(--rest)">● Photo matches</span></div>
+<div class="excard"><div class="pic"><img src="exercises/sphinx-a.jpg" alt=""><img src="exercises/sphinx-b.jpg" alt=""></div><b>Prone sphinx pose</b><span class="st" style="color:var(--rest)">● Photo matches</span><span class=n>One photo, no motion</span></div>
+<div class="excard"><div class="pic"><img src="exercises/db-bulgarian-split-squat-a.jpg" alt=""><img src="exercises/db-bulgarian-split-squat-b.jpg" alt=""></div><b>DB Bulgarian split squat</b><span class="st" style="color:var(--ready)">● Close variant</span><span class=n>Back foot on the floor, yours is on the bench</span></div>
+<div class="excard"><div class="pic"><img src="exercises/incline-shoulder-press-a.jpg" alt=""><img src="exercises/incline-shoulder-press-b.jpg" alt=""></div><b>Seated incline DB shoulder press</b><span class="st" style="color:var(--ready)">● Close variant</span><span class=n>Bench upright, yours is at 75–80°</span></div>
+<div class="excard"><div class="pic"><img src="exercises/swiss-ball-dead-bug-a.jpg" alt=""><img src="exercises/swiss-ball-dead-bug-b.jpg" alt=""></div><b>Swiss ball dead bug</b><span class="st" style="color:var(--ready)">● Close variant</span><span class=n>No Swiss ball shown</span></div>
+<div class="excard"><div class="pic"><img src="exercises/stir-the-pot-a.jpg" alt=""><img src="exercises/stir-the-pot-b.jpg" alt=""></div><b>Swiss ball stir-the-pot</b><span class="st" style="color:var(--ready)">● Close variant</span><span class=n>Knees down and still; you hold a full plank and circle</span></div>
+<div class="excard"><div class="pic"><img src="exercises/b-stance-hinge-a.svg" alt=""><img src="exercises/b-stance-hinge-b.svg" alt=""></div><b>B-stance DB hip hinge</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Back foot as a kickstand, hips push back</span></div>
+<div class="excard"><div class="pic"><img src="exercises/suitcase-carry-a.svg" alt=""><img src="exercises/suitcase-carry-b.svg" alt=""></div><b>Single-arm suitcase carry</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Weight in one hand, walk tall</span></div>
+<div class="excard"><div class="pic"><img src="exercises/psoas-90-90-a.svg" alt=""><img src="exercises/psoas-90-90-b.svg" alt=""></div><b>90/90 psoas relief on Swiss ball</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Hands rise and fall with the breath</span></div>
+<div class="excard"><div class="pic"><img src="exercises/figure-4-a.svg" alt=""><img src="exercises/figure-4-b.svg" alt=""></div><b>Supine figure-4 stretch</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Ankle over knee, then pull the thigh in</span></div>
+<div class="excard"><div class="pic"><img src="exercises/db-pullover-a.svg" alt=""><img src="exercises/db-pullover-b.svg" alt=""></div><b>DB pullover on the bench</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Lie along the bench, not across it</span></div>
+<div class="excard"><div class="pic"><img src="exercises/plank-shoulder-tap-a.svg" alt=""><img src="exercises/plank-shoulder-tap-b.svg" alt=""></div><b>Plank shoulder taps</b><span class="st" style="color:var(--cool)">● Illustration</span><span class=n>Hips stay still as each hand taps</span></div>
+  </div>
+  <p class="muted" style="font-size:12px">Photo credits: bird-dog, Swiss ball wall squat and stir-the-pot by PTPioneer, CC BY 2.0 (flickr.com/photos/182613284@N02). Sphinx pose by Christy Collins, CC BY-SA 3.0, Wikimedia Commons. All other photos from free-exercise-db (public domain).</p>
+</section>
+
+<!-- ============ SCREENS ============ -->
+<section id="screens">
+  <div class="sec-head">
+    <span class="eyebrow">04 · Standard phone</span>
+    <h2>The same eight screens on a normal iPhone</h2>
+    <p class="muted">Big type for reading from a mat two metres away. One primary action per screen, sized for sweaty thumbs. Dark by default to save battery and reduce glare.</p>
+  </div>
+  <div class="phones">
+
+  <!-- 1 HOME -->
+  <figure class="screen" id="s-home">
+    <div class="phone"><div class="ph">
+      <div class="status"><span>7:02</span><span>●●● 82%</span></div>
+      <div class="between" style="margin-top:6px">
+        <div><div class="tag muted">Your plan</div><div class="big" style="font-size:34px">Spine Rehab<br>Split</div></div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></div>
+      </div>
+      <div class="row mini muted" style="gap:12px"><span>4 days</span><span>·</span><span>~60 min each</span><span>·</span><span>L4–S1 safe</span></div>
+      <div class="day next"><div class="num">1</div><div><h4>Upper push/pull + anti-rotation</h4><p>Anchor: Plank shoulder taps · DB, bench</p></div></div>
+      <div class="day"><div class="num">2</div><div><h4>Posterior chain + anti-shear glutes</h4><p>Anchor: B-stance hinge · DB, Swiss ball</p></div></div>
+      <div class="day"><div class="num">3</div><div><h4>Upper vertical &amp; arms + anti-extension</h4><p>Anchor: Swiss ball dead bug · DB, bench</p></div></div>
+      <div class="day"><div class="num">4</div><div><h4>Quads + lateral hip stability</h4><p>Anchor: Suitcase carry · DB, Swiss ball, bench</p></div></div>
+      <div class="mini muted" style="text-align:center;margin-top:auto">Warm-up and cool-down are built into every day</div>
+    </div></div>
+    <figcaption><b>1 · Home</b><span>The four days as big cards. No streaks, no history. The voice button opens voice and beep settings.</span></figcaption>
+  </figure>
+
+  <!-- 2 DAY DETAIL -->
+  <figure class="screen" id="s-day">
+    <div class="phone"><div class="ph" style="gap:8px">
+      <div class="status"><span>7:03</span><span>●●● 82%</span></div>
+      <div class="row" style="margin-top:4px"><div class="icon" style="width:32px;height:32px"><svg viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg></div><span class="tag muted">Day 2 · 58 min</span></div>
+      <div class="big" style="font-size:30px">Posterior chain +<br>anti-shear glutes</div>
+      <div class="card" style="padding:10px 12px"><div class="tag" style="color:var(--rest)">Why it helps your back</div><p class="mini muted" style="margin-top:4px;line-height:1.4">The B-stance hinge moves most of the load to one leg, so glutes and hamstrings get strong while the spine stays neutral.</p></div>
+      <div class="tl">
+        <div class="tl-item"><div class="bar" style="background:var(--cool)"></div><div><b>Warm-up</b><span>Cat-camel · Bird-dog · Bridges · Hip flexor</span></div><em>10:00</em></div>
+        <div class="tl-item"><div class="bar" style="background:var(--work)"></div><div><b>Superset A × 3</b><span>Swiss ball ham curl · DB Bulgarian split squat</span></div><em>14:00</em></div>
+        <div class="tl-item"><div class="bar" style="background:var(--work)"></div><div><b>Superset B × 3</b><span>B-stance DB hinge · Single-leg glute bridge</span></div><em>14:00</em></div>
+        <div class="tl-item"><div class="bar" style="background:var(--ready)"></div><div><b>Finisher × 3</b><span>Swiss ball stir-the-pot</span></div><em>10:00</em></div>
+        <div class="tl-item"><div class="bar" style="background:var(--cool)"></div><div><b>Cool-down</b><span>90/90 psoas · Sphinx · Figure-4</span></div><em>8:00</em></div>
+      </div>
+      <div class="row" style="flex-wrap:wrap;gap:6px"><span class="pill">Dumbbells</span><span class="pill">Swiss ball</span><span class="pill">Bench</span></div>
+      <div class="btn primary" style="margin-top:auto"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1a0904"><path d="M7 4v16l13-8z"/></svg>Start workout</div>
+    </div></div>
+    <figcaption><b>2 · Day detail</b><span>What you’ll do, how long, and which gear to grab. Tap a block to see each exercise and its coaching cues.</span></figcaption>
+  </figure>
+
+  <!-- 3 GET READY -->
+  <figure class="screen" id="s-ready">
+    <div class="phone"><div class="ph ready" style="align-items:center;text-align:center">
+      <div class="status"><span>7:04</span><span>●●● 82%</span></div>
+      <div class="tag" style="color:var(--ready);margin-top:30px">Get ready</div>
+      <div class="big" style="font-size:150px;color:var(--ready);margin-top:20px">7</div>
+      <div class="muted mini" style="margin-top:6px">First up</div>
+      <div class="big" style="font-size:30px">Cat-camel</div>
+      <div class="muted" style="font-size:13px">Mid-range only · 8 slow cycles</div>
+      <div class="cue live" style="color:var(--ready);margin-top:auto;width:100%;text-align:left"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Welcome to day two. Grab a mat. We start with cat-camel, small and slow.”</span></div>
+      <div class="mini muted">Tap anywhere to pause</div>
+    </div></div>
+    <figcaption><b>3 · Get ready</b><span>Start opens a 10-second countdown so you can put the phone down. Pressing Start also unlocks audio on iOS and keeps the screen on.</span></figcaption>
+  </figure>
+
+  <!-- 4 TIMED WORK -->
+  <figure class="screen" id="s-timed">
+    <div class="phone"><div class="ph cool">
+      <div class="status"><span>7:11</span><span>●●● 81%</span></div>
+      <div class="seg" style="margin-top:4px"><i style="background:var(--cool)"></i><i style="background:var(--cool)"></i><i style="background:var(--cool)"></i><i style="background:linear-gradient(90deg,var(--cool) 60%,var(--surface-2) 60%)"></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="between"><span class="tag" style="color:var(--cool)">Warm-up · 4 of 4</span><span class="mini muted" style="font-variant-numeric:tabular-nums">08:42 / 58:00</span></div>
+      <div class="big" style="font-size:32px">Half-kneeling<br>hip flexor squeeze</div>
+      <div class="row"><span class="pill" style="background:var(--cool);color:#120d2b">Left side</span><span class="mini muted">then right</span></div>
+      <div class="ring" style="margin-top:6px">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#1f2531" stroke-width="8"/><circle cx="50" cy="50" r="44" fill="none" stroke="#9d8cff" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="110"/></svg>
+        <div class="t"><div class="big">0:18</div><div class="mini muted">of 0:30</div></div>
+      </div>
+      <div class="cue live" style="color:var(--cool)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Squeeze the back glute. Feel the front of the hip open. Keep breathing.”</span></div>
+      <div class="controls"><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M18 5v14L8 12zM6 5h2v14H6z"/></svg></div><div class="icon play"><svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg></div></div>
+    </div></div>
+    <figcaption><b>4 · Timed exercise</b><span>Holds, carries and stretches count down and move on by themselves. The voice says “Switch sides” at the halfway point of each-side moves.</span></figcaption>
+  </figure>
+
+  <!-- 5 REP WORK -->
+  <figure class="screen" id="s-reps">
+    <div class="phone"><div class="ph work">
+      <div class="status"><span>7:24</span><span>●●● 79%</span></div>
+      <div class="seg" style="margin-top:4px"><i style="background:var(--cool)"></i><i style="background:var(--work)"></i><i style="background:linear-gradient(90deg,var(--work) 40%,var(--surface-2) 40%)"></i><i></i><i></i><i></i></div>
+      <div class="between"><span class="tag" style="color:var(--work)">Superset A · Round 2 of 3</span><span class="mini muted" style="font-variant-numeric:tabular-nums">21:06</span></div>
+      <div class="row" style="gap:6px"><span class="pill" style="background:var(--work);color:#1a0904">A1</span><span class="pill">A2 next</span></div>
+      <div class="big" style="font-size:36px">Swiss ball<br>hamstring curl</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span class="big" style="font-size:96px;color:var(--work)">10–12</span><span class="big muted" style="font-size:24px">reps</span></div>
+      <div class="row mini muted"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b94a7" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/></svg><span style="font-variant-numeric:tabular-nums">Set time 0:34</span></div>
+      <div class="cue live" style="color:var(--work)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Hips up, heels drive the ball in. Slow on the way out.”</span></div>
+      <div class="btn primary" style="margin-top:auto;height:64px;font-size:18px">Done set</div>
+      <div class="mini muted" style="text-align:center">Rest 45 s starts on Done · tap screen to pause</div>
+    </div></div>
+    <figcaption><b>5 · Rep set</b><span>Reps aren’t timed. You lift at your own pace and tap Done, which starts the rest. A set timer counts up so you can keep an eye on tempo.</span></figcaption>
+  </figure>
+
+  <!-- 6 REST -->
+  <figure class="screen" id="s-rest">
+    <div class="phone"><div class="ph rest">
+      <div class="status"><span>7:25</span><span>●●● 79%</span></div>
+      <div class="seg" style="margin-top:4px"><i style="background:var(--cool)"></i><i style="background:var(--work)"></i><i style="background:linear-gradient(90deg,var(--work) 46%,var(--surface-2) 46%)"></i><i></i><i></i><i></i></div>
+      <div class="tag" style="color:var(--rest);margin-top:8px">Rest</div>
+      <div class="ring" style="margin-top:4px">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#1f2531" stroke-width="8"/><circle cx="50" cy="50" r="44" fill="none" stroke="#27c4b0" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="190"/></svg>
+        <div class="t"><div class="big">0:09</div><div class="mini muted">breathe</div></div>
+      </div>
+      <div class="row" style="justify-content:center;gap:10px"><div class="btn ghost" style="height:40px;padding:0 16px;font-size:13px">+15 s</div><div class="btn ghost" style="height:40px;padding:0 16px;font-size:13px">Skip rest</div></div>
+      <div class="tag muted" style="margin-top:6px">Up next</div>
+      <div class="upnext"><div class="thumb"><span class="big" style="font-size:16px;color:var(--work)">A2</span></div><div><b style="font-size:14px;display:block;line-height:1.2">DB Bulgarian split squat</b><span class="mini muted">8–10 reps each leg · rest 75 s</span></div></div>
+      <div class="cue live" style="color:var(--rest);margin-top:auto"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Up next, dumbbell Bulgarian split squats. Eight to ten each leg. Grab your dumbbells.”</span></div>
+    </div></div>
+    <figcaption><b>6 · Rest + up next</b><span>At 10 seconds left the coach announces the next exercise, then beeps 3·2·1. Add 15 seconds or skip with one tap.</span></figcaption>
+  </figure>
+
+  <!-- 7 PAUSE -->
+  <figure class="screen" id="s-pause">
+    <div class="phone"><div class="ph work">
+      <div class="status"><span>7:31</span><span>●●● 78%</span></div>
+      <div class="tag" style="color:var(--work);margin-top:4px">Superset A · Round 2 of 3</div>
+      <div class="big" style="font-size:36px">DB Bulgarian<br>split squat</div>
+      <div class="big" style="font-size:80px;color:var(--work)">8–10</div>
+      <div class="dim"></div>
+      <div class="sheet">
+        <div class="grab"></div>
+        <div class="between"><span class="big" style="font-size:26px">Paused</span><span class="mini muted" style="font-variant-numeric:tabular-nums">24:51 in</span></div>
+        <div class="btn primary" style="height:54px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#1a0904"><path d="M7 4v16l13-8z"/></svg>Resume</div>
+        <div>
+          <div class="opt"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2"><path d="M11 17 6 12l5-5M18 17l-5-5 5-5"/></svg>Previous exercise</div>
+          <div class="opt"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2"><path d="m13 17 5-5-5-5M6 17l5-5-5-5"/></svg>Skip exercise</div>
+          <div class="opt"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>Voice coach<span class="toggle"></span></div>
+          <div class="opt"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eef1f6" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Countdown beeps<span class="toggle"></span></div>
+          <div class="opt" style="color:var(--work)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5c39" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>End workout</div>
+        </div>
+      </div>
+    </div></div>
+    <figcaption><b>7 · Pause sheet</b><span>Tap anywhere on a player screen to pause. You can step back or forward, mute the coach, or end the workout. Ending asks once before it quits.</span></figcaption>
+  </figure>
+
+  <!-- 8 COMPLETE -->
+  <figure class="screen" id="s-done">
+    <div class="phone"><div class="ph" style="background:radial-gradient(120% 70% at 50% 20%,rgba(255,92,57,.28),transparent 60%),var(--bg)">
+      <div class="status"><span>8:02</span><span>●●● 71%</span></div>
+      <div class="tag" style="color:var(--work);margin-top:28px;text-align:center">Day 2 complete</div>
+      <div class="big" style="font-size:58px;text-align:center">Nice<br>work.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <div class="card" style="text-align:center"><div class="big" style="font-size:30px;font-variant-numeric:tabular-nums">57:48</div><div class="mini muted">time</div></div>
+        <div class="card" style="text-align:center"><div class="big" style="font-size:30px">27</div><div class="mini muted">sets done</div></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;gap:6px;font-size:12.5px">
+        <div class="between"><span>Warm-up</span><span style="color:var(--rest)">✓</span></div>
+        <div class="between"><span>Superset A × 3</span><span style="color:var(--rest)">✓</span></div>
+        <div class="between"><span>Superset B × 3</span><span style="color:var(--rest)">✓</span></div>
+        <div class="between"><span>Finisher × 3</span><span style="color:var(--rest)">✓</span></div>
+        <div class="between"><span>Cool-down</span><span style="color:var(--rest)">✓</span></div>
+      </div>
+      <p class="mini muted" style="text-align:center">Next time: Day 3 · Upper vertical &amp; arms</p>
+      <div class="btn ghost" style="margin-top:auto">Back to plan</div>
+    </div></div>
+    <figcaption><b>8 · Complete</b><span>A short summary for this session only. Nothing is saved. The app just remembers which day comes next, on this device.</span></figcaption>
+  </figure>
+  </div>
+</section>
+
+
+<!-- ============ IPHONE DUO, OTHER MODES ============ -->
+<section id="duo">
+  <div class="sec-head">
+    <span class="eyebrow">05 · iPhone Duo · other ways to hold it</span>
+    <h2>Closed, or half-folded upright</h2>
+    <p class="muted">The app picks a layout from the screen’s size and orientation, so the same rules work on any phone or tablet. Landscape-open is the one designed first; these are the fallbacks.</p>
+  </div>
+  <div class="bp">
+    <div class="note"><h3>Book · main</h3><ul><li><b>Landscape, 800 pt+ wide</b></li><li>Duo inner screen sideways (≈890 × 626). Fold runs top to bottom: left half is now, right half is context.</li></ul></div>
+    <div class="note"><h3>Compact</h3><ul><li><b>Under 440 pt wide</b></li><li>Standard iPhones. Section 03.</li></ul></div>
+    <div class="note"><h3>Short-wide</h3><ul><li><b>440–599 pt wide, under 720 pt tall</b></li><li>Duo outer screen (≈466 × 678). Ring and up-next sit side by side.</li></ul></div>
+    <div class="note"><h3>Tabletop</h3><ul><li><b>600 pt+ wide, portrait</b></li><li>Duo inner screen upright (≈626 × 890). Fold runs across the middle: timer on top, controls on the bottom.</li></ul></div>
+  </div>
+  <div class="duo-row">
+  <!-- OUTER: rest, short-wide -->
+  <figure class="screen w-outer" id="d-outer">
+    <div class="phone outer"><div class="ph rest" style="padding:36px 20px 18px;gap:10px">
+      <div class="status"><span>7:25</span><span>●●● 79%</span></div>
+      <div class="seg" style="margin-top:2px"><i style="background:var(--cool)"></i><i style="background:var(--work)"></i><i style="background:linear-gradient(90deg,var(--work) 46%,var(--surface-2) 46%)"></i><i></i><i></i><i></i></div>
+      <div class="between"><span class="tag" style="color:var(--rest)">Rest · Superset A · Round 2 of 3</span><span class="mini muted" style="font-variant-numeric:tabular-nums">21:51</span></div>
+      <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center">
+        <div class="ring" style="width:150px;height:150px">
+          <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="#1f2531" stroke-width="8"/><circle cx="50" cy="50" r="44" fill="none" stroke="#27c4b0" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="190"/></svg>
+          <div class="t"><div class="big" style="font-size:50px">0:09</div><div class="mini muted">of 0:45</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+          <div class="tag muted">Up next · A2</div>
+          <div class="big" style="font-size:26px">DB Bulgarian<br>split squat</div>
+          <div class="mini muted">8–10 reps each leg</div>
+        </div>
+      </div>
+      <div class="cue live" style="color:var(--rest)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Up next, dumbbell Bulgarian split squats. Grab your dumbbells.”</span></div>
+      <div class="row" style="margin-top:auto;gap:10px"><div class="btn ghost" style="flex:1;height:48px;font-size:14px">+15 s</div><div class="btn ghost" style="flex:1;height:48px;font-size:14px">Skip rest</div></div>
+    </div></div>
+    <figcaption><b>Outer screen · Rest</b><span>Short-wide layout. The ring and up-next sit side by side, so the whole step fits with no scrolling and the buttons stay in thumb reach.</span></figcaption>
+  </figure>
+
+  <figure class="screen w-inner" id="d-table">
+    <div class="phone inner"><div class="ph cool" style="padding:30px 22px 30px;display:grid;grid-template-rows:1fr 1fr;gap:28px">
+      <div class="status"><span>7:42</span><span>●●● 76%</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px;justify-content:center">
+        <span class="tag" style="color:var(--cool)">Superset A · A2 · Round 1 of 3</span>
+        <div class="big" style="font-size:38px">Side plank</div>
+        <span class="pill" style="background:var(--cool);color:#120d2b;align-self:flex-start">Right side</span>
+        <div class="big" style="font-size:120px;font-variant-numeric:tabular-nums;color:var(--cool)">0:14</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;justify-content:center">
+        <div class="seg"><i style="background:var(--cool)"></i><i style="background:var(--work)"></i><i style="background:linear-gradient(90deg,var(--work) 20%,var(--surface-2) 20%)"></i><i></i><i></i><i></i></div>
+        <div class="cue live" style="color:var(--cool)"><div class="wave"><i style="height:6px"></i><i style="height:14px"></i><i style="height:9px"></i><i style="height:12px"></i></div><span style="color:var(--fg)">“Hips high. Drop to your knees if you need to.”</span></div>
+        <span class="mini muted">Up next: rest 60 s, then B1 · DB step-ups</span>
+        <div class="controls" style="gap:16px"><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M18 5v14L8 12zM6 5h2v14H6z"/></svg></div><div class="icon play" style="width:58px;height:58px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></div><div class="icon"><svg viewBox="0 0 24 24" fill="#eef1f6"><path d="M6 5v14l10-7zM16 5h2v14h-2z"/></svg></div></div>
+      </div>
+    </div></div>
+    <figcaption><b>Inner screen upright · Tabletop</b><span>Held upright, the fold runs across the middle. Half-folded on the floor like a laptop, the top half shows the exercise and timer and the bottom half lies flat with the controls.</span></figcaption>
+  </figure>
+  </div>
+</section>
+
+<!-- ============ VOICE SCRIPT ============ -->
+<section id="voice">
+  <div class="sec-head">
+    <span class="eyebrow">06 · Voice coach</span>
+    <h2>What the coach says, and when</h2>
+    <p class="muted">Every line comes from a small set of templates, filled in from the plan data and recorded ahead of time as audio clips, the same way HeroQuest does it. Beeps come from Web Audio so they’re instant. Example: Superset A on Day 2.</p>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Moment</th><th>Trigger</th><th>Coach says</th></tr></thead>
+    <tbody>
+      <tr><td><span class="k" style="background:var(--ready)"></span>Block start</td><td>Last warm-up step ends</td><td><q>Warm-up done. Superset A, three rounds. You’ll need the Swiss ball and your dumbbells.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--ready)"></span>T −3 s</td><td>Before any work step</td><td>beep · beep · beep · <q>Go!</q></td></tr>
+      <tr><td><span class="k" style="background:var(--work)"></span>Work start</td><td>Rep step begins</td><td><q>Swiss ball hamstring curls. Ten to twelve reps.</q> then one form cue: <q>Hips up, heels drive the ball in.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--work)"></span>Rep nudge</td><td>45 s without Done</td><td><q>Slow and controlled. Tap done when you finish your set.</q> (once only)</td></tr>
+      <tr><td><span class="k" style="background:var(--rest)"></span>Rest start</td><td>Done tapped</td><td><q>Nice. Rest, forty-five seconds.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--rest)"></span>T −10 s rest</td><td>Rest countdown</td><td><q>Up next, dumbbell Bulgarian split squats. Eight to ten each leg.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--work)"></span>Round</td><td>A2 rest ends</td><td><q>Round two of three.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--cool)"></span>Timed halves</td><td>Each-side holds and carries</td><td><q>Halfway.</q> · <q>Switch sides.</q> · <q>Ten seconds left.</q></td></tr>
+      <tr><td><span class="k" style="background:var(--cool)"></span>Guided tempo</td><td>Bird-dog, shoulder taps, dead bug</td><td><q>Reach… hold, two, three, four, five. Back.</q> The coach counts the holds so you don’t have to.</td></tr>
+      <tr><td><span class="k" style="background:var(--work)"></span>Finish</td><td>Last cool-down step ends</td><td><q>That’s day two done. Great work looking after your back.</q></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="build">
+  <div class="sec-head">
+    <span class="eyebrow">07 · How it’s built</span>
+    <h2>Same stack as HeroQuest</h2>
+  </div>
+  <div class="grid2">
+    <div class="note"><h3>Stack</h3><ul>
+      <li><b>Vue 3 + Vite + TypeScript</b>, Pinia, Vue Router (hash)</li>
+      <li><b>Static site</b> on GitHub Pages. No backend, no login, no analytics</li>
+      <li><b>Vitest</b> for the step engine, <b>Playwright</b> for E2E with a fake clock</li>
+      <li>Self-hosted fonts (@fontsource), no CDN scripts</li>
+    </ul></div>
+    <div class="note"><h3>Plan → steps</h3><ul>
+      <li>The plan is written in <b>data/plan.ts</b>: days → blocks → exercises</li>
+      <li>A pure <b>buildSteps(day)</b> turns it into a flat list of steps: ready, work, rest, switch, transition</li>
+      <li>The player just walks that list. Back and skip only move an index</li>
+      <li>Timers run off real timestamps, so they stay accurate if the tab sleeps</li>
+    </ul></div>
+    <div class="note"><h3>Audio</h3><ul>
+      <li><b>npm run voice</b> records every line with edge-tts (an en-AU coach voice) into public/voice/</li>
+      <li>If a clip is missing, the device’s own voice (speechSynthesis) reads it</li>
+      <li>Web Audio beeps; the Start tap unlocks audio on iOS</li>
+      <li>Your music keeps playing underneath. Web apps can’t lower its volume</li>
+    </ul></div>
+    <div class="note"><h3>Phone friendly</h3><ul>
+      <li><b>Wake Lock</b> keeps the screen on during a workout</li>
+      <li>Media Session shows the current exercise on the lock screen</li>
+      <li>Installable PWA with offline cache, so it works in a gym with no signal</li>
+      <li>localStorage keeps only settings and the next day number</li>
+      <li><b>iPhone Duo:</b> landscape-open is the main layout; layout picked from width, height and orientation, and the fold is a 28 pt gutter. Uses the Viewport Segments API where Safari supports it</li>
+    </ul></div>
+  </div>
+</section>
+</div>

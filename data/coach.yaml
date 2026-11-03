@@ -1,0 +1,33 @@
+# How the coach talks and paces a workout. Applies to every plan.
+# {placeholders} are filled from the plan. Each list item is one variant; the coach rotates through them.
+
+timing:
+  getReady: 10          # countdown before the first exercise
+  blockChange: 15       # pause between blocks to grab gear
+  upNextAt: 10          # seconds left in a rest when "Up next" is said
+  countdownBeeps: 3     # 3·2·1 beeps before work
+  repNudgeAfter: 45     # seconds into a rep set before the one-off "tap done" reminder
+  switchSidesGap: 5     # changeover between sides when no rest is set
+  secondsPerRep: 3      # only used to estimate a day's length
+
+# Words the coach says differently from how they're written.
+pronounce:
+  DB: dumbbell
+  "90/90": ninety ninety
+  "L4–S1": L four, S one
+
+lines:
+  welcome:      ["Welcome to {day}. Grab a mat. We start with {first}."]
+  blockStart:   ["{block}. {rounds} rounds. You'll need {gear}.", "Next up, {block}. Grab {gear}."]
+  go:           ["Go!", "Let's go!"]
+  repsStart:    ["{exercise}. {target}."]
+  timeStart:    ["{exercise}. {seconds} seconds."]
+  repNudge:     ["Slow and controlled. Tap done when you finish your set."]
+  halfway:      ["Halfway."]
+  tenLeft:      ["Ten seconds left."]
+  switchSides:  ["Switch sides.", "Other side."]
+  restStart:    ["Nice. Rest, {seconds} seconds.", "Good work. Rest {seconds}."]
+  upNext:       ["Up next, {exercise}. {target}."]
+  round:        ["Round {round} of {rounds}."]
+  holdCount:    ["Hold"]               # followed by counted numbers
+  finish:       ["That's {day} done. Great work looking after your back."]

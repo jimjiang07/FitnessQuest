@@ -1,0 +1,27 @@
+/* Design tokens from docs/design/design-board.html. Dark by design: readable from the mat, easy on battery. */
+:root {
+  --bg: #0d1016;
+  --surface: #161b24;
+  --surface-2: #1f2531;
+  --line: #2a3242;
+  --fg: #eef1f6;
+  --muted: #8b94a7;
+
+  /* phase colours: the whole screen tints to the phase */
+  --work: #ff5c39;
+  --rest: #27c4b0;
+  --ready: #ffb627;
+  --cool: #9d8cff;
+  --on-work: #1a0904;
+  --on-cool: #120d2b;
+
+  --display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius-card: 18px;
+  --radius-pill: 999px;
+  --fold-gutter: 28px;   /* covers the Duo hinge in book and tabletop layouts */
+  --tap-min: 56px;
+
+  color-scheme: dark;
+}

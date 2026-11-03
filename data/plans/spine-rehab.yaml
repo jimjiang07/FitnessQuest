@@ -1,0 +1,274 @@
+# Spine Rehab Split: the whole plan in one file. Format: docs/plan-format.md
+# Edit, then run `npm run check-plan` to validate and see each day's timeline.
+
+id: spine-rehab
+name: Spine Rehab Split
+summary: Four ~60-minute days built around L4–S1 safety. Every day has a spine rehab anchor.
+# Equipment: dumbbells, a flat/incline bench and a Swiss ball. No bands.
+equipment: [dumbbells, bench, swiss ball]
+
+# ── Exercise library ─────────────────────────────────────────────
+# key: used by days below. name: shown on screen. say: how the coach pronounces it (optional).
+# cues: short form tips; the coach reads the first one when the set starts, the rest show on screen.
+exercises:
+  cat-camel:
+    name: Cat-camel
+    gear: [mat]
+    cues: [Small and slow. Mid-range only., Don't force the end of the range.]
+  bird-dog:
+    name: McGill bird-dog
+    say: McGill bird dog
+    gear: [mat]
+    cues: [Reach long, hips square., Make a fist and squeeze the glute.]
+  glute-bridge:
+    name: Glute bridge
+    gear: [mat]
+    cues: [Squeeze the glutes and hold at the top., Ribs down. Don't arch your back.]
+  hip-flexor-squeeze:
+    name: Half-kneeling hip flexor squeeze
+    gear: [mat]
+    cues: [Squeeze the back glute., Feel the front of the hip open.]
+
+  chest-supported-db-row:
+    name: Chest-supported DB row
+    say: chest supported dumbbell row
+    gear: [dumbbells, bench]
+    cues: [Chest stays on the bench., Elbows drive to your back pockets.]
+  flat-db-bench:
+    name: Flat DB bench press
+    say: flat dumbbell bench press
+    gear: [dumbbells, bench]
+    cues: [Feet flat, shoulder blades pinned., Lower slow to the chest.]
+  incline-db-press:
+    name: Incline DB press
+    say: incline dumbbell press
+    gear: [dumbbells, bench]
+    cues: [Press up and slightly back., Control the way down.]
+  incline-rear-delt-fly:
+    name: Chest-supported DB reverse fly
+    say: chest supported dumbbell reverse fly
+    gear: [dumbbells, bench]
+    note: Lie face down on the bench at about 30°
+    cues: [Thumbs up, lift out to the sides., Squeeze the shoulder blades together.]
+  plank-shoulder-tap:
+    name: Plank shoulder taps
+    gear: [mat]
+    note: Feet wide. Drop to your knees if your back sags.
+    cues: [Tap the opposite shoulder and hold. Hips don't rock., Brace like someone's about to poke your stomach.]
+
+  swiss-ball-ham-curl:
+    name: Swiss ball hamstring curl
+    gear: [swiss ball, mat]
+    cues: [Hips up, heels drive the ball in., Slow on the way out.]
+  db-bulgarian-split-squat:
+    name: DB Bulgarian split squat
+    say: dumbbell bulgarian split squat
+    gear: [dumbbells, bench]
+    cues: [Torso tall, drop straight down., Back foot on the bench, laces down.]
+  b-stance-hinge:
+    name: B-stance DB hip hinge
+    say: B stance dumbbell hip hinge
+    gear: [dumbbells]
+    cues: [Push your hips back., Spine stays locked and neutral.]
+  single-leg-glute-bridge:
+    name: Single-leg glute bridge
+    gear: [mat]
+    cues: [Drive through the heel. Hips stay level., Lower slowly. Don't let the hip drop.]
+  stir-the-pot:
+    name: Swiss ball stir-the-pot
+    say: Swiss ball stir the pot
+    gear: [swiss ball]
+    cues: [Small, controlled circles., Hips still. Only the forearms move.]
+
+  db-pullover:
+    name: DB pullover on the bench
+    say: dumbbell pullover
+    gear: [dumbbells, bench]
+    note: Lie along the bench, whole back supported, feet flat
+    cues: [Ribs down. Only go as far as your back stays flat., Pull the weight back over your chest with your lats.]
+  incline-shoulder-press:
+    name: Seated incline DB shoulder press
+    say: seated incline dumbbell shoulder press
+    gear: [dumbbells, bench]
+    note: Bench at 75–80°
+    cues: [Back flat on the bench., Press straight up.]
+  single-arm-db-row:
+    name: Single-arm bench-supported DB row
+    say: single arm dumbbell row
+    gear: [dumbbells, bench]
+    cues: [Flat back, pull to the hip., No twisting.]
+  incline-bicep-curl:
+    name: Incline DB bicep curl
+    say: incline dumbbell bicep curl
+    gear: [dumbbells, bench]
+    cues: [Elbows stay back., Slow on the way down.]
+  swiss-ball-dead-bug:
+    name: Swiss ball dead bug
+    gear: [swiss ball, mat]
+    cues: [Press the ball hard with the opposite hand and knee., Lower back stays down.]
+
+  swiss-ball-wall-squat:
+    name: Swiss ball wall squat
+    gear: [swiss ball]
+    cues: [Ball in your lower back., Sit down and back.]
+  side-plank:
+    name: Side plank
+    gear: [mat]
+    cues: [Hips high., Drop to your knees if you need to.]
+  db-step-up:
+    name: DB step-up on bench
+    say: dumbbell step up
+    gear: [dumbbells, bench]
+    cues: [Drive through the front heel., Stand tall at the top.]
+  standing-hip-abduction:
+    name: Standing hip abduction
+    gear: [bench]
+    note: Hold the bench for balance
+    cues: [Lift the leg out to the side, toes forward., Stand tall. Don't lean away.]
+  suitcase-carry:
+    name: Single-arm suitcase carry
+    gear: [dumbbells]
+    note: 25 lb dumbbell
+    cues: [Walk tall. Don't lean toward the weight., Squeeze the handle hard.]
+
+  psoas-90-90:
+    name: 90/90 psoas relief on Swiss ball
+    say: ninety ninety psoas relief
+    gear: [swiss ball, mat]
+    cues: [Lower legs on the ball, knees and hips at ninety degrees., Breathe deep into your belly.]
+  sphinx:
+    name: Prone sphinx pose
+    gear: [mat]
+    cues: [Let your glutes and lower back hang loose., If it pinches, lie flat on your stomach instead.]
+  figure-4:
+    name: Supine figure-4 stretch
+    say: figure four stretch
+    gear: [mat]
+    cues: [Ankle over the opposite knee., Gently draw the leg toward your chest.]
+
+# ── Shared blocks (used by every day with `use:`) ────────────────
+# Work types:  reps: "10-12"   tap Done when finished
+#              time: 30        seconds, counts down by itself
+#              guided: {reps: 6, hold: 5}   coach counts each rep and hold
+#              guided: {reps: 8, tempo: 6}  coach counts one rep every 6 s
+# perSide: true doubles it (left then right). rest: seconds after the item.
+blocks:
+  warmup:
+    name: Warm-up
+    kind: warmup
+    rest: 5
+    items:
+      - { exercise: cat-camel, guided: { reps: 8, tempo: 6 } }
+      - { exercise: bird-dog, guided: { reps: 6, hold: 5 }, perSide: true }
+      - { exercise: glute-bridge, guided: { reps: 15, hold: 2 } }
+      - { exercise: hip-flexor-squeeze, time: 30, perSide: true }
+  cooldown:
+    name: Cool-down
+    kind: cooldown
+    rest: 5
+    items:
+      - { exercise: psoas-90-90, time: 180 }
+      - { exercise: sphinx, time: 120 }
+      - { exercise: figure-4, time: 90, perSide: true }
+
+# ── Days ─────────────────────────────────────────────────────────
+days:
+  - id: day-1
+    title: Upper push/pull + anti-rotation core
+    anchor: Plank shoulder taps & chest-supported rows
+    why: Rotational shear quickly aggravates a posterior disc bulge. Shoulder taps train the deep core to stop the hips twisting while one hand lifts, bracing the L4–S1 discs.
+    blocks:
+      - use: warmup
+      - name: Superset A
+        kind: superset
+        rounds: 3
+        items:
+          - { label: A1, exercise: chest-supported-db-row, reps: 10-12, rest: 45 }
+          - { label: A2, exercise: flat-db-bench, reps: 10-12, rest: 60 }
+      - name: Superset B
+        kind: superset
+        rounds: 3
+        items:
+          - { label: B1, exercise: incline-db-press, reps: 10-12, rest: 45 }
+          - { label: B2, exercise: incline-rear-delt-fly, reps: 12-15, rest: 60 }
+      - name: Spine rehab finisher
+        kind: finisher
+        rounds: 3
+        items:
+          - { label: C1, exercise: plank-shoulder-tap, guided: { reps: 10, hold: 2 }, perSide: true, restBetweenSides: 30, rest: 45 }
+      - use: cooldown
+
+  - id: day-2
+    title: Posterior chain + anti-shear glute strength
+    anchor: B-stance DB hip hinge & Swiss ball hamstring curls
+    why: Standard deadlifts flex the spine under load. The B-stance hinge moves most of the load to one leg, building glutes and hamstrings while the spine stays neutral.
+    blocks:
+      - use: warmup
+      - name: Superset A
+        kind: superset
+        rounds: 3
+        items:
+          - { label: A1, exercise: swiss-ball-ham-curl, reps: 10-12, rest: 45 }
+          - { label: A2, exercise: db-bulgarian-split-squat, reps: 8-10, perSide: true, rest: 75 }
+      - name: Superset B
+        kind: superset
+        rounds: 3
+        items:
+          - { label: B1, exercise: b-stance-hinge, reps: 10, perSide: true, rest: 45 }
+          - { label: B2, exercise: single-leg-glute-bridge, reps: 10, perSide: true, rest: 60 }
+      - name: Spine rehab finisher
+        kind: finisher
+        rounds: 3
+        items:
+          - { label: C1, exercise: stir-the-pot, time: 30, rest: 60 }
+      - use: cooldown
+
+  - id: day-3
+    title: Upper vertical & arms + anti-extension core
+    anchor: Swiss ball dead bug & DB pullover
+    why: The dead bug trains your abs to stop the lower back arching, which pinches the facet joints and compresses the back of the discs.
+    blocks:
+      - use: warmup
+      - name: Superset A
+        kind: superset
+        rounds: 3
+        items:
+          - { label: A1, exercise: db-pullover, reps: 10-12, rest: 45 }
+          - { label: A2, exercise: incline-shoulder-press, reps: 10-12, rest: 60 }
+      - name: Superset B
+        kind: superset
+        rounds: 3
+        items:
+          - { label: B1, exercise: single-arm-db-row, reps: 10, perSide: true, rest: 45 }
+          - { label: B2, exercise: incline-bicep-curl, reps: 12, rest: 60 }
+      - name: Spine rehab finisher
+        kind: finisher
+        rounds: 3
+        items:
+          - { label: C1, exercise: swiss-ball-dead-bug, guided: { reps: 8, tempo: 5 }, perSide: true, rest: 60 }
+      - use: cooldown
+
+  - id: day-4
+    title: Quad dominance + lateral hip & pelvic stability
+    anchor: Single-arm suitcase carry & side plank
+    why: The QL and glute medius stop the pelvis dropping when you walk or carry. Carries and side planks stiffen the pelvic sling so the L4–S1 disc doesn't tilt under load.
+    blocks:
+      - use: warmup
+      - name: Superset A
+        kind: superset
+        rounds: 3
+        items:
+          - { label: A1, exercise: swiss-ball-wall-squat, reps: 10-12, rest: 45 }
+          - { label: A2, exercise: side-plank, time: 25, perSide: true, rest: 60 }
+      - name: Superset B
+        kind: superset
+        rounds: 3
+        items:
+          - { label: B1, exercise: db-step-up, reps: 10, perSide: true, rest: 45 }
+          - { label: B2, exercise: standing-hip-abduction, reps: 12, perSide: true, rest: 60 }
+      - name: Spine rehab finisher
+        kind: finisher
+        rounds: 3
+        items:
+          - { label: C1, exercise: suitcase-carry, time: 35, perSide: true, restBetweenSides: 45, rest: 45 }
+      - use: cooldown
