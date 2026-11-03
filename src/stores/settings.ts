@@ -18,7 +18,8 @@ function load(): Settings {
     return {
       voice: typeof p?.voice === 'boolean' ? p.voice : d.voice,
       beeps: typeof p?.beeps === 'boolean' ? p.beeps : d.beeps,
-      music: MUSIC_MODES.includes(p?.music) ? p.music : d.music,
+      // 'duck' was offered once but iOS ignores it for web apps; treat it as plain mixing
+      music: p?.music === 'duck' ? 'mix' : MUSIC_MODES.includes(p?.music) ? p.music : d.music,
       nextDayId: typeof p?.nextDayId === 'string' ? p.nextDayId : d.nextDayId,
     };
   } catch {

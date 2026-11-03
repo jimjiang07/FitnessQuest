@@ -19,7 +19,7 @@ def master(mp3, m4a):
     wav, loud = mp3[:-4] + '.wav', mp3[:-4] + '-loud.wav'
     subprocess.run(['afconvert', '-f', 'WAVE', '-d', 'LEI16@24000', '-c', '1', mp3, wav], check=True)
     samples, sr = loudness.read(wav)
-    loudness.write(loud, loudness.process(loudness.trim(samples, sr), sr), sr)
+    loudness.write(loud, loudness.process(loudness.voice_eq(loudness.trim(samples, sr), sr), sr), sr)
     part = m4a + '.part'
     subprocess.run(['afconvert', '-f', 'm4af', '-d', 'aac', '-b', '64000', loud, part], check=True)
     os.replace(part, m4a)

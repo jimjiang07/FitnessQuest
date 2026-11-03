@@ -10,7 +10,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {collectLines} from './voice-lines.mjs';
 
-const VOICE = 'en-AU-WilliamNeural', RATE = '+5%', EXT = 'm4a', MASTER = 'loud-v2'; // bump MASTER to re-record after changing loudness.py
+const VOICE = 'en-AU-WilliamNeural', RATE = '+5%', EXT = 'm4a', MASTER = 'loud-v3'; // bump MASTER to re-record after changing loudness.py
 const root = fileURLToPath(new URL('..', import.meta.url)), out = path.join(root, 'public/voice'), indexFile = path.join(out, 'index.json');
 
 // clip naming comes from the app's own TypeScript, loaded through Vite, so the script and the app can't disagree

@@ -6,7 +6,9 @@ import array, math, sys, wave
 CEILING_DB = -0.8      # leave a little headroom so AAC encoding doesn't clip
 THRESHOLD_DB = -34.0   # everything above this is squashed...
 RATIO = 8.0            # ...this hard, so quiet syllables come up close to the loud ones
-DRIVE = 4.0            # fast soft limiter: rounds off syllable peaks so speech sits ~8 dB louder at the same ceiling
+DRIVE = 5.0            # fast soft limiter: rounds off syllable peaks so speech sits much louder at the same ceiling
+HIGHPASS_HZ = 140      # bass competes with the music's and wastes loudness
+PRESENCE_HZ, PRESENCE_DB = 3000, 7.0   # the band ears pick out of music: consonants, beep attack
 PAD = 0.04             # seconds of silence kept around speech; edge-tts pads ~0.5 s, which delays every cue
 
 
@@ -27,6 +29,34 @@ def write(path, samples, rate):
         w.setsampwidth(2)
         w.setframerate(rate)
         w.writeframes(array.array('h', (max(-32767, min(32767, int(s * 32767))) for s in samples)).tobytes())
+
+
+def biquad(samples, b0, b1, b2, a0, a1, a2):
+    b0, b1, b2, a1, a2 = b0 / a0, b1 / a0, b2 / a0, a1 / a0, a2 / a0
+    x1 = x2 = y1 = y2 = 0.0
+    out = []
+    for x in samples:
+        y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+        x2, x1, y2, y1 = x1, x, y1, y
+        out.append(y)
+    return out
+
+
+def highpass(samples, rate, hz, q=0.707):
+    # RBJ audio EQ cookbook
+    w = 2 * math.pi * hz / rate
+    alpha, c = math.sin(w) / (2 * q), math.cos(w)
+    return biquad(samples, (1 + c) / 2, -(1 + c), (1 + c) / 2, 1 + alpha, -2 * c, 1 - alpha)
+
+
+def peaking(samples, rate, hz, gain_db, q=0.9):
+    w = 2 * math.pi * hz / rate
+    a, alpha, c = 10 ** (gain_db / 40), math.sin(w) / (2 * q), math.cos(w)
+    return biquad(samples, 1 + alpha * a, -2 * c, 1 - alpha * a, 1 + alpha / a, -2 * c, 1 - alpha / a)
+
+
+def voice_eq(samples, rate):
+    return peaking(highpass(samples, rate, HIGHPASS_HZ), rate, PRESENCE_HZ, PRESENCE_DB)
 
 
 def trim(samples, rate, floor_db=-45.0):
@@ -77,6 +107,6 @@ def tone(rate, freqs, seconds, gap=0.0, repeats=1):
 
 if __name__ == '__main__':
     src, rate = read(sys.argv[1])
-    dst = process(trim(src, rate), rate)
+    dst = process(voice_eq(trim(src, rate), rate), rate)
     write(sys.argv[2], dst, rate)
     print(f'speech rms {rms_db(src):.1f} → {rms_db(dst):.1f} dBFS, {len(src) / rate:.2f} → {len(dst) / rate:.2f} s')

@@ -93,13 +93,10 @@ async function begin() {
 const musicModes = [
   {mode: 'off', label: 'No music'},
   {mode: 'mix', label: 'With music'},
-  {mode: 'duck', label: 'Lower it (beta)'},
 ] as const;
-const musicHelp = computed(() => ({
-  off: 'Only the coach plays. Works with the ringer switch on silent.',
-  mix: 'Your music keeps playing and the coach plays over it. Turn the ringer switch off silent, or you won’t hear the coach.',
-  duck: 'Like “With music”, and asks iOS to lower your music while the coach talks. Not every iPhone supports it.',
-}[settings.music]));
+const musicHelp = computed(() => (settings.music === 'off'
+  ? 'Only the coach plays. Works with the ringer switch on silent.'
+  : 'Your music keeps playing and the coach plays over it. Turn the ringer switch off silent, or you won’t hear the coach.'));
 const checking = ref(false);
 async function soundCheck() {
   if (checking.value) return;
@@ -375,7 +372,7 @@ function endWorkout() { player.end(); router.replace('/'); }
 .tap { font-size: 54px; }
 .hint { margin: 0; font-size: 14px; }
 .music { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; width: 100%; max-width: 360px; cursor: default; }
-.seg-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line); }
+.seg-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line); }
 .seg-btns button { min-height: 44px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--muted); font-weight: 700; font-size: 14px; cursor: pointer; }
 .seg-btns button.on { background: var(--ready); color: #1a1204; }
 .music-help { margin: 0; min-height: 2.8em; }
