@@ -29,5 +29,7 @@ lines:
   restStart:    ["Nice. Rest, {seconds} seconds.", "Good work. Rest {seconds}."]
   upNext:       ["Up next, {exercise}. {target}."]
   round:        ["Round {round} of {rounds}."]
+  reach:        ["Reach"]
   holdCount:    ["Hold"]               # followed by counted numbers
+  back:         ["Back"]
   finish:       ["That's {day} done. Great work looking after your back."]

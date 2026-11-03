@@ -13,9 +13,12 @@ const plansDir = join(root, 'data/plans');
 // load the TS validator through Vite so this script needs no build step or extra dependency
 const vite = await createServer({root, logLevel: 'error', appType: 'custom', server: {middlewareMode: true, hmr: false}});
 let failed = false;
+let buildSteps, estimateDuration; // used by printDay below
 try {
   const {validatePlan} = await vite.ssrLoadModule('/src/plan/resolve.ts');
   const {coachSchema} = await vite.ssrLoadModule('/src/plan/schema.ts');
+  ({buildSteps} = await vite.ssrLoadModule('/src/engine/buildSteps.ts'));
+  ({estimateDuration} = await vite.ssrLoadModule('/src/engine/estimate.ts'));
 
   const coachResult = coachSchema.safeParse(parse(readFileSync(join(root, 'data/coach.yaml'), 'utf8')));
   if (!coachResult.success) {
@@ -23,7 +26,7 @@ try {
     console.log('✗ data/coach.yaml');
     for (const i of coachResult.error.issues) console.log(`  error: ${i.path.join('.') || 'coach'}: ${i.message}`);
   }
-  const timing = coachResult.success ? coachResult.data.timing : {getReady: 10, blockChange: 15, switchSidesGap: 5, secondsPerRep: 3};
+  const coach = coachResult.success ? coachResult.data : null;
 
   const pictures = readdirSync(join(root, 'public/exercises'));
   const files = readdirSync(plansDir).filter((f) => /\.ya?ml$/.test(f)).sort();
@@ -51,36 +54,24 @@ try {
     const {plan, warnings} = result;
     console.log(`✓ data/plans/${file}: ${plan.name} (${plan.days.length} days, ${Object.keys(plan.exercises).length} exercises)`);
     for (const w of warnings) console.log(`  warning: ${w}`);
-    // switch to Stream B's estimateDuration from src/engine/estimate.ts once it lands
-    for (const day of plan.days) printDay(day, timing);
+    if (coach) for (const day of plan.days) printDay(day, plan, coach);
   }
 } finally {
   await vite.close();
 }
 process.exit(failed ? 1 : 0);
 
-function printDay(day, timing) {
+// same steps and estimate the player uses, so the printed length matches the app
+function printDay(day, plan, coach) {
   console.log(`\n  ${day.id}  ${day.title}`);
-  let total = timing.getReady + timing.blockChange * (day.blocks.length - 1);
+  const steps = buildSteps(day, plan, coach);
   day.blocks.forEach((block, i) => {
-    let secs = 0;
-    for (const item of block.items) secs += itemSeconds(item, timing);
-    secs *= block.rounds;
-    if (i === day.blocks.length - 1) secs -= block.items.at(-1).rest; // no rest after the day's last set
-    total += secs;
+    const secs = estimateDuration(steps.filter((s) => s.type !== 'ready' && s.type !== 'transition' && s.blockIndex === i), coach);
     const rounds = block.rounds > 1 ? `× ${block.rounds}` : '';
     console.log(`    ${block.name.padEnd(24)}${rounds.padEnd(5)}${clock(secs).padStart(6)}`);
   });
-  console.log(`    ${'Total'.padEnd(29)}${clock(total).padStart(6)}  (incl. ${timing.getReady}s get ready, ${timing.blockChange}s between blocks)`);
-}
-
-function itemSeconds(item, timing) {
-  const rx = item.rx;
-  const work = rx.kind === 'time' ? rx.seconds
-    : rx.kind === 'guided' ? rx.reps * (rx.tempo ?? rx.hold + timing.secondsPerRep)
-    : Math.max(...(rx.reps.match(/\d+/g) ?? ['10']).map(Number)) * timing.secondsPerRep;
-  const sides = item.perSide ? 2 * work + (item.restBetweenSides ?? timing.switchSidesGap) : work;
-  return sides + item.rest;
+  const {getReady, blockChange} = coach.timing;
+  console.log(`    ${'Total'.padEnd(29)}${clock(estimateDuration(steps, coach)).padStart(6)}  (incl. ${getReady}s get ready, ${blockChange}s between blocks)`);
 }
 
 function clock(secs) {
