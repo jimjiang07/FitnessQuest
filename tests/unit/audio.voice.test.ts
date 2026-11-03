@@ -50,7 +50,13 @@ class FakeCtx {
   constructor() { FakeCtx.all.push(this); }
   resume() { this.state = 'running'; return Promise.resolve(); }
   createBuffer() { return {}; }
-  createBufferSource() { return {buffer: null, connect() {}, start() {}}; }
+  sources: {buffer: any; onended: (() => void) | null; started: boolean}[] = [];
+  createBufferSource() {
+    const src = {buffer: null as any, onended: null as (() => void) | null, started: false, connect() {}, start() { src.started = true; }, stop() {}};
+    this.sources.push(src);
+    return src;
+  }
+  decodeAudioData(data: any, ok: (b: any) => void) { ok({decoded: data.url}); }
   createGain() { return {gain: {setValueAtTime() {}, linearRampToValueAtTime() {}}, connect() {}}; }
   createOscillator() {
     const o = {type: '', frequency: {value: 0}, connect() {}, start() {}, stop() {}};
@@ -63,6 +69,11 @@ const indexed = (...lines: string[]) =>
   vi.fn(async () => ({ok: true, json: async () => ({voice: 'en-AU-WilliamNeural', rate: '+5%', clips: lines.map(clipId)})}));
 
 const flush = () => new Promise(r => setTimeout(r, 0));
+
+// serves the clip index and, for anything else, a fake audio file tagged with its URL
+const files = (...lines: string[]) => vi.fn(async (url: string) => (url.endsWith('index.json')
+  ? {ok: true, json: async () => ({clips: lines.map(clipId)})}
+  : {ok: true, arrayBuffer: async () => ({url})}));
 
 function setup(fetch: any = indexed()) {
   const synth = fakeSynth();
@@ -213,6 +224,25 @@ describe('voice', () => {
     voice.beep('long');
     await Promise.resolve(); await Promise.resolve();
     expect(FakeCtx.all[0].oscillators.map(o => o.frequency.value)).toEqual([1320]);
+  });
+
+  it('in music mode plays clips and beeps through Web Audio and never touches <audio> or speech', async () => {
+    const {voice, synth} = setup(files('Switch sides.'));
+    voice.setMusicMode('mix');
+    await voice.unlock();
+    expect(FakeAudio.all.flatMap(a => a.played)).toEqual([]);
+    expect(synth.spoken).toEqual([]);
+    const ctx = FakeCtx.all[0];
+    const done = voice.speak('Switch sides.');
+    for (let i = 0; i < 4; i++) await flush();
+    const clip = ctx.sources.find(src => String(src.buffer?.decoded).includes(clipId('Switch sides.')));
+    expect(clip?.started).toBe(true);
+    clip!.onended?.();
+    await done;
+    voice.beep('short');
+    for (let i = 0; i < 3; i++) await flush();
+    expect(ctx.sources.some(src => src.buffer?.decoded === './sounds/beep-short.m4a' && src.started)).toBe(true);
+    expect(FakeAudio.all.flatMap(a => a.played)).toEqual([]);
   });
 
   it('sets the Safari audio session type from the music mode', async () => {

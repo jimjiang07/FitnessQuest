@@ -60,6 +60,9 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
   let index: Promise<Set<string>> | null = null;
   let token = 0;                       // bumps on every speak/cancel so stale playback stops
   let stopCurrent: (() => void) | null = null;
+  // iOS: <audio> takes over the speaker and pauses other apps' music; Web Audio mixes with it (but the ringer switch mutes it)
+  const buffers = new Map<string, Promise<AudioBuffer | null>>();
+  const viaWebAudio = () => music !== 'off' && !!ctx;
 
   // fetched once, lazily; any failure means "no clips" and the device voice does everything
   const clips = () => index ??= (async () => {
@@ -79,8 +82,50 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
     return audio;
   };
 
+  // fetched and decoded once per file; null means "couldn't load", so callers fall back
+  function loadBuffer(url: string): Promise<AudioBuffer | null> {
+    let p = buffers.get(url);
+    if (!p) {
+      p = (async () => {
+        try {
+          const f = doFetch();
+          if (!f || !ctx) return null;
+          const res = await f(url);
+          if (!res.ok) return null;
+          const data = await res.arrayBuffer();
+          // callback form: older Safari has no promise-returning decodeAudioData
+          return await new Promise<AudioBuffer>((ok, fail) => ctx!.decodeAudioData(data, ok, fail));
+        } catch { return null; }
+      })();
+      buffers.set(url, p);
+    }
+    return p;
+  }
+
+  function playBuffer(buf: AudioBuffer, onEnd: () => void): () => void {
+    const src = ctx!.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx!.destination);
+    src.onended = onEnd;
+    if (ctx!.state === 'suspended') void ctx!.resume().catch(() => {});
+    src.start(0);
+    return () => { src.onended = null; try { src.stop(); } catch { /* already stopped */ } };
+  }
+
+  async function playClipWeb(url: string): Promise<boolean> {
+    const buf = await loadBuffer(url);
+    if (!buf) return false;
+    return new Promise(resolve => {
+      let halt: () => void = () => {};
+      const stop = () => { halt(); if (stopCurrent === stop) stopCurrent = null; resolve(true); };
+      stopCurrent = stop;
+      halt = playBuffer(buf, () => { if (stopCurrent === stop) stopCurrent = null; resolve(true); });
+    });
+  }
+
   /** resolves true when the clip played (or was cancelled), false when it failed and the device voice should say it */
   function playClip(id: string): Promise<boolean> {
+    if (viaWebAudio()) return playClipWeb(`${base}voice/${id}.${CLIP_EXT}`);
     const el = element();
     if (!el) return Promise.resolve(false);
     return new Promise(resolve => {
@@ -153,6 +198,7 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
   async function unlock(): Promise<void> {
     void clips();
     applySession(music);
+    const musicOn = music !== 'off';
     const C = Ctx();
     try {
       if (!ctx && C) ctx = new C();
@@ -164,6 +210,7 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
         src.start(0);
       }
     } catch { /* no Web Audio: beeps stay silent, the voice still works */ }
+    if (musicOn) { prefetchBeeps(); return; }   // touching <audio> or speech here would pause the music
     // prime the clip and beep elements and the device voice inside the same tap
     const el = element();
     const A = AudioEl();
@@ -183,12 +230,19 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
   }
 
   // recorded beeps are loud and behave like the voice on iOS; the oscillator is only a fallback
+  const beepUrl = (kind: BeepKind) => `${base}sounds/beep-${kind}.${CLIP_EXT}`;
+  const prefetchBeeps = () => { for (const k of ['short', 'long'] as const) void loadBuffer(beepUrl(k)); };
+
   function beep(kind: BeepKind): void {
     if (!beepsOn) return;
     const oscillator = () => { if (ctx) try { playBeep(ctx, kind); } catch { /* a beep is never worth an error */ } };
+    if (viaWebAudio()) {
+      void loadBuffer(beepUrl(kind)).then(buf => (buf ? playBuffer(buf, () => {}) : oscillator()));
+      return;
+    }
     if (!beepEl) return oscillator();
     try {
-      beepEl.src = `${base}sounds/beep-${kind}.${CLIP_EXT}`;
+      beepEl.src = beepUrl(kind);
       const p = beepEl.play();
       if (p && typeof p.catch === 'function') p.catch(oscillator);
     } catch { oscillator(); }
@@ -197,6 +251,7 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
   function setMusicMode(mode: MusicMode): void {
     music = mode;
     applySession(mode);
+    if (mode !== 'off' && ctx) prefetchBeeps();
   }
 
   function setEnabled(o: {voice: boolean; beeps: boolean}): void {

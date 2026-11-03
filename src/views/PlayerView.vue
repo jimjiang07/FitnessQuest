@@ -92,13 +92,13 @@ async function begin() {
 }
 const musicModes = [
   {mode: 'off', label: 'No music'},
-  {mode: 'duck', label: 'Lower it'},
-  {mode: 'mix', label: 'Over it'},
+  {mode: 'mix', label: 'With music'},
+  {mode: 'duck', label: 'Lower it (beta)'},
 ] as const;
 const musicHelp = computed(() => ({
-  off: 'Only the coach plays.',
-  duck: 'Your music gets quieter while the coach talks. If you can’t hear the coach, try “Over it”.',
-  mix: 'The coach and beeps play over your music at full volume.',
+  off: 'Only the coach plays. Works with the ringer switch on silent.',
+  mix: 'Your music keeps playing and the coach plays over it. Turn the ringer switch off silent, or you won’t hear the coach.',
+  duck: 'Like “With music”, and asks iOS to lower your music while the coach talks. Not every iPhone supports it.',
 }[settings.music]));
 const checking = ref(false);
 async function soundCheck() {
