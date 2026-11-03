@@ -16,10 +16,11 @@ const root = fileURLToPath(new URL('..', import.meta.url)), out = path.join(root
 // clip naming comes from the app's own TypeScript, loaded through Vite, so the script and the app can't disagree
 const vite = await createServer({root, configFile: path.join(root, 'vite.config.ts'), server: {middlewareMode: true}, appType: 'custom', logLevel: 'error'});
 const {sentences, clipId} = await vite.ssrLoadModule('/src/audio/clips.ts');
+const lines = await collectLines(vite);
 await vite.close();
 
 const clips = new Map();
-for (const s of collectLines().flatMap(sentences)) {
+for (const s of lines.flatMap(sentences)) {
   const id = clipId(s), had = clips.get(id);
   const norm = t => t.toLowerCase().replace(/[’‘]/g, "'");
   if (had && norm(had) !== norm(s)) throw new Error(`Two sentences share clip ${id}: "${had}" and "${s}"`);
