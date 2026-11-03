@@ -9,7 +9,7 @@ What the app is and why: `docs/plans/spec.md`. What it looks like: `docs/design/
 | Wave | Stream | State |
 |---|---|---|
 | 0 | Foundation (scaffold, contracts, routes, CI, deploy) | **Done**: on `main`, deployed |
-| 1 | A Plan data · B Engine · C Audio · D UI kit | Ready to start, all four in parallel |
+| 1 | A Plan data · B Engine · C Audio · D UI kit | **A merged (#2), C merged (#1)**; B and D in progress |
 | 2 | E Player store · F Screens | Start when the Wave 1 streams they depend on have merged (F can start earlier on mocks) |
 | 3 | G E2E journeys · H PWA, About, polish | After Wave 2 |
 
@@ -67,11 +67,11 @@ Turns the YAML into a validated, resolved `Plan` the rest of the app uses.
   - Friendly errors with a path and a "did you mean": `day-2 › Superset A › A2: unknown exercise "db-bulgarian-split-sqat". Did you mean "db-bulgarian-split-squat"?`
   - Gear check: every exercise's `gear` is in `equipment` (plus `mat`). Missing pictures are a warning.
   - `src/plan/index.ts` exports `plans: Plan[]` (all `data/plans/*.yaml` via `import.meta.glob`), `coach: CoachConfig`
-    (`data/coach.yaml`), `getDay(dayId)`.
+    (`data/coach.yaml`), `getDay(dayId)` and `planForDay(dayId)`, plus `validatePlan`/`resolvePlan` in `resolve.ts`.
   - `npm run check-plan` validates every plan and prints each day's timeline and estimated length (uses B's
     `estimateDuration` once merged; until then a local estimate).
 - **Accepts when:** the real plan resolves with no errors; tests cover each error type with a broken fixture; check-plan
-  output matches the timeline in the design board within ±10%.
+  prints every day's timeline. (Decided: days estimate at 41–45 min at 3 s/rep; screens show the computed estimate, not the board's placeholder "58 min".)
 
 ### Stream B: Step engine
 

@@ -11,7 +11,7 @@
     "typecheck": "vue-tsc -b",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "test": "vitest run && playwright test",
+    "test": "node scripts/check-plan.mjs && vitest run && playwright test",
     "check-plan": "node scripts/check-plan.mjs",
     "voice": "node scripts/make-voice.mjs",
     "figures": "node scripts/make-figures.mjs public/exercises"
