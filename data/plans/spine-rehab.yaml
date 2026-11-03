@@ -14,137 +14,191 @@ exercises:
   cat-camel:
     name: Cat-camel
     gear: [mat]
-    cues: [Small and slow. Mid-range only., Don't force the end of the range.]
+    cues:
+      - "Small and slow. Mid-range only."
+      - "Don't force the end of the range."
   bird-dog:
     name: McGill bird-dog
     say: McGill bird dog
     gear: [mat]
-    cues: [Reach long, hips square., Make a fist and squeeze the glute.]
+    cues:
+      - "Reach long, hips square."
+      - "Make a fist and squeeze the glute."
   glute-bridge:
     name: Glute bridge
     gear: [mat]
-    cues: [Squeeze the glutes and hold at the top., Ribs down. Don't arch your back.]
+    cues:
+      - "Squeeze the glutes and hold at the top."
+      - "Ribs down. Don't arch your back."
   hip-flexor-squeeze:
     name: Half-kneeling hip flexor squeeze
     gear: [mat]
-    cues: [Squeeze the back glute., Feel the front of the hip open.]
+    cues:
+      - "Squeeze the back glute."
+      - "Feel the front of the hip open."
 
   chest-supported-db-row:
     name: Chest-supported DB row
     say: chest supported dumbbell row
     gear: [dumbbells, bench]
-    cues: [Chest stays on the bench., Elbows drive to your back pockets.]
+    cues:
+      - "Chest stays on the bench."
+      - "Elbows drive to your back pockets."
   flat-db-bench:
     name: Flat DB bench press
     say: flat dumbbell bench press
     gear: [dumbbells, bench]
-    cues: [Feet flat, shoulder blades pinned., Lower slow to the chest.]
+    cues:
+      - "Feet flat, shoulder blades pinned."
+      - "Lower slow to the chest."
   incline-db-press:
     name: Incline DB press
     say: incline dumbbell press
     gear: [dumbbells, bench]
-    cues: [Press up and slightly back., Control the way down.]
+    cues:
+      - "Press up and slightly back."
+      - "Control the way down."
   incline-rear-delt-fly:
     name: Chest-supported DB reverse fly
     say: chest supported dumbbell reverse fly
     gear: [dumbbells, bench]
     note: Lie face down on the bench at about 30°
-    cues: [Thumbs up, lift out to the sides., Squeeze the shoulder blades together.]
+    cues:
+      - "Thumbs up, lift out to the sides."
+      - "Squeeze the shoulder blades together."
   plank-shoulder-tap:
     name: Plank shoulder taps
     gear: [mat]
     note: Feet wide. Drop to your knees if your back sags.
-    cues: [Tap the opposite shoulder and hold. Hips don't rock., Brace like someone's about to poke your stomach.]
+    cues:
+      - "Tap the opposite shoulder and hold. Hips don't rock."
+      - "Brace like someone's about to poke your stomach."
 
   swiss-ball-ham-curl:
     name: Swiss ball hamstring curl
     gear: [swiss ball, mat]
-    cues: [Hips up, heels drive the ball in., Slow on the way out.]
+    cues:
+      - "Hips up, heels drive the ball in."
+      - "Slow on the way out."
   db-bulgarian-split-squat:
     name: DB Bulgarian split squat
     say: dumbbell bulgarian split squat
     gear: [dumbbells, bench]
-    cues: [Torso tall, drop straight down., Back foot on the bench, laces down.]
+    cues:
+      - "Torso tall, drop straight down."
+      - "Back foot on the bench, laces down."
   b-stance-hinge:
     name: B-stance DB hip hinge
     say: B stance dumbbell hip hinge
     gear: [dumbbells]
-    cues: [Push your hips back., Spine stays locked and neutral.]
+    cues:
+      - "Push your hips back."
+      - "Spine stays locked and neutral."
   single-leg-glute-bridge:
     name: Single-leg glute bridge
     gear: [mat]
-    cues: [Drive through the heel. Hips stay level., Lower slowly. Don't let the hip drop.]
+    cues:
+      - "Drive through the heel. Hips stay level."
+      - "Lower slowly. Don't let the hip drop."
   stir-the-pot:
     name: Swiss ball stir-the-pot
     say: Swiss ball stir the pot
     gear: [swiss ball]
-    cues: [Small, controlled circles., Hips still. Only the forearms move.]
+    cues:
+      - "Small, controlled circles."
+      - "Hips still. Only the forearms move."
 
   db-pullover:
     name: DB pullover on the bench
     say: dumbbell pullover
     gear: [dumbbells, bench]
     note: Lie along the bench, whole back supported, feet flat
-    cues: [Ribs down. Only go as far as your back stays flat., Pull the weight back over your chest with your lats.]
+    cues:
+      - "Ribs down. Only go as far as your back stays flat."
+      - "Pull the weight back over your chest with your lats."
   incline-shoulder-press:
     name: Seated incline DB shoulder press
     say: seated incline dumbbell shoulder press
     gear: [dumbbells, bench]
     note: Bench at 75–80°
-    cues: [Back flat on the bench., Press straight up.]
+    cues:
+      - "Back flat on the bench."
+      - "Press straight up."
   single-arm-db-row:
     name: Single-arm bench-supported DB row
     say: single arm dumbbell row
     gear: [dumbbells, bench]
-    cues: [Flat back, pull to the hip., No twisting.]
+    cues:
+      - "Flat back, pull to the hip."
+      - "No twisting."
   incline-bicep-curl:
     name: Incline DB bicep curl
     say: incline dumbbell bicep curl
     gear: [dumbbells, bench]
-    cues: [Elbows stay back., Slow on the way down.]
+    cues:
+      - "Elbows stay back."
+      - "Slow on the way down."
   swiss-ball-dead-bug:
     name: Swiss ball dead bug
     gear: [swiss ball, mat]
-    cues: [Press the ball hard with the opposite hand and knee., Lower back stays down.]
+    cues:
+      - "Press the ball hard with the opposite hand and knee."
+      - "Lower back stays down."
 
   swiss-ball-wall-squat:
     name: Swiss ball wall squat
     gear: [swiss ball]
-    cues: [Ball in your lower back., Sit down and back.]
+    cues:
+      - "Ball in your lower back."
+      - "Sit down and back."
   side-plank:
     name: Side plank
     gear: [mat]
-    cues: [Hips high., Drop to your knees if you need to.]
+    cues:
+      - "Hips high."
+      - "Drop to your knees if you need to."
   db-step-up:
     name: DB step-up on bench
     say: dumbbell step up
     gear: [dumbbells, bench]
-    cues: [Drive through the front heel., Stand tall at the top.]
+    cues:
+      - "Drive through the front heel."
+      - "Stand tall at the top."
   standing-hip-abduction:
     name: Standing hip abduction
     gear: [bench]
     note: Hold the bench for balance
-    cues: [Lift the leg out to the side, toes forward., Stand tall. Don't lean away.]
+    cues:
+      - "Lift the leg out to the side, toes forward."
+      - "Stand tall. Don't lean away."
   suitcase-carry:
     name: Single-arm suitcase carry
     gear: [dumbbells]
     note: 25 lb dumbbell
-    cues: [Walk tall. Don't lean toward the weight., Squeeze the handle hard.]
+    cues:
+      - "Walk tall. Don't lean toward the weight."
+      - "Squeeze the handle hard."
 
   psoas-90-90:
     name: 90/90 psoas relief on Swiss ball
     say: ninety ninety psoas relief
     gear: [swiss ball, mat]
-    cues: [Lower legs on the ball, knees and hips at ninety degrees., Breathe deep into your belly.]
+    cues:
+      - "Lower legs on the ball, knees and hips at ninety degrees."
+      - "Breathe deep into your belly."
   sphinx:
     name: Prone sphinx pose
     gear: [mat]
-    cues: [Let your glutes and lower back hang loose., If it pinches, lie flat on your stomach instead.]
+    cues:
+      - "Let your glutes and lower back hang loose."
+      - "If it pinches, lie flat on your stomach instead."
   figure-4:
     name: Supine figure-4 stretch
     say: figure four stretch
     gear: [mat]
-    cues: [Ankle over the opposite knee., Gently draw the leg toward your chest.]
+    cues:
+      - "Ankle over the opposite knee."
+      - "Gently draw the leg toward your chest."
 
 # ── Shared blocks (used by every day with `use:`) ────────────────
 # Work types:  reps: "10-12"   tap Done when finished
