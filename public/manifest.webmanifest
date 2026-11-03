@@ -1,0 +1,19 @@
+{
+  "name": "Fitness Quest",
+  "short_name": "Fitness Quest",
+  "description": "Voice-coached workouts for a 4-day spine rehab split. No login, no tracking.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0d1016",
+  "background_color": "#0d1016",
+  "lang": "en-AU",
+  "categories": ["health", "fitness"],
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

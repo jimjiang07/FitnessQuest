@@ -11,3 +11,8 @@ import App from './App.vue';
 import {router} from './router';
 
 createApp(App).use(createPinia()).use(router).mount('#app');
+
+// offline cache for the gym; production only so dev never serves stale files
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
+}

@@ -2,6 +2,7 @@ import {defineConfig, type Plugin} from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import {parse} from 'yaml';
 import {fileURLToPath, URL} from 'node:url';
+import {precachePlugin} from './build/precache-plugin.ts';
 
 // plans and coach settings are YAML; parse them at build time so the app ships plain JSON
 const yamlPlugin = (): Plugin => ({
@@ -15,7 +16,7 @@ const yamlPlugin = (): Plugin => ({
 // relative base: the same build works at the GitHub Pages project URL and on localhost
 export default defineConfig({
   base: './',
-  plugins: [vue(), yamlPlugin()],
+  plugins: [vue(), yamlPlugin(), precachePlugin()],
   resolve: {alias: {'@': fileURLToPath(new URL('./src', import.meta.url)), '@data': fileURLToPath(new URL('./data', import.meta.url))}},
   test: {include: ['tests/unit/**/*.test.ts']},
 });
