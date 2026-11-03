@@ -23,12 +23,12 @@ describe('settings store', () => {
     const s = useSettingsStore();
     s.voice = false;
     s.nextDayId = 'day-3';
-    expect(JSON.parse(storage.map.get(SETTINGS_KEY)!)).toEqual({voice: false, beeps: true, nextDayId: 'day-3'});
+    expect(JSON.parse(storage.map.get(SETTINGS_KEY)!)).toEqual({voice: false, beeps: true, music: 'off', nextDayId: 'day-3'});
     expect([...storage.map.keys()]).toEqual([SETTINGS_KEY]);
 
     setActivePinia(createPinia());
     const again = useSettingsStore();
-    expect({voice: again.voice, beeps: again.beeps, nextDayId: again.nextDayId}).toEqual({voice: false, beeps: true, nextDayId: 'day-3'});
+    expect({voice: again.voice, beeps: again.beeps, music: again.music, nextDayId: again.nextDayId}).toEqual({voice: false, beeps: true, music: 'off', nextDayId: 'day-3'});
   });
 
   it('ignores corrupt or wrongly typed saved data', () => {

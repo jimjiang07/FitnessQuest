@@ -99,6 +99,8 @@ export interface Voice {
   cancel(): void;
   beep(kind: 'short' | 'long'): void;
   setEnabled(opts: {voice: boolean; beeps: boolean}): void;
+  /** how the coach shares the speaker with music from another app (Safari's Audio Session API where available) */
+  setMusicMode(mode: MusicMode): void;
 }
 
 // ── Player ─────────────────────────────────────────────────────────────────────────
@@ -124,11 +126,17 @@ export interface PlayerApi {
   previous(): void;
   addRest(seconds: number): void;
   end(): void;
+  /** plays a coach line and the beeps so you can check the level over your music; call from a tap */
+  soundCheck(): Promise<void>;
 }
+
+/** off: no music · duck: lower other apps' music while the coach talks · mix: play over it at full volume */
+export type MusicMode = 'off' | 'duck' | 'mix';
 
 export interface Settings {
   voice: boolean;
   beeps: boolean;
+  music: MusicMode;
   nextDayId: string | null;
 }
 

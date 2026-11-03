@@ -22,7 +22,7 @@ test('Day 2 runs from Start through the first superset rest', async ({page}, inf
   // the welcome is either a recorded clip or the device voice
   await expect.poll(async () => {
     const a = await audio(page);
-    return a.clips.some((c) => /\/voice\/[0-9a-f]{8}\.mp3$/.test(c)) || a.spoken.some((s) => /Welcome/.test(s));
+    return a.clips.some((c) => /\/voice\/[0-9a-f]{8}\.m4a$/.test(c)) || a.spoken.some((s) => /Welcome/.test(s));
   }).toBe(true);
   await advance(page, 7100);
   await expect(player(page).locator('.count')).toHaveText('3');

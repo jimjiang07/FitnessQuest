@@ -29,7 +29,11 @@ function fakeAudio() {
 
   HTMLMediaElement.prototype.play = function (this: HTMLMediaElement) {
     // data: URLs are the silent unlock clip, not the coach
-    if (!this.src.startsWith('data:')) fq.clips.push(new URL(this.src).pathname);
+    if (!this.src.startsWith('data:')) {
+      const path = new URL(this.src).pathname;
+      const beep = /\/sounds\/beep-(short|long)\./.exec(path);   // beeps are recorded sound files now
+      if (beep) fq.beeps.push(beep[1]); else fq.clips.push(path);
+    }
     queueMicrotask(() => this.dispatchEvent(new Event('ended')));
     return Promise.resolve();
   };

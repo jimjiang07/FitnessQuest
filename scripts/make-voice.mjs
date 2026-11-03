@@ -10,7 +10,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {collectLines} from './voice-lines.mjs';
 
-const VOICE = 'en-AU-WilliamNeural', RATE = '+5%';
+const VOICE = 'en-AU-WilliamNeural', RATE = '+5%', EXT = 'm4a', MASTER = 'loud-v2'; // bump MASTER to re-record after changing loudness.py
 const root = fileURLToPath(new URL('..', import.meta.url)), out = path.join(root, 'public/voice'), indexFile = path.join(out, 'index.json');
 
 // clip naming comes from the app's own TypeScript, loaded through Vite, so the script and the app can't disagree
@@ -32,8 +32,8 @@ const spoken = s => s.replace(/ \+ /g, ' plus ').replace(/–/g, ' to ').replace
 
 fs.mkdirSync(out, {recursive: true});
 const old = fs.existsSync(indexFile) ? JSON.parse(fs.readFileSync(indexFile, 'utf8')) : {};
-const same = old.voice === VOICE && old.rate === RATE;
-const todo = [...clips].filter(([id]) => !same || !fs.existsSync(path.join(out, `${id}.mp3`))).map(([id, text]) => ({id, text: spoken(text)}));
+const same = old.voice === VOICE && old.rate === RATE && old.master === MASTER;
+const todo = [...clips].filter(([id]) => !same || !fs.existsSync(path.join(out, `${id}.${EXT}`))).map(([id, text]) => ({id, text: spoken(text)}));
 console.log(`${clips.size} sentences, ${todo.length} to record`);
 if (process.argv.includes('--list')) {
   for (const s of [...clips.values()].sort()) console.log(s);
@@ -45,7 +45,9 @@ if (todo.length) {
   execFileSync('uv', ['run', '--quiet', '--with', 'edge-tts', 'python', '-I', path.join(root, 'scripts/voice-render.py'), jobs, out, VOICE, RATE], {stdio: 'inherit'});
 }
 let gone = 0;
-for (const f of fs.readdirSync(out)) if (f.endsWith('.mp3') && !clips.has(f.slice(0, -4))) { fs.unlinkSync(path.join(out, f)); gone++; }
-fs.writeFileSync(indexFile, JSON.stringify({voice: VOICE, rate: RATE, clips: [...clips.keys()].sort()}));
+// also clears clips in the old format
+for (const f of fs.readdirSync(out)) if (/\.(mp3|m4a)$/.test(f) && !(f.endsWith(`.${EXT}`) && clips.has(f.slice(0, -EXT.length - 1)))) { fs.unlinkSync(path.join(out, f)); gone++; }
+fs.writeFileSync(indexFile, JSON.stringify({voice: VOICE, rate: RATE, master: MASTER, clips: [...clips.keys()].sort()}));
+execFileSync('python3', ['-I', path.join(root, 'scripts/make-beeps.py')], {stdio: 'inherit'});
 const bytes = fs.readdirSync(out).reduce((n, f) => n + fs.statSync(path.join(out, f)).size, 0);
 console.log(`Done: ${clips.size} clips (${(bytes / 1e6).toFixed(1)} MB), ${gone} unused removed.`);

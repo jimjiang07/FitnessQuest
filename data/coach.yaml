@@ -33,3 +33,4 @@ lines:
   holdCount:    ["Hold"]               # followed by counted numbers
   back:         ["Back"]
   finish:       ["That's {day} done. Great work looking after your back."]
+  soundCheck:   ["Sound check. Can you hear me over your music?"]

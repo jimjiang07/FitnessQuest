@@ -7,13 +7,13 @@ export const BEEPS: Record<BeepKind, {hz: number; seconds: number}> = {
   long: {hz: 1320, seconds: 0.45},   // Go
 };
 
-export function playBeep(ctx: AudioContext, kind: BeepKind, volume = 0.35): void {
+export function playBeep(ctx: AudioContext, kind: BeepKind, volume = 0.6): void {
   const {hz, seconds} = BEEPS[kind];
   if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
   const t = ctx.currentTime;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
-  osc.type = 'sine';
+  osc.type = 'square';   // brighter than a sine, so it cuts through music
   osc.frequency.value = hz;
   // quick fade in and out so the beep doesn't click
   gain.gain.setValueAtTime(0, t);

@@ -41,6 +41,7 @@ function fakeVoice() {
     cancel: vi.fn(() => { events.push({kind: 'cancel'}); }),
     beep: vi.fn((beep: 'short' | 'long') => { events.push({kind: 'beep', beep}); }),
     setEnabled: vi.fn(),
+    setMusicMode: vi.fn(),
   } satisfies Voice;
   return {voice, events};
 }

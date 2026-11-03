@@ -40,5 +40,8 @@ Every push to `main` deploys to https://jimjiang07.github.io/FitnessQuest/ (`.gi
 - **Reps are not timed:** reps sets wait for Done; timed and guided work auto-advance.
 - **Pictures:** `public/exercises/<key>-a.*` and `-b.*` (start/end). Keep `public/exercises/CREDITS.md` up to date;
   CC BY / BY-SA photos need credit on the About screen.
+- **Audio over music:** the coach and beeps are recorded loud (`scripts/loudness.py`: trim, compress, soft-limit, AAC).
+  Music mode (off / duck / mix) sets Safari's `navigator.audioSession.type`; in music mode the app leaves the
+  lock screen to the music app. Re-record after changing loudness settings by bumping `MASTER` in `make-voice.mjs`.
 - **Comments:** short, one line, explain why. No ticket numbers in code.
 - Australian spelling. Sentence case in UI copy.

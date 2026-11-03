@@ -82,7 +82,7 @@ describe('voice', () => {
     const done = voice.speak('Switch sides.');
     await flush();
     const el = FakeAudio.all[0];
-    expect(el.played).toEqual([`./voice/${clipId('Switch sides.')}.mp3`]);
+    expect(el.played).toEqual([`./voice/${clipId('Switch sides.')}.m4a`]);
     expect(synth.spoken).toHaveLength(0);
     el.end();
     await done;
@@ -194,17 +194,39 @@ describe('voice', () => {
     expect(synth.spoken[0]).toMatchObject({text: '', volume: 0});
   });
 
-  it('beeps on the unlocked context with the right pitch, and respects the beeps setting', async () => {
+  it('plays the recorded beeps on their own element, and respects the beeps setting', async () => {
     const {voice} = setup();
-    voice.beep('short');              // before unlock: no context yet, so nothing
     await voice.unlock();
-    const ctx = FakeCtx.all[0];
+    const beepEl = FakeAudio.all[1];
     voice.beep('short');
     voice.beep('long');
-    expect(ctx.oscillators.map(o => o.frequency.value)).toEqual([880, 1320]);
+    expect(beepEl.played.slice(1)).toEqual(['./sounds/beep-short.m4a', './sounds/beep-long.m4a']);
     voice.setEnabled({voice: true, beeps: false});
     voice.beep('short');
-    expect(ctx.oscillators).toHaveLength(2);
+    expect(beepEl.played).toHaveLength(3);
+  });
+
+  it('falls back to an oscillator beep when the beep file fails to play', async () => {
+    const {voice} = setup();
+    await voice.unlock();
+    FakeAudio.all[1].failNext = true;
+    voice.beep('long');
+    await Promise.resolve(); await Promise.resolve();
+    expect(FakeCtx.all[0].oscillators.map(o => o.frequency.value)).toEqual([1320]);
+  });
+
+  it('sets the Safari audio session type from the music mode', async () => {
+    const session = {type: 'auto'};
+    vi.stubGlobal('navigator', {audioSession: session});
+    const {voice} = setup();
+    voice.setMusicMode('duck');
+    expect(session.type).toBe('transient');
+    voice.setMusicMode('mix');
+    expect(session.type).toBe('ambient');
+    voice.setMusicMode('off');
+    await voice.unlock();
+    expect(session.type).toBe('auto');
+    vi.unstubAllGlobals();
   });
 });
 

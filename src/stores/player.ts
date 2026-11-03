@@ -99,6 +99,12 @@ export const usePlayerStore = defineStore('player', () => {
 
   watch(() => [settings.voice, settings.beeps] as const,
     ([voice, beeps]) => deps().voice.setEnabled({voice, beeps}), {immediate: true});
+  // with music playing in another app, leave its lock-screen controls alone
+  watch(() => settings.music, (mode) => {
+    deps().voice.setMusicMode(mode);
+    if (mode !== 'off') deps().device.setNowPlaying(null);
+    else if (status.value !== 'idle') updateNowPlaying();
+  }, {immediate: true});
 
   const cuesAt = (i: number, extra = 0): Cue[] => {
     const s = steps.value[i];
@@ -113,7 +119,7 @@ export const usePlayerStore = defineStore('player', () => {
 
   function updateNowPlaying() {
     const s = step.value;
-    if (!s || !day.value) return;
+    if (!s || !day.value || settings.music !== 'off') return;
     deps().device.setNowPlaying({title: nowPlayingTitle(s), artist: day.value.title, onPlay: resume, onPause: pause});
   }
 
@@ -306,9 +312,23 @@ export const usePlayerStore = defineStore('player', () => {
     fired = 0;
   }
 
+  // a coach line then the 3·2·1·Go beeps, so you can set your music level before starting
+  async function soundCheck(): Promise<void> {
+    const {voice, plans} = deps();
+    const unlocked = voice.unlock();   // inside the tap, before any await
+    voice.setMusicMode(settings.music);
+    voice.setEnabled({voice: settings.voice, beeps: settings.beeps});
+    await unlocked;
+    await voice.speak(plans.coach.lines.soundCheck?.[0] ?? 'Sound check. Can you hear me over your music?');
+    for (const kind of ['short', 'short', 'short', 'long'] as const) {
+      voice.beep(kind);
+      await new Promise((r) => setTimeout(r, 700));
+    }
+  }
+
   return {
     status, day, steps, index, currentLine, step, stepElapsedMs, stepRemainingMs, totalElapsedMs, setsDone,
-    start, pause, resume, done, next, previous, addRest, end,
+    start, pause, resume, done, next, previous, addRest, end, soundCheck,
   };
 });
 

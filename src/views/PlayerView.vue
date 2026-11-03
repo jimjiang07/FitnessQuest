@@ -90,6 +90,22 @@ async function begin() {
   starting.value = true;
   try { await player.start(props.dayId); } finally { starting.value = false; }
 }
+const musicModes = [
+  {mode: 'off', label: 'No music'},
+  {mode: 'duck', label: 'Lower it'},
+  {mode: 'mix', label: 'Over it'},
+] as const;
+const musicHelp = computed(() => ({
+  off: 'Only the coach plays.',
+  duck: 'Your music gets quieter while the coach talks. If you can’t hear the coach, try “Over it”.',
+  mix: 'The coach and beeps play over your music at full volume.',
+}[settings.music]));
+const checking = ref(false);
+async function soundCheck() {
+  if (checking.value) return;
+  checking.value = true;
+  try { await player.soundCheck(); } finally { checking.value = false; }
+}
 function tapScreen() { if (player.status === 'running') player.pause(); }
 function toggle() { if (paused.value) player.resume(); else player.pause(); }
 function fromSheet(action: 'previous' | 'skip') {
@@ -109,6 +125,15 @@ function endWorkout() { player.end(); router.replace('/'); }
           <span class="fq-tag" style="color: var(--ready)">Day {{ dayNumber(plan, day.id) }} · {{ Math.round(estimateMs / 60000) }} min</span>
           <h1 class="fq-big begin-title">{{ day.title }}</h1>
           <p class="fq-muted hint">Turn your sound up and put the phone where you can see it.</p>
+          <div class="music" @click.stop>
+            <span class="fq-tag fq-muted">Music from another app?</span>
+            <div class="seg-btns" role="radiogroup" aria-label="Music from another app">
+              <button v-for="m in musicModes" :key="m.mode" type="button" role="radio" :aria-checked="settings.music === m.mode"
+                :class="{on: settings.music === m.mode}" @click="settings.music = m.mode">{{ m.label }}</button>
+            </div>
+            <p class="fq-mini fq-muted music-help">{{ musicHelp }}</p>
+            <BigButton size="md" variant="ghost" :disabled="checking" @click="soundCheck">{{ checking ? 'Listen…' : 'Sound check' }}</BigButton>
+          </div>
         </div>
       </template>
       <template #context>
@@ -349,5 +374,10 @@ function endWorkout() { player.end(); router.replace('/'); }
 .begin-title { font-size: 40px; }
 .tap { font-size: 54px; }
 .hint { margin: 0; font-size: 14px; }
+.music { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; width: 100%; max-width: 360px; cursor: default; }
+.seg-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line); }
+.seg-btns button { min-height: 44px; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--muted); font-weight: 700; font-size: 14px; cursor: pointer; }
+.seg-btns button.on { background: var(--ready); color: #1a1204; }
+.music-help { margin: 0; min-height: 2.8em; }
 .back { align-self: center; min-height: 44px; display: inline-flex; align-items: center; }
 </style>

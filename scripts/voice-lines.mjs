@@ -26,5 +26,6 @@ export async function collectLines(vite) {
         for (let variant = 0; variant < VARIANTS; variant++)
           for (const cue of cuesFor(step, {plan, coach, day, variant})) if (cue.line) out.add(cue.line);
   }
+  for (const line of coach.lines.soundCheck ?? []) out.add(line); // said by the Sound check button, not a step
   return [...out];
 }

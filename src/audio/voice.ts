@@ -1,5 +1,5 @@
 /* The coach's voice: a recorded clip when the sentence is in public/voice/index.json, else the device voice. */
-import type {Voice} from '@/types';
+import type {MusicMode, Voice} from '@/types';
 import {clipId, sentences} from './clips';
 import {playBeep, type BeepKind} from './beeps';
 
@@ -30,6 +30,16 @@ function silentWav(): string {
   return 'data:audio/wav;base64,' + btoa(String.fromCharCode(...buf));
 }
 
+export const CLIP_EXT = 'm4a';
+
+// Safari's Audio Session API: 'transient' ducks other apps' music while we play, 'ambient' mixes at full volume
+export const SESSION_TYPES: Record<MusicMode, string> = {off: 'auto', duck: 'transient', mix: 'ambient'};
+export function applySession(mode: MusicMode): void {
+  const session = (globalThis as any).navigator?.audioSession;
+  if (!session) return;
+  try { session.type = SESSION_TYPES[mode]; } catch { /* unsupported type on this browser */ }
+}
+
 export function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
   const lang = (v: SpeechSynthesisVoice) => (v.lang || '').replace('_', '-').toLowerCase();
   return voices.find(v => lang(v) === 'en-au') ?? voices.find(v => lang(v).startsWith('en'));
@@ -43,7 +53,8 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
   const synth = () => opts.speechSynthesis ?? g.speechSynthesis as SpeechSynthesis | undefined;
   const Utter = () => opts.Utterance ?? g.SpeechSynthesisUtterance as typeof SpeechSynthesisUtterance | undefined;
 
-  let voiceOn = true, beepsOn = true;
+  let voiceOn = true, beepsOn = true, music: MusicMode = 'off';
+  let beepEl: HTMLAudioElement | null = null;   // separate from the voice element so a beep never cuts the coach off
   let ctx: AudioContext | null = null;
   let audio: HTMLAudioElement | null = null;
   let index: Promise<Set<string>> | null = null;
@@ -85,7 +96,7 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
       stopCurrent = stop;
       el.onended = () => done(true);
       el.onerror = () => done(false);
-      el.src = `${base}voice/${id}.mp3`;
+      el.src = `${base}voice/${id}.${CLIP_EXT}`;
       try {
         const p = el.play();
         if (p && typeof p.catch === 'function') p.catch(() => done(false));
@@ -141,6 +152,7 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
 
   async function unlock(): Promise<void> {
     void clips();
+    applySession(music);
     const C = Ctx();
     try {
       if (!ctx && C) ctx = new C();
@@ -152,12 +164,15 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
         src.start(0);
       }
     } catch { /* no Web Audio: beeps stay silent, the voice still works */ }
-    // prime the clip element and the device voice inside the same tap
+    // prime the clip and beep elements and the device voice inside the same tap
     const el = element();
-    if (el) {
+    const A = AudioEl();
+    if (!beepEl && A) beepEl = new A();
+    for (const e of [el, beepEl]) {
+      if (!e) continue;
       try {
-        el.src = silentWav();
-        const p = el.play();
+        e.src = silentWav();
+        const p = e.play();
         if (p && typeof p.catch === 'function') await p.catch(() => {});
       } catch { /* ignore */ }
     }
@@ -167,9 +182,21 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
     }
   }
 
+  // recorded beeps are loud and behave like the voice on iOS; the oscillator is only a fallback
   function beep(kind: BeepKind): void {
-    if (!beepsOn || !ctx) return;
-    try { playBeep(ctx, kind); } catch { /* a beep is never worth an error */ }
+    if (!beepsOn) return;
+    const oscillator = () => { if (ctx) try { playBeep(ctx, kind); } catch { /* a beep is never worth an error */ } };
+    if (!beepEl) return oscillator();
+    try {
+      beepEl.src = `${base}sounds/beep-${kind}.${CLIP_EXT}`;
+      const p = beepEl.play();
+      if (p && typeof p.catch === 'function') p.catch(oscillator);
+    } catch { oscillator(); }
+  }
+
+  function setMusicMode(mode: MusicMode): void {
+    music = mode;
+    applySession(mode);
   }
 
   function setEnabled(o: {voice: boolean; beeps: boolean}): void {
@@ -178,5 +205,5 @@ export function createVoice(opts: VoiceOptions = {}): Voice {
     if (!voiceOn) cancel();
   }
 
-  return {unlock, speak, cancel, beep, setEnabled};
+  return {unlock, speak, cancel, beep, setEnabled, setMusicMode};
 }
