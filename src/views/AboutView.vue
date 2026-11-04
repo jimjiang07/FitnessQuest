@@ -22,7 +22,7 @@ const photos: {exercise: string; title: string; author: string; licence: Licence
   {exercise: 'Sphinx', title: 'IMG 0549 2 Sphinx', author: 'Christy Collins', licence: CC_BY_SA_3,
     sources: ['https://commons.wikimedia.org/wiki/File:IMG_0549_2_Sphinx.jpg']},
 ];
-const drawn = ['B-stance hinge', 'suitcase carry', 'psoas 90/90', 'figure 4', 'dumbbell pullover', 'plank shoulder tap', 'McGill curl-up'];
+const drawn = ['B-stance hinge', 'suitcase carry', 'psoas 90/90', 'figure 4', 'dumbbell pullover', 'plank shoulder tap', 'McGill curl-up', 'neck exercises'];
 </script>
 
 <template>

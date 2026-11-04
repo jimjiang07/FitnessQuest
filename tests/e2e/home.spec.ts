@@ -33,3 +33,21 @@ test('home lists the four days and opens Day 2', async ({page}, info) => {
   await expect(page.locator('body')).not.toContainText('58 min');
   await expect(page.getByRole('button', {name: 'Start workout'})).toBeVisible();
 });
+
+test('the plan switch opens the quick neck sessions', async ({page}) => {
+  await open(page, './');
+  const tabs = page.getByRole('tablist', {name: 'Plan'}).first();
+  await expect(tabs.getByRole('tab')).toHaveCount(3);
+  await tabs.getByRole('tab', {name: 'Quick neck rehab'}).click();
+  await expect(tabs.getByRole('tab', {name: 'Quick neck rehab'})).toHaveAttribute('aria-selected', 'true');
+  const days = page.locator('.day');
+  await expect(days).toHaveCount(3);
+  await expect(days.first()).toContainText('Neck control');
+  for (const d of await days.all()) await expect(d).toContainText(/\d{1,2} min/);
+  // every tab label stays inside the switch at every layout
+  for (const t of await tabs.getByRole('tab').all()) {
+    const [tb, sb] = [await t.boundingBox(), await tabs.boundingBox()];
+    expect(tb!.x + tb!.width).toBeLessThanOrEqual(sb!.x + sb!.width + 1);
+  }
+  await expect(page.locator('body')).not.toContainText('built into every day');
+});

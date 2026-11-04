@@ -39,7 +39,8 @@ function choose(id: string) {
   else router.push(`/day/${id}`);
 }
 const detailLine = (i: number) => [anchorShort(plan.value.days[i]), formatMinutes(minutes.value[i])].filter(Boolean).join(' · ');
-const subtitle = computed(() => `${plan.value.days.length} ${plan.value.dayLabel.toLowerCase()}s · ~${avg.value} each · L4–S1 safe`);
+const subtitle = computed(() => `${plan.value.days.length} ${plan.value.dayLabel.toLowerCase()}s · ~${avg.value} each`);
+const hasWarmups = computed(() => plan.value.days.every(d => d.blocks.some(b => b.kind === 'warmup') && d.blocks.some(b => b.kind === 'cooldown')));
 </script>
 
 <template>
@@ -96,7 +97,7 @@ const subtitle = computed(() => `${plan.value.days.length} ${plan.value.dayLabel
         <DayCard :number="i + 1" :title="d.title" :detail="detailLine(i)" :next="d.id === nextId" @select="choose(d.id)" />
       </li>
     </ol>
-    <p class="fq-mini fq-muted foot">Warm-up and cool-down are built into every day · <RouterLink to="/about">About</RouterLink></p>
+    <p class="fq-mini fq-muted foot"><template v-if="hasWarmups">Warm-up and cool-down are built into every day · </template><RouterLink to="/about">About</RouterLink></p>
   </main>
 </template>
 

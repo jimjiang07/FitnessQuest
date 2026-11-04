@@ -122,7 +122,7 @@ describe('cuesFor', () => {
   });
 
   it('complete: the finish line', () => {
-    expect(cues(steps.at(-1)!)).toEqual([{atMs: 0, line: "That's day two done. Great work looking after your back."}]);
+    expect(cues(steps.at(-1)!)).toEqual([{atMs: 0, line: "That's day two done. Great work looking after your spine."}]);
   });
 
   it('applies pronounce to every line and say: to names', () => {

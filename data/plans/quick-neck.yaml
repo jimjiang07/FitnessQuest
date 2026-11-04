@@ -1,0 +1,139 @@
+# Quick neck rehab: short standalone sessions for neck and shoulder pain from a suspected cervical disc.
+# Nothing loads the neck, bends it to the end of its range or pulls on the nerves in the arm (no stretches
+# that tilt the head away, no nerve flossing): those can flare a disc and belong with a physio.
+# Format: docs/plan-format.md. Check with `npm run check-plan`.
+
+id: quick-neck
+name: Quick neck rehab
+summary: Three 10–12 minute sessions for neck and shoulder pain. Gentle neck control and upper-back strength; nothing loads your neck.
+equipment: [dumbbells, bench, swiss ball]
+order: 3
+rotate: false        # sessions are picked freely; doing one doesn't change the 4-day split's next day
+dayLabel: Session
+
+exercises:
+  chin-tuck:
+    name: Lying chin tuck
+    say: chin tuck
+    gear: [mat]
+    note: Knees bent, head flat on the floor, no pillow
+    cues:
+      - "Nod your chin in, like making a double chin. Back of the neck gets long."
+      - "Small and gentle. Don't lift your head off the floor."
+  neck-isometrics:
+    name: Seated neck isometrics
+    say: neck isometrics
+    gear: [bench]
+    note: "Push gently into your hand: forehead, back, then each side"
+    cues:
+      - "Push your head into your hand, but don't let it move. Change direction each rep."
+      - "About a quarter of your strength. Keep breathing."
+  scap-squeeze:
+    name: Seated shoulder blade squeeze
+    say: shoulder blade squeeze
+    gear: [bench]
+    cues:
+      - "Draw your shoulder blades back and down, into your back pockets."
+      - "Shoulders away from your ears. Chin stays tucked."
+  ball-prone-y:
+    name: Prone Y raise on Swiss ball
+    say: prone Y raise
+    gear: [swiss ball]
+    note: No weight. Thumbs up
+    cues:
+      - "Lift your arms forward into a Y, thumbs up."
+      - "Look at the floor. Neck stays long."
+  ball-prone-w:
+    name: Prone W squeeze on Swiss ball
+    say: prone W squeeze
+    gear: [swiss ball]
+    note: No weight
+    cues:
+      - "Pull your elbows back and squeeze your shoulder blades."
+      - "Look at the floor. Shoulders away from your ears."
+  thoracic-extension-ball:
+    name: Upper back extension on Swiss ball
+    say: upper back extension
+    gear: [swiss ball]
+    note: Ball under your shoulder blades, hands holding your head
+    cues:
+      - "Let your upper back open over the ball. Hands hold your head, so your neck relaxes."
+      - "Stop before your lower back arches."
+  chest-supported-db-row:
+    name: Chest-supported DB row
+    say: chest supported dumbbell row
+    gear: [dumbbells, bench]
+    note: Light weight, incline bench
+    cues:
+      - "Pull your elbows back to your hips."
+      - "Shoulders down, away from your ears."
+  incline-rear-delt-fly:
+    name: Incline rear delt fly
+    gear: [dumbbells, bench]
+    note: Very light weight, chest on the incline bench
+    cues:
+      - "Open your arms wide, slight bend in the elbows."
+      - "Squeeze your shoulder blades. Chin stays tucked."
+  cat-camel:
+    name: Cat-camel
+    gear: [mat]
+    cues:
+      - "Small and slow. Let your head follow your spine."
+      - "Don't force the end of the range."
+  ball-rest:
+    name: Supported rest with legs on the ball
+    say: supported rest
+    gear: [swiss ball, mat]
+    images: [psoas-90-90-a.svg, psoas-90-90-b.svg]
+    note: A folded towel under your head if your chin pokes up
+    cues:
+      - "Let your shoulders sink into the floor. Chin gently tucked."
+      - "Slow breaths into your belly."
+
+days:
+  - id: neck-1
+    title: Neck control
+    anchor: Chin tucks and isometrics
+    why: Chin tucks wake up the deep neck muscles that hold your head over your spine, and isometrics build strength without moving the neck. Arm pain that moves up toward your neck is fine; stop if pain, pins and needles or numbness spread further down your arm.
+    blocks:
+      - name: Neck control
+        kind: circuit
+        rounds: 2
+        items:
+          - { exercise: chin-tuck, guided: { reps: 10, hold: 5 }, rest: 15 }
+          - { exercise: neck-isometrics, guided: { reps: 8, hold: 5 }, rest: 15 }
+          - { exercise: scap-squeeze, guided: { reps: 10, hold: 5 }, rest: 15 }
+          - { exercise: thoracic-extension-ball, guided: { reps: 6, hold: 5 }, rest: 20 }
+
+  - id: neck-2
+    title: Upper back and shoulders
+    anchor: Y, W, rows and rear flys
+    why: A strong upper back holds your shoulders back, so your head stops drifting forward and loading the neck. Arm pain that moves up toward your neck is fine; stop if pain, pins and needles or numbness spread further down your arm.
+    blocks:
+      - name: Upper back
+        kind: circuit
+        rounds: 2
+        items:
+          - { exercise: chin-tuck, guided: { reps: 6, hold: 5 }, rest: 10 }
+          - { exercise: ball-prone-y, guided: { reps: 8, hold: 3 }, rest: 20 }
+          - { exercise: ball-prone-w, guided: { reps: 8, hold: 3 }, rest: 20 }
+          - { exercise: chest-supported-db-row, reps: 10-12, rest: 30 }
+          - { exercise: incline-rear-delt-fly, reps: 12, rest: 30 }
+
+  - id: neck-3
+    title: Calm and decompress
+    anchor: For flare-up days
+    why: Gentle, supported positions that take weight off the neck and let tight shoulders settle. Use it when your neck is grumpy. Arm pain that moves up toward your neck is fine; stop if pain, pins and needles or numbness spread further down your arm.
+    blocks:
+      - name: Decompress
+        kind: cooldown
+        rounds: 1
+        rest: 10
+        items:
+          - { exercise: ball-rest, time: 120 }
+          - { exercise: chin-tuck, guided: { reps: 8, hold: 5 } }
+          - { exercise: scap-squeeze, guided: { reps: 8, hold: 5 } }
+          - { exercise: cat-camel, guided: { reps: 8, tempo: 6 } }
+          - { exercise: thoracic-extension-ball, time: 75, rest: 15 }
+          - { exercise: chin-tuck, guided: { reps: 6, hold: 5 } }
+          - { exercise: ball-rest, time: 120 }
