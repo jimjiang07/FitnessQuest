@@ -144,3 +144,68 @@ export interface Settings {
 }
 
 export type Layout = 'compact' | 'shortWide' | 'book' | 'tabletop';
+
+// ── Gym tracker (data/tracker.yaml + what you log, kept in localStorage) ─────────────
+export type RoutineId = 'upper' | 'lower';
+export type ActivityColor = 'work' | 'rest' | 'ready' | 'cool' | 'muted';
+
+export interface TrackerActivity { id: string; label: string; short: string; color: ActivityColor; counts: boolean }
+
+export interface TrackerExercise {
+  key: string;
+  name: string;
+  cue: string;           // what to do, always visible
+  why: string;           // the clinical reason, behind the safety badge
+  critical?: boolean;    // shown in the warning colour
+  repsLabel?: string;    // defaults to "Reps"
+}
+
+export interface TrackerRoutine {
+  id: RoutineId;
+  name: string;
+  tab: string;
+  summary: string;
+  warning: {title: string; points: string[]};
+  exercises: TrackerExercise[];
+}
+
+export interface FlexCard { id: string; name: string; summary: string; points: string[] }
+
+export interface TrackerConfig {
+  weeklyTarget: number;
+  weeksShown: number;
+  profile: {lumbar: string; cervical: string; goals: string[]};
+  activities: TrackerActivity[];
+  routines: TrackerRoutine[];
+  flexMix: {title: string; summary: string; cards: FlexCard[]};
+}
+
+/** Dates are local calendar days, "YYYY-MM-DD". Empty number fields are null. */
+export interface SetEntry { weight: number | null; reps: number | null; rpe: number | null }
+
+export interface StrengthSession {
+  id: string;
+  routine: RoutineId;
+  date: string;
+  sets: Record<string, SetEntry[]>;   // exercise key → sets in order
+}
+
+export interface BodyEntry {
+  id: string;
+  date: string;
+  weight: number | null;   // fasting, kg
+  waist: number | null;    // morning, at the navel, cm
+  lumbar: number;          // discomfort 0–10
+  neck: number;            // strain 0–10
+  notes: string;
+}
+
+export interface TrackerData {
+  version: 1;
+  startDate: string;                 // Monday of week 1 on the habit wall
+  habits: Record<string, string>;    // date → activity id
+  sessions: StrengthSession[];
+  body: BodyEntry[];
+}
+
+export interface WeekSummary { week: number; dates: string[]; sessions: number; achieved: boolean }

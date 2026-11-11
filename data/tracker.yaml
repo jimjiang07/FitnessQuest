@@ -1,0 +1,119 @@
+# Gym tracker: what the Habits, Upper, Lower and Body tabs show. Edit here, not in code.
+# Safety cues are written for L4/L5 + L5/S1 disc protrusion and sensitive neck facet joints.
+
+weeklyTarget: 3          # sessions a week for "Target achieved"
+weeksShown: 52           # the habit wall shows at least this many weeks, more once you pass it
+
+profile:
+  lumbar: "L4/L5 and L5/S1 disc degeneration and protrusion. No axial loading (standing heavy squats or deadlifts), no unsupported hip hinging (bent-over rows), no fast twisting (boxing, badminton, swings) and no hard landings."
+  cervical: "Sensitive neck facet joints. Don't tip your head back: no cobra or swan head lifts, no looking up at a screen on the bike or rower. Keep a gentle chin tuck and a neutral neck."
+  goals:
+    - Rebuild deep core stability
+    - Lose belly fat
+    - Build strength on supported machines
+    - Keep the spine decompressed
+
+# One per day on the habit wall. counts: false means it doesn't add to the weekly target.
+activities:
+  - { id: strength, label: Strength (gym), short: Gym, color: work, counts: true }
+  - { id: pilates, label: Reformer Pilates, short: Pilates, color: cool, counts: true }
+  - { id: swim, label: Swim and spa, short: Swim, color: rest, counts: true }
+  - { id: cardio, label: Cardio or cycle, short: Cardio, color: ready, counts: true }
+  - { id: rest, label: Rest day, short: Rest, color: muted, counts: false }
+
+routines:
+  - id: upper
+    name: Upper strength
+    tab: Upper
+    summary: Chest- and back-supported machines only, so your spine never holds the load.
+    warning:
+      title: Spine and neck rules
+      points:
+        - "Chest or back stays on the pad for every rep. If you have to swing, the weight is too heavy."
+        - "Chin tucked, eyes forward. Never pull behind your neck or look up."
+        - "Exhale on the effort and keep your ribs down: no arching off the backrest."
+    exercises:
+      - key: machine-row
+        name: Chest-supported machine row
+        cue: "Sternum glued to the chest pad, chin tucked, no swinging."
+        why: "The pad carries your upper body, so the discs at L4–S1 take no shear while your back muscles work."
+      - key: chest-press
+        name: Seated chest press machine
+        cue: "Back pressed into the backrest. Don't arch your lower back."
+        why: "The backrest keeps your lumbar spine neutral, so the press can't turn into a back arch that pinches the discs."
+      - key: lat-pulldown
+        name: Lat pulldown (neutral or wide grip)
+        cue: "Pull to your collarbone, eyes forward. Never behind the neck."
+        why: "Pulling to the front keeps your neck neutral. Behind-the-neck pulls force the head forward and load the facet joints."
+      - key: rear-delt-fly
+        name: Reverse pec deck (rear delt fly)
+        cue: "Chest on the pad. Squeeze your shoulder blades back and down."
+        why: "Strong rear shoulders pull your head back over your spine, which takes strain off the neck."
+      - key: pallof-press
+        name: Cable Pallof press
+        cue: "Resist the twist. Exhale and draw your navel in, pelvis locked."
+        repsLabel: Reps each side
+        why: "Anti-rotation trains the deep core to stop twisting, the movement that shears a protruding disc."
+
+  - id: lower
+    name: Lower strength
+    tab: Lower
+    summary: Zero load down the spine. Pelvis stays locked and your deep core braces every rep.
+    warning:
+      title: Lower back rules
+      points:
+        - "Leg press: stop before your tailbone curls off the seat. That curl is loaded spinal flexion."
+        - "Grip the handles and keep your pelvis pinned on every seated machine."
+        - "Brace gently (navel to spine) and breathe. Never hold your breath and strain."
+    exercises:
+      - key: leg-press
+        name: 45° or horizontal leg press
+        cue: "Feet high and wide. Stop before your tailbone lifts off the seat!"
+        critical: true
+        why: "If the pelvis tucks at the bottom, the lumbar spine bends under the whole sled's weight. Stopping short keeps L4–S1 neutral."
+      - key: leg-curl
+        name: Seated leg curl
+        cue: "Thigh pad locked tight, grip the handles, feel the hamstrings."
+        why: "Seated with the pad locked, the pelvis can't tilt, so the hamstrings work without tugging on your lower back."
+      - key: hip-abductor
+        name: Seated hip abductor
+        cue: "Sit tall, pause at the widest point."
+        why: "Glute medius steadies the pelvis when you walk and stand, which takes side-to-side load off the lower discs."
+      - key: leg-extension
+        name: Seated leg extension
+        cue: "Lower for three seconds. Back stays against the pad."
+        why: "Builds the quads with no spinal load at all, as long as your back stays on the pad."
+      - key: suitcase-carry
+        name: Single-arm suitcase carry
+        cue: "Dumbbell in one hand, walk slowly, don't lean."
+        repsLabel: Metres each side
+        why: "Resisting the side-bend trains the obliques and quadratus lumborum that brace your spine, with no twisting."
+
+flexMix:
+  title: Weekend flex mix
+  summary: Pick one when you want to move but don't want a full session.
+  cards:
+    - id: light-machines
+      name: Light machines
+      summary: Pick 3 supported machines, 2 gentle sets each.
+      points:
+        - "Choose from your upper and lower lists: anything with a pad or backrest."
+        - "Leave 4 or 5 reps in the tank (RPE 5 to 6)."
+    - id: incline-walk
+      name: Incline treadmill walk
+      summary: Incline 3–4%, 5 km/h, hands free.
+      points:
+        - "Don't hold the rails. Let your arms swing."
+        - "Look straight ahead, not down at your phone or up at a screen."
+    - id: cycle-class
+      name: Cycle class mode
+      summary: Handlebars as high and close as they go, 100% seated.
+      points:
+        - "No standing climbs and no sprints out of the saddle."
+        - "Chin tucked. Don't crane your neck up at the instructor's screen."
+    - id: swim
+      name: Hydrotherapy and swim
+      summary: Breaststroke with a long glide, or backstroke floating.
+      points:
+        - "Breathe with your face turning, not lifting: keep your neck long along the water."
+        - "Spa and warm-water walking count too."

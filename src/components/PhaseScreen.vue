@@ -17,7 +17,7 @@ withDefaults(defineProps<{phase?: Phase | 'done' | 'none'; fill?: boolean}>(), {
   padding: max(16px, env(safe-area-inset-top, 0px)) var(--pad-x) max(16px, env(safe-area-inset-bottom, 0px));
   background: var(--bg); color: var(--fg);
 }
-.fill { height: 100vh; height: 100dvh; }
+.fill { height: calc(100vh - var(--tabbar-h, 0px)); height: calc(100dvh - var(--tabbar-h, 0px)); }
 .work { background: radial-gradient(120% 60% at 50% 0%, rgba(255, 92, 57, .22), transparent 60%), var(--bg); }
 .rest { background: radial-gradient(120% 60% at 50% 0%, rgba(39, 196, 176, .22), transparent 60%), var(--bg); }
 .ready { background: radial-gradient(120% 70% at 50% 30%, rgba(255, 182, 39, .25), transparent 60%), var(--bg); }
