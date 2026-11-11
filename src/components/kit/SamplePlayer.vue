@@ -13,7 +13,6 @@ import PlayerControls from '../PlayerControls.vue';
 import RoundTracker from '../RoundTracker.vue';
 import SegmentBar from '../SegmentBar.vue';
 import UpNextCard from '../UpNextCard.vue';
-import '@/styles/components.css';
 
 // Kit-only: a Day 2 rep set laid out the way the player will use Panes, with a working pause sheet.
 const props = withDefaults(defineProps<{layout?: Layout; fill?: boolean}>(), {fill: false});

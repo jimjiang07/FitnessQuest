@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {useLayout} from '@/composables/useLayout';
-import '@/styles/components.css';
 
 const layout = useLayout();
 const REPO = 'https://github.com/jimjiang07/FitnessQuest';

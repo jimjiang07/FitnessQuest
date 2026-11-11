@@ -9,7 +9,7 @@ const exercise = z.strictObject({
   key: z.string().regex(/^[a-z0-9-]+$/), name: text, cue: text, why: text,
   critical: z.boolean().optional(), repsLabel: text.optional(),
 });
-export const trackerSchema = z.strictObject({
+const trackerSchema = z.strictObject({
   weeklyTarget: z.number().int().min(1).max(7),
   weeksShown: z.number().int().min(1).max(520),
   profile: z.strictObject({lumbar: text, cervical: text, goals: z.array(text)}),

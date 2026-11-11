@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {phaseColor, type Phase} from './phase';
-import '@/styles/components.css';
 
 withDefaults(defineProps<{
   label?: string;    // "A2", or a rest length like "45s"

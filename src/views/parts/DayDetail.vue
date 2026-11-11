@@ -7,7 +7,6 @@ import BigButton from '@/components/BigButton.vue';
 import BlockTimeline from '@/components/BlockTimeline.vue';
 import GearChips from '@/components/GearChips.vue';
 import {dayGear, dayNumber, dayTimeline, formatMinutes, summariseDay} from '../viewModel';
-import '@/styles/components.css';
 
 // Day detail: title, why it helps, block timeline, gear and Start. Shared by Home (book/tabletop) and DayView.
 // dense = smaller head; steps = still list each block's exercises (book has the height for it)

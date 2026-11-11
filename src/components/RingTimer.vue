@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {computed} from 'vue';
 import {formatClock, phaseColor, type Phase} from './phase';
-import '@/styles/components.css';
 
 const props = withDefaults(defineProps<{
   remainingMs: number;

@@ -24,7 +24,6 @@ import {
   blockItemsTimeline, dayNumber, guidedCount, itemPhase, panelFor, phaseFor, progressFor, readyChecklist, roundsFor,
   sideLabel, stepTag, summariseDay, targetLabel, upNextAfter,
 } from './viewModel';
-import '@/styles/components.css';
 
 const props = defineProps<{dayId: string}>();
 const router = useRouter();

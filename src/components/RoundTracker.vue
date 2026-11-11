@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {phaseColor, phaseInk, type Phase} from './phase';
-import '@/styles/components.css';
 
 // rows are walked round by round (A1, A2, A1, A2…), so "done" is everything before current in that order
 const props = withDefaults(defineProps<{

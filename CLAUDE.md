@@ -2,12 +2,14 @@
 
 A no-login web app that runs a 4-day spine rehab plan as voice-coached workouts, like an F45 or Fitstop class:
 pick a day, press Start, and the coach calls every exercise, set, rest and side switch. Plan data is YAML.
-No accounts, no backend, no tracking. Main device: iPhone Duo, inner screen open in landscape.
+It also has a gym tracker (Habits, Upper, Lower, Body and Data tabs) for machine sessions at the club; what you log stays
+in this browser's localStorage. No accounts, no backend, no analytics. Main device: iPhone Duo, inner screen open in landscape.
 
 - What and why: `docs/plans/spec.md`
 - Look: `docs/design/design-board.html` (published: https://claude.ai/artifact/Lp37bsiETrus857w75ZSga)
 - **How to build it in parallel: `docs/plans/implementation-plan.md`** (streams, file ownership, contracts)
 - Plan file format: `docs/plan-format.md`
+- Gym tracker: `docs/plans/tracker-plan.md`; content in `data/tracker.yaml`, logic in `src/tracker/`, state in `src/stores/tracker.ts`
 
 This repo is **public** (GitHub Pages). The plan describes the owner's back condition on purpose; don't add any other
 personal details (names, addresses, photos of people we know).
@@ -36,7 +38,9 @@ Every push to `main` deploys to https://jimjiang07.github.io/FitnessQuest/ (`.gi
   (e.g. pullover across the bench). When unsure, pick the version with the spine supported and neutral.
 - **Layouts:** book (Duo inner landscape: left half = now, right half = context, 28px fold gutter, nothing on the
   crease, sheets open inside one half), compact (phones), shortWide (Duo outer), tabletop (Duo upright half-folded).
-- **Player screens never scroll.** Tap targets 56px+. Dark theme only. Respect reduced motion.
+- **Tracker data:** only through `useTrackerStore`; saved data is run through `sanitize()` on load and import, so a
+  bad file or old version can't break the app. Don't rename `fitness-quest:tracker` or change `TrackerData` without a migration.
+- **Player screens never scroll.** Tracker pages may. Tap targets 56px+. Dark theme only. Respect reduced motion.
 - **Reps are not timed:** reps sets wait for Done; timed and guided work auto-advance.
 - **Pictures:** `public/exercises/<key>-a.*` and `-b.*` (start/end). Keep `public/exercises/CREDITS.md` up to date;
   CC BY / BY-SA photos need credit on the About screen.

@@ -7,6 +7,7 @@ import '@fontsource/manrope/600.css';
 import '@fontsource/manrope/700.css';
 import './styles/tokens.css';
 import './styles/app.css';
+import './styles/components.css';
 import App from './App.vue';
 import {router} from './router';
 

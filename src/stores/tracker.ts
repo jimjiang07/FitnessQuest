@@ -2,8 +2,8 @@
 import {defineStore} from 'pinia';
 import {computed, ref, watch} from 'vue';
 import type {BodyEntry, RoutineId, SetEntry, StrengthSession, TrackerData} from '@/types';
-import {tracker} from '@/tracker/config';
-import {emptyData, emptySet, mondayOf, newestFirst, newId, previousSets, sanitize, today, weekNumber, weekSummary} from '@/tracker/logic';
+import {routine, tracker} from '@/tracker/config';
+import {bestWeights, emptyData, emptySet, mondayOf, newestFirst, newId, previousSets, sanitize, today, weekNumber, weekSummary} from '@/tracker/logic';
 
 export const TRACKER_KEY = 'fitness-quest:tracker';
 
@@ -18,10 +18,18 @@ export const useTrackerStore = defineStore('tracker', () => {
   const data = ref<TrackerData>(load());
   const saveError = ref(false);   // the screens can warn that this browser isn't keeping data
 
-  watch(data, d => {
-    try { (globalThis as any).localStorage?.setItem(TRACKER_KEY, JSON.stringify(d)); saveError.value = false; }
+  // typing a set shouldn't re-serialise years of history per keystroke: save once things go quiet, or when the app hides
+  let pending: ReturnType<typeof setTimeout> | undefined;
+  function save() {
+    clearTimeout(pending);
+    pending = undefined;
+    try { (globalThis as any).localStorage?.setItem(TRACKER_KEY, JSON.stringify(data.value)); saveError.value = false; }
     catch { saveError.value = true; }
-  }, {deep: true, flush: 'sync'});
+  }
+  watch(data, () => { clearTimeout(pending); pending = setTimeout(save, 400); }, {deep: true});
+  const flushNow = () => save();
+  globalThis.addEventListener?.('pagehide', flushNow);
+  globalThis.document?.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') save(); });
 
   // ── habits ──
   const setHabit = (date: string, activityId: string | null) => {
@@ -36,9 +44,9 @@ export const useTrackerStore = defineStore('tracker', () => {
   const sessionsFor = (r: RoutineId) => newestFirst(data.value.sessions.filter(s => s.routine === r));
   const session = (id: string) => data.value.sessions.find(s => s.id === id);
 
-  /** New session dated today with one empty set per exercise; also marks today as a gym day if it's blank. */
+  // also marks the day as a gym day if nothing else is logged
   function addSession(r: RoutineId, date = today()): StrengthSession {
-    const exercises = tracker.routines.find(x => x.id === r)?.exercises ?? [];
+    const exercises = routine(r)?.exercises ?? [];
     const s: StrengthSession = {id: newId(), routine: r, date, sets: Object.fromEntries(exercises.map(e => [e.key, [emptySet()]]))};
     data.value.sessions.push(s);
     if (!data.value.habits[date]) data.value.habits[date] = 'strength';
@@ -69,6 +77,7 @@ export const useTrackerStore = defineStore('tracker', () => {
     if (s && prev) s.sets[key] = prev.map(p => ({weight: p.weight, reps: p.reps, rpe: null}));
   }
   const previous = (s: StrengthSession, key: string) => previousSets(data.value.sessions, s.routine, key, s);
+  const best = computed(() => bestWeights(data.value.sessions));
 
   // ── body journal ──
   const bodyEntries = computed(() => newestFirst(data.value.body));
@@ -98,7 +107,7 @@ export const useTrackerStore = defineStore('tracker', () => {
 
   return {
     data, saveError, setHabit, week, currentWeek, setStartDate,
-    sessionsFor, session, addSession, deleteSession, setSessionDate, updateSet, addSet, removeSet, copyPrevious, previous,
+    sessionsFor, addSession, deleteSession, setSessionDate, updateSet, addSet, removeSet, copyPrevious, previous, best, flushNow,
     bodyEntries, addBody, updateBody, deleteBody, exportJson, importJson, clearAll,
   };
 });

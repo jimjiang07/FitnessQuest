@@ -2,7 +2,6 @@
 import {nextTick, ref, watch} from 'vue';
 import BigButton from './BigButton.vue';
 import type {Phase} from './phase';
-import '@/styles/components.css';
 
 // Absolutely positioned inside the nearest positioned ancestor (a Panes pane), so it never crosses the fold.
 const props = withDefaults(defineProps<{

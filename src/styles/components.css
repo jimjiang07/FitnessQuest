@@ -5,4 +5,22 @@
 .fq-muted { color: var(--muted); }
 .fq-num { font-variant-numeric: tabular-nums; }
 .fq-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 14px; }
-.fq-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.fq-sr { position: absolute; inset: 0 auto auto 0; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Tracker pages: one column on phones; on the Duo inner screen two halves that scroll on their own, gutter on the hinge */
+.fq-page {
+  --pad-x: max(18px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
+  padding: max(22px, env(safe-area-inset-top)) var(--pad-x) 24px;
+}
+.fq-page.book {
+  --pad-x: max(22px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+  column-gap: var(--fold-gutter); height: var(--view-h); padding: 0 var(--pad-x); overflow: hidden;
+}
+.fq-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; contain: paint; }
+.book > .fq-col { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: max(16px, env(safe-area-inset-top)) 2px 20px; scrollbar-width: none; }
+.book > .fq-col::-webkit-scrollbar { display: none; }
+.fq-head { display: flex; flex-direction: column; gap: 4px; }
+.fq-title { font-size: clamp(38px, 11vw, 52px); font-weight: 800; }
+.book .fq-title { font-size: 42px; }

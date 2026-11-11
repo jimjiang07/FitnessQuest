@@ -18,7 +18,6 @@ import UpNextCard from '@/components/UpNextCard.vue';
 import ScaledFrame from '@/components/kit/ScaledFrame.vue';
 import SamplePlayer from '@/components/kit/SamplePlayer.vue';
 import type {Phase, TimelineItem} from '@/components/phase';
-import '@/styles/components.css';
 
 // Gallery of every kit component and state, with sample data from the real plan (Day 2).
 const layout = useLayout();

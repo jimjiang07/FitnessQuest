@@ -33,10 +33,33 @@ export function weekSummary(startDate: string, week: number, habits: Record<stri
 /** Weeks to show: at least `minWeeks`, and always up to the week containing `now`. */
 export const weeksToShow = (startDate: string, now: string, minWeeks: number) => Math.max(minWeeks, weekNumber(startDate, now));
 
-/** Next status when tapping a day: none → each activity in order → none. */
-export function nextActivity(current: string | undefined, activities: TrackerActivity[]): string | undefined {
-  const i = activities.findIndex(a => a.id === current);
-  return i === -1 ? activities[0]?.id : activities[i + 1]?.id;
+/** Current streak (ending this week, or last week while this one is in progress) and best streak so far. */
+export function streaks(weeks: WeekSummary[]): {current: number; best: number} {
+  let best = 0, run = 0;
+  for (const w of weeks) { run = w.achieved ? run + 1 : 0; best = Math.max(best, run); }
+  let i = weeks.length - 1;
+  if (i >= 0 && !weeks[i].achieved) i--;
+  let current = 0;
+  while (i >= 0 && weeks[i].achieved) { current++; i--; }
+  return {current, best};
+}
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+/** "3 Nov" · "Mon 3 Nov" · "Monday 3 November 2026" */
+export function formatDate(iso: string, style: 'short' | 'day' | 'long' = 'short'): string {
+  const d = parse(iso);
+  if (style === 'long') return d.toLocaleDateString('en-AU', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}).replace(',', '');
+  const short = `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  return style === 'day' ? `${DAYS[d.getDay()]} ${short}` : short;
+}
+
+/** Typed number: '' → null, invalid or out of range → undefined. Accepts a decimal comma. */
+export function parseNumber(raw: string, {min = -Infinity, max = Infinity, integer = false} = {}): number | null | undefined {
+  const t = raw.trim().replace(',', '.');
+  if (!t) return null;
+  const n = Number(t);
+  return Number.isFinite(n) && (!integer || Number.isInteger(n)) && n >= min && n <= max ? n : undefined;
 }
 
 export const newestFirst = <T extends {date: string; id: string}>(list: T[]) =>
@@ -57,10 +80,11 @@ export function previousSets(sessions: StrengthSession[], routine: RoutineId, ke
 export const hasValue = (s: SetEntry) => s.weight != null || s.reps != null || s.rpe != null;
 export const emptySet = (): SetEntry => ({weight: null, reps: null, rpe: null});
 
-/** Best weight logged for an exercise across all sessions (for a simple progress line). */
-export function bestWeight(sessions: StrengthSession[], key: string): number | null {
-  let best: number | null = null;
-  for (const s of sessions) for (const set of s.sets[key] ?? []) if (set.weight != null && (best == null || set.weight > best)) best = set.weight;
+/** Heaviest weight logged per exercise key, in one pass. */
+export function bestWeights(sessions: StrengthSession[]): Record<string, number> {
+  const best: Record<string, number> = {};
+  for (const s of sessions) for (const [key, sets] of Object.entries(s.sets))
+    for (const set of sets) if (set.weight != null && !(set.weight <= best[key])) best[key] = set.weight;
   return best;
 }
 
@@ -68,7 +92,7 @@ export const newId = (now = Date.now()) => `${now.toString(36)}${Math.random().t
 
 export const emptyData = (now = today()): TrackerData => ({version: 1, startDate: mondayOf(now), habits: {}, sessions: [], body: []});
 
-// ── checking saved or imported data: keep what's valid, drop what isn't ──────────────
+// saved or imported data: keep what's valid, drop what isn't
 const num = (v: unknown, min: number, max: number): number | null =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : null;
 const scale = (v: unknown) => Math.round(num(v, 0, 10) ?? 0);

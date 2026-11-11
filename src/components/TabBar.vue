@@ -2,38 +2,29 @@
 import {computed} from 'vue';
 import {useRoute} from 'vue-router';
 import {useLayout} from '@/composables/useLayout';
-import {tracker} from '@/tracker/config';
+import {routine} from '@/tracker/config';
 
-// icon paths drawn on a 24px grid (lucide-style strokes)
-const ICONS: Record<string, string> = {
-  coach: 'M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z',
-  habits: 'M3 4h18v18H3zM16 2v4M8 2v4M3 10h18M8 15l2 2 4-4',
-  upper: 'M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11',
-  lower: 'M12 3v5l-4 5v8M12 8l4 5v8M9 21h-2M17 21h-2',
-  body: 'M3 12h4l3-8 4 16 3-8h4',
-  data: 'M12 3c4.97 0 9 1.34 9 3s-4.03 3-9 3-9-1.34-9-3 4.03-3 9-3zM3 6v6c0 1.66 4.03 3 9 3s9-1.34 9-3V6M3 12v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6',
-};
-const name = (id: string) => tracker.routines.find(r => r.id === id)?.tab ?? id;
+const name = (id: string) => routine(id)?.tab ?? id;
+// icons are lucide-style strokes on a 24px grid; `fold` starts the right half in book layout
 const TABS = [
-  {id: 'coach', to: '/', label: 'Coach'},
-  {id: 'habits', to: '/habits', label: 'Habits'},
-  {id: 'upper', to: '/upper', label: name('upper')},
-  {id: 'lower', to: '/lower', label: name('lower')},
-  {id: 'body', to: '/body', label: 'Body'},
-  {id: 'data', to: '/data', label: 'Data'},
+  {id: 'coach', to: '/', label: 'Coach', icon: 'M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z'},
+  {id: 'habits', to: '/habits', label: 'Habits', icon: 'M3 4h18v18H3zM16 2v4M8 2v4M3 10h18M8 15l2 2 4-4'},
+  {id: 'upper', to: '/upper', label: name('upper'), icon: 'M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11'},
+  {id: 'lower', to: '/lower', label: name('lower'), icon: 'M12 3v5l-4 5v8M12 8l4 5v8M9 21h-2M17 21h-2', fold: true},
+  {id: 'body', to: '/body', label: 'Body', icon: 'M3 12h4l3-8 4 16 3-8h4'},
+  {id: 'data', to: '/data', label: 'Data', icon: 'M12 3c4.97 0 9 1.34 9 3s-4.03 3-9 3-9-1.34-9-3 4.03-3 9-3zM3 6v6c0 1.66 4.03 3 9 3s9-1.34 9-3V6M3 12v6c0 1.66 4.03 3 9 3s9-1.34 9-3v-6'},
 ];
 
 const route = useRoute();
 const layout = useLayout();
-// Coach owns its day, about and complete screens too
-const active = computed(() => TABS.find(t => t.to !== '/' && route.path.startsWith(t.to))?.id ?? 'coach');
+const active = computed(() => route.meta.tab ?? 'coach');
 </script>
 
 <template>
   <nav class="tabbar" :class="layout" aria-label="Sections">
-    <RouterLink v-for="(t, i) in TABS" :key="t.id" :to="t.to" class="tab" :class="{on: active === t.id, fold: i === 3}"
+    <RouterLink v-for="t in TABS" :key="t.id" :to="t.to" class="tab" :class="{on: active === t.id, fold: t.fold}"
       :aria-current="active === t.id ? 'page' : undefined">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="ICONS[t.id]" /></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path :d="t.icon" /></svg>
       <span>{{ t.label }}</span>
     </RouterLink>
   </nav>

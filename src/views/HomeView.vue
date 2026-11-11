@@ -9,7 +9,6 @@ import PhaseScreen from '@/components/PhaseScreen.vue';
 import DayDetail from './parts/DayDetail.vue';
 import {useSettingsApi} from './player';
 import {anchorShort, formatMinutes, summariseDay} from './viewModel';
-import '@/styles/components.css';
 
 const layout = useLayout();
 const route = useRoute();

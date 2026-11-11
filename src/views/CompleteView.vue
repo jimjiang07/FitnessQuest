@@ -10,7 +10,6 @@ import PhaseScreen from '@/components/PhaseScreen.vue';
 import {formatClock} from '@/components/phase';
 import {usePlayerApi, useSettingsApi} from './player';
 import {dayNumber, dayTimeline, nextDayAfter, summariseDay} from './viewModel';
-import '@/styles/components.css';
 
 const props = defineProps<{dayId: string}>();
 const router = useRouter();

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Voice-coached workouts for a 4-day spine rehab split: pick a day, press start, follow the coach. No login, no tracking.",
+  "description": "Voice-coached spine rehab workouts and a private gym tracker. No login, no backend.",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
