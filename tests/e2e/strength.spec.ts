@@ -164,3 +164,23 @@ test('the plan additions: lateral raise, RKC plank, knee raise and cardio with t
   await expect(knee).toHaveClass(/critical/);
   await expect(knee).toContainText('Stop at 90°');
 });
+
+test('outer screen: tabs open at the top, rules fold away, and a second tap continues today', async ({page}, info) => {
+  test.skip(info.project.name !== 'duo-outer' && info.project.name !== 'phone', 'single-column layouts only');
+  await open(page, './#/body');
+  await page.evaluate(() => scrollTo({top: 2000, behavior: 'instant'}));
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(200);
+  await page.getByRole('link', {name: 'Upper'}).click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+
+  const rules = page.getByRole('button', {name: /Spine and neck warning/});
+  await expect(rules).toHaveAttribute('aria-expanded', 'false');
+  await rules.click();
+  await expect(page.locator('#spine-rules')).toBeVisible();
+
+  const start = page.getByRole('button', {name: /today's session/});
+  await start.click();
+  await expect(start).toHaveText(/Continue today's session/);
+  await start.click();
+  await expect(page.locator('article[data-session]')).toHaveCount(1);
+});

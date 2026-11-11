@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import {computed, reactive, watch} from 'vue';
+import {computed, nextTick, reactive, watch} from 'vue';
+import {today} from '@/tracker/logic';
 import {routine as findRoutine} from '@/tracker/config';
 import {useTrackerStore} from '@/stores/tracker';
 import {useLayout} from '@/composables/useLayout';
@@ -22,7 +23,14 @@ openOnly(sessions.value[0]?.id);
 watch(() => props.routine, () => openOnly(sessions.value[0]?.id));   // /upper and /lower share this view instance
 
 const toggle = (id: string) => { if (!opened.delete(id)) opened.add(id); };
-const start = () => openOnly(store.addSession(props.routine).id);
+// one session a day per routine: a second tap reopens today's instead of starting a duplicate
+const todays = computed(() => sessions.value.find(s => s.date === today()));
+async function start() {
+  const s = todays.value ?? store.addSession(props.routine);
+  openOnly(s.id);
+  await nextTick();
+  document.querySelector(`[data-session="${s.id}"]`)?.scrollIntoView({block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+}
 </script>
 
 <template>
@@ -39,7 +47,7 @@ const start = () => openOnly(store.addSession(props.routine).id);
     <div class="fq-col">
       <button type="button" class="start" @click="start">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
-        Start today's session
+        {{ todays ? "Continue today's session" : "Start today's session" }}
       </button>
 
       <section class="log" aria-labelledby="log-title">

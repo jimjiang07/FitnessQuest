@@ -2,8 +2,9 @@
 import {ref} from 'vue';
 import type {TrackerRoutine} from '@/types';
 
-// part: compact layouts place the warning and the exercise list apart
-defineProps<{routine: TrackerRoutine; part?: 'warning' | 'exercises'}>();
+// part: compact layouts place the warning and the exercise list apart; there the warning folds to one line
+const props = defineProps<{routine: TrackerRoutine; part?: 'warning' | 'exercises'}>();
+const rulesOpen = ref(props.part !== 'warning');
 const open = ref(new Set<string>());
 const toggle = (key: string) => {
   const s = new Set(open.value);
@@ -13,12 +14,20 @@ const toggle = (key: string) => {
 </script>
 
 <template>
-  <section v-if="part !== 'exercises'" class="warning" aria-labelledby="spine-warning">
-    <h2 id="spine-warning" class="w-title"><span aria-hidden="true">⚠️</span> Spine and neck warning</h2>
+  <section v-if="part !== 'exercises'" class="warning" :class="{folded: !rulesOpen}" aria-labelledby="spine-warning">
+    <h2 id="spine-warning" class="w-title">
+      <button v-if="part === 'warning'" type="button" class="w-toggle" :aria-expanded="rulesOpen" aria-controls="spine-rules" @click="rulesOpen = !rulesOpen">
+        <span><span aria-hidden="true">⚠️</span> Spine and neck warning</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+      <template v-else><span aria-hidden="true">⚠️</span> Spine and neck warning</template>
+    </h2>
+    <div v-show="rulesOpen" id="spine-rules">
     <p class="w-sub">{{ routine.warning.title }}</p>
     <ul class="w-points">
       <li v-for="p in routine.warning.points" :key="p">{{ p }}</li>
     </ul>
+    </div>
   </section>
 
   <section v-if="part !== 'warning'" class="roster" aria-labelledby="roster-title">
@@ -51,6 +60,13 @@ const toggle = (key: string) => {
   border: 1.5px solid rgba(255, 182, 39, .55);
 }
 .w-title { font-size: 22px; font-weight: 800; color: var(--ready); }
+.w-toggle {
+  width: 100%; min-height: 44px; margin: -6px 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border: 0; background: transparent; color: inherit; font: inherit; text-transform: inherit; letter-spacing: inherit; text-align: left; cursor: pointer;
+}
+.w-toggle .chev { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; transition: transform .2s; }
+.w-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.folded { padding-bottom: 14px; }
 .w-sub { margin: 4px 0 6px; font-weight: 700; font-size: 13.5px; }
 .w-points { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .w-points li::marker { color: var(--ready); }

@@ -105,9 +105,14 @@ test('the Habits tab opens from Coach', async ({page}) => {
   await expect(page.getByRole('link', {name: 'Habits'})).toHaveAttribute('aria-current', 'page');
 });
 
-test('the habit wall shows the weekly plan with today marked', async ({page}) => {
+test('the habit wall shows the weekly plan with today marked', async ({page}, info) => {
   await open(page, './#/habits');
-  const plan = page.getByRole('region', {name: 'Your week'});
+  const plan = page.locator('section.plan');
+  if (info.project.name !== 'duo-landscape') {
+    // one column shows today only, the whole week on request
+    await expect(plan.locator('li')).toHaveCount(1);
+    await plan.getByRole('button', {name: 'Whole week'}).click();
+  }
   await expect(plan.locator('li')).toHaveCount(7);
   await expect(plan).toContainText('Saturday burn');
   await expect(plan.locator('li[aria-current="date"]')).toHaveCount(1);

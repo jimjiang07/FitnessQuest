@@ -17,6 +17,9 @@ const long = (iso: string) => formatDate(iso, 'day');
 
 const now = today();
 const todayIndex = (new Date().getDay() + 6) % 7;   // Monday first, like the plan
+// one column (outer screen, phones): today's plan only until asked, so the wall stays close
+const wholeWeek = ref(false);
+const planDays = computed(() => tracker.week.map((d, i) => ({...d, i})).filter(d => book.value || wholeWeek.value || d.i === todayIndex));
 const target = tracker.weeklyTarget;
 const cur = computed(() => Math.max(1, store.currentWeek));
 const weeks = computed(() => {
@@ -93,9 +96,14 @@ onMounted(async () => {
       </section>
 
       <section class="fq-panel plan" aria-labelledby="plan-h">
-        <h2 id="plan-h">Your week</h2>
+        <div class="plan-head">
+          <h2 id="plan-h">{{ book || wholeWeek ? 'Your week' : 'Today' }}</h2>
+          <button v-if="!book" type="button" class="plan-more" :aria-expanded="wholeWeek" @click="wholeWeek = !wholeWeek">
+            {{ wholeWeek ? 'Just today' : 'Whole week' }}
+          </button>
+        </div>
         <ol class="plan-days">
-          <li v-for="(d, i) in tracker.week" :key="d.day" :class="{today: i === todayIndex}" :aria-current="i === todayIndex ? 'date' : undefined">
+          <li v-for="d in planDays" :key="d.day" :class="{today: d.i === todayIndex}" :aria-current="d.i === todayIndex ? 'date' : undefined">
             <span class="plan-day fq-tag">{{ d.day }}</span>
             <span class="plan-text"><b>{{ d.plan }}</b><span v-if="d.note" class="fq-mini fq-muted">{{ d.note }}</span></span>
           </li>
@@ -172,6 +180,11 @@ h2 { font-size: 24px; font-weight: 800; }
 .stat dt { font-size: 9.5px; letter-spacing: .1em; }
 .stat dd { margin: 0; font-family: var(--display); font-size: 26px; font-weight: 800; line-height: 1; }
 .plan { display: flex; flex-direction: column; gap: 8px; }
+.plan-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.plan-more {
+  min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--line);
+  background: var(--surface-2); color: var(--fg); font-weight: 700; font-size: 13.5px; cursor: pointer;
+}
 .plan-days { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .plan-days li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 12px; }
 .plan-days li.today { background: color-mix(in srgb, var(--rest) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rest) 50%, transparent); }

@@ -2,18 +2,20 @@
 import {createRouter, createWebHashHistory} from 'vue-router';
 
 declare module 'vue-router' {
-  interface RouteMeta { tab?: 'coach' | 'habits' | 'upper' | 'lower' | 'body' | 'data'; fullscreen?: boolean }
+  interface RouteMeta { tab?: 'coach' | 'habits' | 'upper' | 'lower' | 'body' | 'data'; fullscreen?: boolean; ownScroll?: boolean }
 }
 
 export const router = createRouter({
   history: createWebHashHistory(),
+  // a new tab opens at its top (Habits scrolls to this week itself); Back returns to where you were
+  scrollBehavior: (to, _from, saved) => saved ?? (to.meta.ownScroll ? false : {top: 0}),
   routes: [
     {path: '/', component: () => import('@/views/HomeView.vue'), meta: {tab: 'coach'}},
     {path: '/day/:dayId', component: () => import('@/views/DayView.vue'), props: true, meta: {tab: 'coach'}},  // compact layouts only; book shows detail on Home
     {path: '/play/:dayId', component: () => import('@/views/PlayerView.vue'), props: true, meta: {fullscreen: true}},
     {path: '/done/:dayId', component: () => import('@/views/CompleteView.vue'), props: true, meta: {fullscreen: true}},
     {path: '/about', component: () => import('@/views/AboutView.vue'), meta: {tab: 'coach'}},
-    {path: '/habits', component: () => import('@/views/HabitsView.vue'), meta: {tab: 'habits'}},
+    {path: '/habits', component: () => import('@/views/HabitsView.vue'), meta: {tab: 'habits', ownScroll: true}},
     {path: '/upper', component: () => import('@/views/StrengthView.vue'), props: {routine: 'upper'}, meta: {tab: 'upper'}},
     {path: '/lower', component: () => import('@/views/StrengthView.vue'), props: {routine: 'lower'}, meta: {tab: 'lower'}},
     {path: '/body', component: () => import('@/views/BodyView.vue'), meta: {tab: 'body'}},
