@@ -26,3 +26,11 @@ The tracker is data-driven (`data/tracker.yaml`) and keeps everything in localSt
 - Book layout (Duo inner, landscape): two halves via `Panes` or a 2-column grid with `--fold-gutter`, and nothing on the crease. Compact: one column.
 - No `window.alert` / `confirm`: confirm in the page.
 - Every exercise shows its cue, plus a tappable safety badge that reveals `why`.
+
+## Update, 12 Nov 2026: upper definition and the cut
+
+- Tuesday is now "Upper definition" (about 45 min): chest-supported row, 30° incline press, neutral-grip pulldown,
+  cable or machine lateral raise, then a triceps pushdown + incline curl superset, RKC plank 3 × 20 s and a 20 min
+  incline walk (4%, 5.2 km/h). Reverse pec deck and Pallof press dropped out of the session.
+- `cut` in `data/tracker.yaml`: 75.4 → 68.5 kg by late Feb 2027, daily fuel (1,850 kcal, 150 g protein, 200 g carbs,
+  50 g fat) and four milestones. The Body tab's "The cut" panel goes by the 7-day average weigh-in (`weeklyAverage`).

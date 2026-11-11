@@ -9,6 +9,8 @@ import BodyTrends from '@/components/tracker/BodyTrends.vue';
 import BodyHistoryItem from '@/components/tracker/BodyHistoryItem.vue';
 import BodyFlexMix from '@/components/tracker/BodyFlexMix.vue';
 import BodyProfile from '@/components/tracker/BodyProfile.vue';
+import BodyGoal from '@/components/tracker/BodyGoal.vue';
+import {tracker} from '@/tracker/config';
 
 const layout = useLayout();
 const store = useTrackerStore();
@@ -37,6 +39,7 @@ function add(e: Omit<BodyEntry, 'id'>) {
     </div>
 
     <div class="fq-col">
+      <BodyGoal v-if="tracker.cut" :cut="tracker.cut" :entries="store.data.body" />
       <BodyTrends :entries="store.data.body" />
       <section class="history" aria-labelledby="history-h">
         <h2 id="history-h">History <span class="count fq-muted">{{ store.bodyEntries.length || '' }}</span></h2>

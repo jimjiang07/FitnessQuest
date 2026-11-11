@@ -117,3 +117,19 @@ test('data tab: export, clear in two steps, import restores', async ({page}) => 
   await page.getByRole('link', {name: 'Body'}).click();
   await expect(page.locator('.history .item')).toHaveCount(2);
 });
+
+test('the cut: weekly average, kg to go and the next milestone', async ({page}) => {
+  await open(page, './#/body');
+  const goal = page.locator('section.goal');
+  await expect(goal).toContainText('75.4 → 68.5 kg');
+  await expect(goal.locator('[data-togo]')).toHaveText('6.9 kg to go');
+  await expect(goal).toContainText('1,850');
+  await addEntry(page, '2026-02-24', '74.0', '90', 1);
+  await addEntry(page, '2026-03-01', '73.0', '89', 1);
+  // goes by the 7-day average (73.5), not the last weigh-in
+  await expect(goal.locator('.val')).toContainText('73.5');
+  await expect(goal.locator('[data-togo]')).toHaveText('5.0 kg to go');
+  await expect(goal.locator('[data-next]')).toContainText('71.5 kg');
+  await expect(goal.locator('.miles .hit')).toHaveCount(1);
+  await noOverflow(page);
+});

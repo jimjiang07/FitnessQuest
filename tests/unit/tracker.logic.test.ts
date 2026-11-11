@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import type {StrengthSession, TrackerActivity} from '../../src/types';
-import {addDays, bestWeights, formatDate, isIsoDate, mondayOf, parseNumber, previousSets, sanitize, streaks, today, weekNumber, weekSummary, weeksToShow} from '../../src/tracker/logic';
+import {weeklyAverage, addDays, bestWeights, formatDate, isIsoDate, mondayOf, parseNumber, previousSets, sanitize, streaks, today, weekNumber, weekSummary, weeksToShow} from '../../src/tracker/logic';
 import {parseTracker, tracker} from '../../src/tracker/config';
 
 const acts: TrackerActivity[] = [
@@ -106,5 +106,27 @@ describe('tracker.yaml', () => {
   });
   it('rejects unknown fields', () => {
     expect(() => parseTracker({...tracker, extra: 1})).toThrow(/tracker.yaml/);
+  });
+});
+
+describe('weekly average', () => {
+  const e = (date: string, weight: number | null) => ({id: date, date, weight, waist: null, lumbar: 0, neck: 0, notes: ''});
+  it('averages the weigh-ins in the 7 days up to the latest, skipping blanks and older ones', () => {
+    const r = weeklyAverage([e('2026-11-01', 80), e('2026-11-12', 75.4), e('2026-11-14', null), e('2026-11-15', 75), e('2026-11-18', 74.6)]);
+    expect(r).toEqual({avg: 75, count: 3, date: '2026-11-18'});
+  });
+  it('is null with no weigh-ins', () => {
+    expect(weeklyAverage([e('2026-11-12', null)])).toBeNull();
+  });
+});
+
+describe('the cut', () => {
+  it('starts at 75.4 kg and its milestones step down to the target in date order', () => {
+    const cut = tracker.cut!;
+    expect(cut.start).toBe(75.4);
+    const w = cut.milestones.map(m => m.weight), d = cut.milestones.map(m => m.date);
+    expect(w).toEqual([...w].sort((a, b) => b - a));
+    expect(d).toEqual([...d].sort());
+    expect(w.at(-1)).toBe(cut.target);
   });
 });

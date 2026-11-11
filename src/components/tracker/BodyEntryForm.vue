@@ -28,7 +28,7 @@ function parse(s: string, max: number): number | null | undefined {
 function submit() {
   const weight = parse(form.weight, 500), waist = parse(form.waist, 300);
   if (!isIsoDate(form.date)) error.value = 'Pick a date.';
-  else if (weight === undefined) error.value = 'Weight should be a number in kg, like 82.4.';
+  else if (weight === undefined) error.value = 'Weight should be a number in kg, like 75.4.';
   else if (waist === undefined) error.value = 'Waist should be a number in cm, like 94.5.';
   else {
     error.value = '';
@@ -47,7 +47,7 @@ function submit() {
     <div class="pair">
       <div class="field">
         <label :for="`${pre}-weight`">Fasting weight <span class="unit">kg</span></label>
-        <input :id="`${pre}-weight`" v-model="form.weight" type="text" inputmode="decimal" autocomplete="off" placeholder="82.4" />
+        <input :id="`${pre}-weight`" v-model="form.weight" type="text" inputmode="decimal" autocomplete="off" placeholder="75.4" />
       </div>
       <div class="field">
         <label :for="`${pre}-waist`">Navel waist <span class="unit">cm</span></label>

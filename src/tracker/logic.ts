@@ -123,3 +123,13 @@ export function sanitize(raw: unknown, now = today()): TrackerData {
   }) : [];
   return {version: 1, startDate, habits, sessions, body};
 }
+
+/** Mean of the weigh-ins in the 7 days up to the latest one; day-to-day water swings average out. */
+export function weeklyAverage(entries: BodyEntry[]): {avg: number; count: number; date: string} | null {
+  const weighed = entries.filter(e => e.weight != null).sort((a, b) => a.date.localeCompare(b.date));
+  const last = weighed.at(-1);
+  if (!last) return null;
+  const from = addDays(last.date, -6);
+  const week = weighed.filter(e => e.date >= from).map(e => e.weight as number);
+  return {avg: week.reduce((a, b) => a + b, 0) / week.length, count: week.length, date: last.date};
+}

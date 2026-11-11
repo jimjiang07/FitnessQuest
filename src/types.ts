@@ -176,11 +176,25 @@ export interface FlexCard { id: string; name: string; summary: string; points: s
 
 export interface WeekPlanDay { day: string; plan: string; note?: string }
 
+export interface Milestone { date: string; weight: number; note: string }
+
+/** The fat-loss plan; weights in kg, dates "YYYY-MM-DD". */
+export interface CutPlan {
+  start: number;
+  from: string;
+  target: number;
+  by: string;            // shown as written, e.g. "Late Feb 2027"
+  pace: string;
+  nutrition: {kcal: number; protein: number; fat: number; carbs: number; note?: string};
+  milestones: Milestone[];
+}
+
 export interface TrackerConfig {
   weeklyTarget: number;
   week: WeekPlanDay[];   // Monday first
   weeksShown: number;
   profile: {lumbar: string; cervical: string; goals: string[]};
+  cut?: CutPlan;
   activities: TrackerActivity[];
   routines: TrackerRoutine[];
   flexMix: {title: string; summary: string; cards: FlexCard[]};
