@@ -16,3 +16,20 @@ for (const tab of ['habits', 'upper', 'lower', 'body', 'data']) {
     expect(squashed).toEqual([]);
   });
 }
+
+// iOS home-screen apps can start with a stale size and never fire a breakpoint change
+test('switches to the book layout on resize even when no media query fires', async ({page}) => {
+  await page.addInitScript(() => { MediaQueryList.prototype.addEventListener = () => {}; });
+  await page.setViewportSize({width: 626, height: 890});
+  await open(page, './#/habits');
+  await expect(page.locator('.fq-page')).not.toHaveClass(/book/);
+  await page.setViewportSize({width: 890, height: 626});
+  await expect(page.locator('.fq-page')).toHaveClass(/book/);
+});
+
+test('a one-column page fills a wide screen instead of leaving side gaps', async ({page}) => {
+  await page.setViewportSize({width: 760, height: 1000});
+  await open(page, './#/upper');
+  const box = await page.locator('.fq-page').boundingBox();
+  expect(box!.width).toBeGreaterThanOrEqual(760);
+});

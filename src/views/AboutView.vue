@@ -101,7 +101,7 @@ const drawn = ['B-stance hinge', 'suitcase carry', 'psoas 90/90', 'figure 4', 'd
   min-height: 100%;
   margin: 0 auto;
   padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
-  display: flex; flex-direction: column; gap: 12px; max-width: 640px;
+  display: flex; flex-direction: column; gap: 12px; max-width: 900px;
 }
 /* book: one column per half so nothing sits on the fold */
 .about.book { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--fold-gutter); max-width: none; align-items: start; }

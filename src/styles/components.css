@@ -10,7 +10,7 @@
 /* Tracker pages: one column on phones; on the Duo inner screen two halves that scroll on their own, gutter on the hinge */
 .fq-page {
   --pad-x: max(18px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
-  max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
+  max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
   padding: max(22px, env(safe-area-inset-top)) var(--pad-x) 24px;
 }
 .fq-page.book {

@@ -29,6 +29,6 @@ watch([layout, day], ([l, d]) => {
 </template>
 
 <style scoped>
-.page { max-width: 640px; min-height: 100vh; min-height: var(--view-h, 100dvh); margin: 0 auto; display: flex; flex-direction: column;
+.page { max-width: 900px; min-height: 100vh; min-height: var(--view-h, 100dvh); margin: 0 auto; display: flex; flex-direction: column;
   padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); }
 </style>

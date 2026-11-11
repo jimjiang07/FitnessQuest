@@ -31,8 +31,8 @@ const V_SEGMENTS = '(vertical-viewport-segments: 2)';
 function readViewport(): Viewport {
   const mm = window.matchMedia;
   return {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: document.documentElement.clientWidth || window.innerWidth,
+    height: document.documentElement.clientHeight || window.innerHeight,
     hSegments: mm(H_SEGMENTS).matches ? 2 : 1,
     vSegments: mm(V_SEGMENTS).matches ? 2 : 1,
   };
@@ -45,6 +45,13 @@ export function useLayout(): Readonly<Ref<Layout>> {
   const update = () => { layout.value = pickLayout(readViewport()); };
   const lists = [...QUERIES, H_SEGMENTS, V_SEGMENTS].map((q) => window.matchMedia(q));
   lists.forEach((mql) => mql.addEventListener('change', update));
-  if (getCurrentScope()) onScopeDispose(() => lists.forEach((mql) => mql.removeEventListener('change', update)));
+  // iOS home-screen apps can report a stale size at launch without crossing a breakpoint later
+  const WINDOW_EVENTS = ['resize', 'orientationchange', 'pageshow'] as const;
+  WINDOW_EVENTS.forEach((e) => window.addEventListener(e, update));
+  requestAnimationFrame(update);
+  if (getCurrentScope()) onScopeDispose(() => {
+    lists.forEach((mql) => mql.removeEventListener('change', update));
+    WINDOW_EVENTS.forEach((e) => window.removeEventListener(e, update));
+  });
   return readonly(layout);
 }

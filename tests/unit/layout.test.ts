@@ -38,12 +38,16 @@ describe('useLayout', () => {
     vi.stubGlobal('window', {
       innerWidth: width,
       innerHeight: height,
+      addEventListener: (e: string, fn: Listener) => { const k = `window:${e}`; if (!listeners.has(k)) listeners.set(k, new Set()); listeners.get(k)!.add(fn); },
+      removeEventListener: (e: string, fn: Listener) => listeners.get(`window:${e}`)?.delete(fn),
       matchMedia: (q: string) => ({
         matches: q.includes('horizontal-viewport-segments') ? segmentsH : false,
         addEventListener: (_: string, fn: Listener) => { if (!listeners.has(q)) listeners.set(q, new Set()); listeners.get(q)!.add(fn); },
         removeEventListener: (_: string, fn: Listener) => listeners.get(q)?.delete(fn),
       }),
     });
+    vi.stubGlobal('requestAnimationFrame', (fn: Listener) => fn());
+    vi.stubGlobal('document', {documentElement: {clientWidth: 0, clientHeight: 0}});
   }
   const fire = () => listeners.forEach((set) => set.forEach((fn) => fn()));
 
@@ -62,6 +66,13 @@ describe('useLayout', () => {
 
     segmentsH = true;
     fire();
+    expect(layout.value).toBe('book');
+
+    // a plain resize (no breakpoint change) still re-reads the size
+    segmentsH = false;
+    (window as {innerWidth: number}).innerWidth = 890;
+    (window as {innerHeight: number}).innerHeight = 626;
+    listeners.get('window:resize')!.forEach((fn) => fn());
     expect(layout.value).toBe('book');
 
     scope.stop();

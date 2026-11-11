@@ -109,7 +109,7 @@ const hasWarmups = computed(() => plan.value.days.every(d => d.blocks.some(b => 
 .days.grid { display: grid; grid-template-columns: 1fr 1fr; }
 .days.grid :deep(.day) { height: 100%; }
 .about { margin-top: auto; align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; }
-.page { max-width: 640px; margin: 0 auto; padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 16px; }
+.page { max-width: 900px; margin: 0 auto; padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 16px; }
 .page .days { gap: 12px; }
 .page .days :deep(.day) { padding: 16px; }
 .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
