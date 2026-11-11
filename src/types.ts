@@ -157,6 +157,9 @@ export interface TrackerExercise {
   cue: string;           // what to do, always visible
   why: string;           // the clinical reason, behind the safety badge
   critical?: boolean;    // shown in the warning colour
+  target?: string;       // the dose, e.g. "3 × 10–12"
+  weightLabel: string;   // "Weight", or "Incline" for the treadmill
+  weightUnit: string;    // "kg", "%", or "" for a level
   repsLabel?: string;    // defaults to "Reps"
 }
 
@@ -171,8 +174,11 @@ export interface TrackerRoutine {
 
 export interface FlexCard { id: string; name: string; summary: string; points: string[] }
 
+export interface WeekPlanDay { day: string; plan: string; note?: string }
+
 export interface TrackerConfig {
   weeklyTarget: number;
+  week: WeekPlanDay[];   // Monday first
   weeksShown: number;
   profile: {lumbar: string; cervical: string; goals: string[]};
   activities: TrackerActivity[];

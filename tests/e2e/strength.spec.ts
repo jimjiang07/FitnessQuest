@@ -143,3 +143,24 @@ test('lower: leg press shows its critical cue in the warning colour', async ({pa
   await expect(page.getByRole('heading', {name: 'Upper strength'})).toBeVisible();
   await expect(cards(page)).toHaveCount(0);
 });
+
+test('the plan additions: lateral raise, RKC plank, knee raise and cardio with their own units', async ({page}) => {
+  await open(page, './#/upper');
+  const roster = page.locator('.roster');
+  await expect(roster.locator('[data-key="lateral-raise"]')).toContainText('3 × 12–15');
+  await expect(roster.locator('[data-key="rkc-plank"]')).toContainText('all-out tension');
+  await page.getByRole('button', {name: /Start today/}).click();
+  const card = page.locator('[data-session]').first();
+  await expect(card.locator('[data-key="incline-walk"] .h').nth(1)).toHaveText('Incline (%)');
+  await expect(card.locator('[data-key="incline-walk"] .h').nth(2)).toHaveText('Minutes');
+  await expect(card.locator('[data-key="rkc-plank"] .h').nth(2)).toHaveText('Seconds');
+  await expect(card.locator('[data-key="incline-walk"]')).toContainText('Target 25 min');
+  // incline isn't a lift: it never becomes the session's top set
+  await card.getByLabel('Incline treadmill walk set 1 incline (%)').fill('5');
+  await expect(card.locator('.sum')).not.toContainText('kg');
+
+  await open(page, './#/lower');
+  const knee = page.locator('.roster [data-key="knee-raise"]');
+  await expect(knee).toHaveClass(/critical/);
+  await expect(knee).toContainText('Stop at 90°');
+});

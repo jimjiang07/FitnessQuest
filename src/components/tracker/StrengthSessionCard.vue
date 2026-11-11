@@ -14,7 +14,9 @@ const dayLabel = computed(() => formatDate(props.session.date, 'day'));
 
 const summary = computed(() => {
   const logged = props.routine.exercises.filter(e => (props.session.sets[e.key] ?? []).some(hasValue)).length;
-  const top = Math.max(-Infinity, ...Object.values(props.session.sets).flat().map(s => s.weight ?? -Infinity));
+  // only real lifts count as a top set, not treadmill incline or bike level
+  const lifts = props.routine.exercises.filter(e => e.weightUnit === 'kg').flatMap(e => props.session.sets[e.key] ?? []);
+  const top = Math.max(-Infinity, ...lifts.map(s => s.weight ?? -Infinity));
   const parts = [logged ? `${logged} exercise${logged === 1 ? '' : 's'}` : 'Nothing logged yet'];
   if (Number.isFinite(top)) parts.push(`top set ${top} kg`);
   return parts.join(' · ');
@@ -22,9 +24,11 @@ const summary = computed(() => {
 
 const v = (n: number | null) => (n == null ? '–' : String(n));
 /** "40 kg × 10 @ 7, 40 × 9" — units once, like you'd jot it down. */
-function formatSets(sets: SetEntry[]): string {
-  return sets.map((s, i) => `${v(s.weight)}${i === 0 && s.weight != null ? ' kg' : ''} × ${v(s.reps)}${s.rpe != null ? ` @ ${s.rpe}` : ''}`).join(', ');
+function formatSets(sets: SetEntry[], unit: string): string {
+  const u = unit === '%' ? '%' : unit ? ` ${unit}` : '';
+  return sets.map((s, i) => `${v(s.weight)}${i === 0 && s.weight != null ? u : ''} × ${v(s.reps)}${s.rpe != null ? ` @ ${s.rpe}` : ''}`).join(', ');
 }
+const weightHead = (unit: string, label: string) => (unit ? `${label} (${unit})` : label);
 // one lookup per exercise per change, not per render call
 const last = computed(() => Object.fromEntries(props.routine.exercises.map(e => [e.key, store.previous(props.session, e.key)])));
 
@@ -56,24 +60,25 @@ const upd = (key: string, i: number, field: keyof SetEntry, n: number | null) =>
       <section v-for="ex in routine.exercises" :key="ex.key" class="ex" :data-key="ex.key" :aria-label="ex.name">
         <div class="ex-top">
           <h3 class="ex-name">{{ ex.name }}</h3>
-          <span v-if="store.best[ex.key] != null" class="best fq-mini">Best {{ store.best[ex.key] }} kg</span>
+          <span v-if="ex.weightUnit === 'kg' && store.best[ex.key] != null" class="best fq-mini">Best {{ store.best[ex.key] }} kg</span>
         </div>
+        <p v-if="ex.target" class="target fq-mini fq-num">Target {{ ex.target }}</p>
         <p class="cue fq-mini" :class="{critical: ex.critical}"><span v-if="ex.critical" aria-hidden="true">🚨 </span>{{ ex.cue }}</p>
 
         <div v-if="last[ex.key]" class="last">
-          <span class="last-text fq-mini fq-num"><b>Last:</b> {{ formatSets(last[ex.key]!) }}</span>
+          <span class="last-text fq-mini fq-num"><b>Last:</b> {{ formatSets(last[ex.key]!, ex.weightUnit) }}</span>
           <button type="button" class="same" @click="store.copyPrevious(session.id, ex.key)">Same as last</button>
         </div>
 
         <div class="grid" role="group" :aria-label="`${ex.name} sets`">
           <span class="h" aria-hidden="true">Set</span>
-          <span class="h" aria-hidden="true">Weight (kg)</span>
+          <span class="h" aria-hidden="true">{{ weightHead(ex.weightUnit, ex.weightLabel) }}</span>
           <span class="h" aria-hidden="true">{{ ex.repsLabel ?? 'Reps' }}</span>
           <span class="h" aria-hidden="true">RPE</span>
           <span aria-hidden="true" />
           <template v-for="(s, i) in session.sets[ex.key] ?? []" :key="i">
             <span class="n fq-num">{{ i + 1 }}</span>
-            <StrengthNumber :model-value="s.weight" decimal :min="0" :max="1000" :label="`${ex.name} set ${i + 1} weight (kg)`"
+            <StrengthNumber :model-value="s.weight" decimal :min="0" :max="1000" :label="`${ex.name} set ${i + 1} ${weightHead(ex.weightUnit, ex.weightLabel).toLowerCase()}`"
               @update:model-value="upd(ex.key, i, 'weight', $event)" />
             <StrengthNumber :model-value="s.reps" decimal :min="0" :max="10000" :label="`${ex.name} set ${i + 1} ${(ex.repsLabel ?? 'Reps').toLowerCase()}`"
               @update:model-value="upd(ex.key, i, 'reps', $event)" />
@@ -125,6 +130,7 @@ const upd = (key: string, i: number, field: keyof SetEntry, n: number | null) =>
 .ex-name { font-size: 18px; font-weight: 800; min-width: 0; overflow-wrap: anywhere; }
 .best { flex: none; color: var(--rest); font-weight: 800; }
 .cue { margin: 0; color: var(--muted); }
+.target { margin: 0; color: var(--rest); font-weight: 800; }
 .cue.critical { color: var(--work); font-weight: 700; }
 .last {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: space-between;

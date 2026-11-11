@@ -16,6 +16,7 @@ const short = (iso: string) => formatDate(iso);
 const long = (iso: string) => formatDate(iso, 'day');
 
 const now = today();
+const todayIndex = (new Date().getDay() + 6) % 7;   // Monday first, like the plan
 const target = tracker.weeklyTarget;
 const cur = computed(() => Math.max(1, store.currentWeek));
 const weeks = computed(() => {
@@ -91,6 +92,16 @@ onMounted(async () => {
         <p class="fq-mini streak" :class="{hot: streak > 0}">{{ streakLine }}</p>
       </section>
 
+      <section class="fq-panel plan" aria-labelledby="plan-h">
+        <h2 id="plan-h">Your week</h2>
+        <ol class="plan-days">
+          <li v-for="(d, i) in tracker.week" :key="d.day" :class="{today: i === todayIndex}" :aria-current="i === todayIndex ? 'date' : undefined">
+            <span class="plan-day fq-tag">{{ d.day }}</span>
+            <span class="plan-text"><b>{{ d.plan }}</b><span v-if="d.note" class="fq-mini fq-muted">{{ d.note }}</span></span>
+          </li>
+        </ol>
+      </section>
+
       <dl class="stats">
         <div v-for="st in stats" :key="st.label" class="stat fq-panel">
           <dt class="fq-tag fq-muted">{{ st.label }}</dt>
@@ -160,6 +171,14 @@ h2 { font-size: 24px; font-weight: 800; }
 .stat { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .stat dt { font-size: 9.5px; letter-spacing: .1em; }
 .stat dd { margin: 0; font-family: var(--display); font-size: 26px; font-weight: 800; line-height: 1; }
+.plan { display: flex; flex-direction: column; gap: 8px; }
+.plan-days { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.plan-days li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 12px; }
+.plan-days li.today { background: color-mix(in srgb, var(--rest) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rest) 50%, transparent); }
+.plan-day { color: var(--muted); }
+.today .plan-day { color: var(--rest); }
+.plan-text { display: flex; flex-direction: column; min-width: 0; font-size: 14px; }
+.plan-text b { font-weight: 700; }
 .legend { list-style: none; margin: 0; padding: 0 2px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
 .legend li { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; }

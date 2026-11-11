@@ -1,5 +1,5 @@
 import {expect, test, type Page} from '@playwright/test';
-import {setup, NO_SW} from './helpers';
+import {open, setup, NO_SW} from './helpers';
 
 // setup() fixes today at Mon 2 Mar 2026; starting on 5 Jan makes that week 9
 const SEED = {
@@ -103,4 +103,12 @@ test('the Habits tab opens from Coach', async ({page}) => {
   await expect(page).toHaveURL(/#\/habits$/);
   await expect(page.getByRole('heading', {name: 'Habit wall'})).toBeVisible();
   await expect(page.getByRole('link', {name: 'Habits'})).toHaveAttribute('aria-current', 'page');
+});
+
+test('the habit wall shows the weekly plan with today marked', async ({page}) => {
+  await open(page, './#/habits');
+  const plan = page.getByRole('region', {name: 'Your week'});
+  await expect(plan.locator('li')).toHaveCount(7);
+  await expect(plan).toContainText('Saturday burn');
+  await expect(plan.locator('li[aria-current="date"]')).toHaveCount(1);
 });

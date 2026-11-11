@@ -29,6 +29,7 @@ const toggle = (key: string) => {
           <span class="ex-num fq-num" aria-hidden="true">{{ i + 1 }}</span>
           <div class="ex-text">
             <h3 class="ex-name">{{ ex.name }}</h3>
+            <p v-if="ex.target" class="target fq-num">{{ ex.target }}</p>
             <p class="cue"><span v-if="ex.critical" aria-hidden="true">🚨 </span>{{ ex.cue }}</p>
           </div>
         </div>
@@ -66,6 +67,7 @@ const toggle = (key: string) => {
 }
 .ex-text { min-width: 0; }
 .ex-name { font-size: 19px; font-weight: 800; overflow-wrap: anywhere; }
+.target { margin: 2px 0 0; color: var(--rest); font-weight: 800; font-size: 13px; }
 .cue { margin: 3px 0 0; font-size: 14px; color: var(--fg); opacity: .9; }
 .critical .cue { color: var(--work); opacity: 1; font-weight: 700; }
 .badge {
