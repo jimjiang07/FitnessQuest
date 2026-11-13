@@ -146,7 +146,7 @@ export interface Settings {
 export type Layout = 'compact' | 'shortWide' | 'book' | 'tabletop';
 
 // ── Gym tracker (data/tracker.yaml + what you log, kept in localStorage) ─────────────
-export type RoutineId = 'upper' | 'lower';
+export type RoutineId = 'push' | 'pull' | 'legs';
 export type ActivityColor = 'work' | 'rest' | 'ready' | 'cool' | 'muted';
 
 export interface TrackerActivity { id: string; label: string; short: string; color: ActivityColor; counts: boolean }
@@ -168,14 +168,18 @@ export interface TrackerRoutine {
   id: RoutineId;
   name: string;
   tab: string;
+  day: string;           // "Tue": the Gym tab opens on today's routine
   summary: string;
   warning: {title: string; points: string[]};
+  busy: string[];        // what to do when a machine is taken
   exercises: TrackerExercise[];
 }
 
 export interface FlexCard { id: string; name: string; summary: string; points: string[] }
 
 export interface WeekPlanDay { day: string; plan: string; note?: string }
+
+export interface FuelDay { label: string; days: string[]; kcal: number; protein: number; fat: number; carbs: number; note?: string }
 
 export interface Milestone { date: string; weight: number; note: string }
 
@@ -186,7 +190,7 @@ export interface CutPlan {
   target: number;
   by: string;            // shown as written, e.g. "Late Feb 2027"
   pace: string;
-  nutrition: {kcal: number; protein: number; fat: number; carbs: number; note?: string};
+  fuel: FuelDay[];       // one per kind of day; every weekday in exactly one
   milestones: Milestone[];
 }
 

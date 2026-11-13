@@ -11,20 +11,20 @@ profile:
   goals:
     - Lose 6.9 kg of fat to 11–12% body fat, keeping the muscle
     - Visible abs and a V-taper (wider shoulders, narrower waist)
-    - Sharper shoulders, upper chest and arms
+    - Sharper shoulders, upper chest and arms (about +0.8 kg of upper-body muscle)
     - Rebuild deep core stability
     - Build strength on supported machines
     - Keep the spine decompressed
 
 # The weekly plan, shown on the habit wall. Monday is first.
 week:
-  - { day: Mon, plan: "Pilates (noon) + swim (evening)", note: "Draw your navel in through the whole class." }
-  - { day: Tue, plan: "Upper definition + 20 min incline walk", note: "About 45 minutes. Arms superset at one cable station with one rope, then plank and walk." }
-  - { day: Wed, plan: Rest, note: "8,000 steps of easy walking." }
-  - { day: Thu, plan: "Pilates (noon) + swim (evening)", note: "Active recovery and decompression." }
-  - { day: Fri, plan: "Lower strength + 25 min cardio" }
-  - { day: Sat, plan: "Saturday burn (2–3 pm)", note: "25 min steady cardio + 20 min swim and spa: about 250 active calories." }
-  - { day: Sun, plan: Rest, note: "Full recovery." }
+  - { day: Mon, plan: "Pilates (noon) + easy swim or spa (evening)", note: "Deep core and decompression. Draw your navel in through the whole class." }
+  - { day: Tue, plan: "Push (evening) + 15–20 min incline walk", note: "Chest, side delts, triceps. 25–30 minutes of machines; swap the order if one is taken." }
+  - { day: Wed, plan: Rest, note: "8,000–10,000 steps of easy walking." }
+  - { day: Thu, plan: "Pilates (noon) + easy swim or spa (evening)", note: "Active recovery and decompression." }
+  - { day: Fri, plan: "Pull (evening) + 15–20 min incline walk", note: "Lats, mid back, rear delts, biceps, knee raises." }
+  - { day: Sat, plan: "Legs (2–3 pm, off-peak) + pool and spa", note: "Light maintenance: your legs are already strong." }
+  - { day: Sun, plan: Rest, note: "8,000–10,000 steps of easy walking." }
 
 # The cut: a slow fat loss that keeps the muscle. Weigh in fasted 2–3 mornings a week; the Body tab goes by the weekly average.
 cut:
@@ -32,13 +32,13 @@ cut:
   from: 2026-11-12
   target: 68.5
   by: Late Feb 2027
-  pace: 0.45–0.5 kg a week, about a 500 kcal daily deficit
-  nutrition:
-    kcal: 1850
-    protein: 150
-    fat: 50
-    carbs: 200
-    note: "Protein over 3–4 meals, 35–40 g each. Most of the carbs (rice, oats, potatoes) go in the meals before and after the gym."
+  pace: 0.45–0.5 kg a week, about a 550 kcal daily deficit (1,800 kcal a day on average)
+  # carb cycling: more carbs on the three strength days, fewer on the other four
+  fuel:
+    - { label: Strength day, days: [Tue, Fri, Sat], kcal: 1950, protein: 155, fat: 50, carbs: 220,
+        note: "A bit more rice or noodles at lunch and in the snack before the gym. A protein shake after." }
+    - { label: Lighter day, days: [Mon, Wed, Thu, Sun], kcal: 1700, protein: 155, fat: 50, carbs: 158,
+        note: "Keep the morning and evening protein shakes. Dinner without rice or noodles: lean meat or seafood and plenty of greens." }
   milestones:
     - { date: 2026-12-10, weight: 73.5, note: "Water flush. Waist down 2–3 cm; upper abs firm when you flex." }
     - { date: 2027-01-07, weight: 71.5, note: "The shoulder cap starts to separate from the triceps. Top two abs and the midline show in morning light." }
@@ -54,35 +54,33 @@ activities:
   - { id: rest, label: Rest day, short: Rest, color: muted, counts: false }
 
 routines:
-  - id: upper
-    name: Upper strength
-    tab: Upper
-    summary: Chest- and back-supported machines only, so your spine never holds the load.
+  - id: push
+    name: Push
+    tab: Push
+    day: Tue
+    summary: Chest, side delts and triceps on back-supported machines. 25–30 minutes, then plank and walk.
     warning:
       title: Spine and neck rules
       points:
-        - "Chest or back stays on the pad for every rep. If you have to swing, the weight is too heavy."
-        - "Chin tucked, eyes forward. Never pull behind your neck or look up."
-        - "Exhale on the effort and keep your ribs down: no arching off the backrest."
+        - "Back and head stay on the pad for every rep. If you have to arch, the weight is too heavy."
+        - "Lateral raise: shoulders down, never shrug toward your ears."
+        - "Exhale on the effort and keep your ribs down."
+    busy:
+      - "Chest press taken? Do the pec deck or the lateral raise first; the order doesn't matter."
+      - "Machines all full? The cable station does pushdowns and lateral raises in one spot."
     exercises:
-      - key: machine-row
-        name: Chest-supported machine row
-        images: [gym-machine-row-a.jpg, gym-machine-row-b.jpg]
-        target: 3 × 10
-        cue: "Sternum glued to the chest pad, chin tucked, no swinging."
-        why: "The pad carries your upper body, so the discs at L4–S1 take no shear while your back muscles work. Pulling the shoulders back also opens up the chest."
+      - key: chest-press
+        name: Seated chest press machine
+        images: [gym-chest-press-a.jpg, gym-chest-press-b.jpg]
+        target: 3 × 8–10
+        cue: "Back and head against the pad. Don't arch your lower back."
+        why: "The backrest keeps your lumbar spine neutral, so the press can't turn into a back arch that pinches the discs. If it's taken, do the pec deck or lateral raise first."
       - key: incline-press
-        name: 30° incline machine chest press
+        name: Incline press or pec deck fly
         images: [gym-incline-press-a.jpg, gym-incline-press-b.jpg]
-        target: 3 × 10
-        cue: "Handles level with your upper sternum. Drive your inner elbows together and squeeze one second at the top."
+        target: 3 × 10–12
+        cue: "Either one: drive your inner elbows together and squeeze one second. Lower back and head stay on the pad."
         why: "The incline works the upper (clavicular) chest that fills the line under the collarbone; a flat press mostly builds the middle and lower chest. Lower back and head stay on the pad, so the press can't turn into a back arch."
-      - key: lat-pulldown
-        name: Lat pulldown (neutral grip)
-        images: [gym-lat-pulldown-a.jpg, gym-lat-pulldown-b.jpg]
-        target: 3 × 10
-        cue: "Pull to your collarbone, chin tucked, eyes forward. Never behind the neck."
-        why: "Lat width is the top of the V-taper. Pulling to the front keeps your neck neutral; behind-the-neck pulls force the head forward and load the facet joints."
       - key: lateral-raise
         name: Cable or machine lateral raise
         images: [gym-lateral-raise-a.jpg, gym-lateral-raise-b.jpg]
@@ -90,17 +88,11 @@ routines:
         cue: "Sweep your hands out toward the walls, not up. Stop at shoulder height. Shoulders down, away from your ears."
         why: "The side delt caps the shoulder and makes the waist look narrower. Hold the cable ball or use a wrist cuff instead of gripping hard. If you shrug, the upper traps take over and pinch the neck, so drop the weight."
       - key: triceps-pushdown
-        name: "Superset A: rope triceps pushdown"
+        name: Rope triceps pushdown
         images: [gym-triceps-pushdown-a.jpg, gym-triceps-pushdown-b.jpg]
-        target: 3 × 12, then straight to B
-        cue: "Rope on the high pulley. Elbows pinned to your ribs, spread the rope at the bottom, 3 seconds back up."
+        target: 3 × 12
+        cue: "Elbows pinned to your ribs. Spread the rope at the bottom, 3 seconds back up."
         why: "The triceps are most of the upper arm, and spreading the rope works the outer (lateral) head that makes the horseshoe. Stand tall with soft knees and a rigid neutral spine; if you have to lean in, the weight is too heavy."
-      - key: rope-curl
-        name: "Superset B: rope hammer curl"
-        images: [gym-rope-curl-a.jpg, gym-rope-curl-b.jpg]
-        target: 3 × 10, 60 s rest after the pair
-        cue: "Same rope, same station: move the pulley to the bottom (or use the low pulley beside it). Elbows pinned, curl without leaning back."
-        why: "Both halves of the superset use one rope at one cable station, so you never leave it in a busy gym. Hammer curls build the biceps and the brachialis, which pushes the biceps up for the peak and the line against the triceps. Glutes squeezed and ribs down: if your lower back arches to finish a rep, drop the weight."
       - key: rkc-plank
         name: RKC plank
         images: [gym-rkc-plank-a.jpg]
@@ -112,56 +104,52 @@ routines:
       - key: incline-walk
         name: Incline treadmill walk
         images: [gym-incline-walk-a.jpg]
-        target: 20 min · 4% · 5.2 km/h
+        target: 15–20 min · 4% · 5.2 km/h
         cue: "Hands off the rails, chest proud, chin tucked. Look straight ahead."
         weightLabel: Incline
         weightUnit: "%"
         repsLabel: Minutes
         why: "Walking uphill burns fat with no impact or twisting. Holding the rails takes the work away; looking down or up at a screen strains the neck."
 
-  - id: lower
-    name: Lower strength
-    tab: Lower
-    summary: Zero load down the spine. Pelvis stays locked and your deep core braces every rep.
+  - id: pull
+    name: Pull
+    tab: Pull
+    day: Fri
+    summary: Lats, mid back, rear delts and biceps, chest on the pad. 25–30 minutes, then knee raises and walk.
     warning:
-      title: Lower back rules
+      title: Spine and neck rules
       points:
-        - "Leg press: stop before your tailbone curls off the seat. That curl is loaded spinal flexion."
-        - "Grip the handles and keep your pelvis pinned on every seated machine."
-        - "Brace gently (navel to spine) and breathe. Never hold your breath and strain."
+        - "Sternum glued to the chest pad, chin tucked. Never look up or pull behind your neck."
+        - "Knee raise: stop with your thighs level. Never curl your pelvis up."
+        - "If you have to swing, the weight is too heavy."
+    busy:
+      - "Pulldown taken? Do the chest-supported row first; same muscles, same result."
+      - "Machines all full? A seated cable row at the cable station, chest tall or against a bench."
     exercises:
-      - key: leg-press
-        name: 45° or horizontal leg press
-        images: [gym-leg-press-a.jpg]
+      - key: lat-pulldown
+        name: Lat pulldown (neutral grip)
+        images: [gym-lat-pulldown-a.jpg, gym-lat-pulldown-b.jpg]
         target: 3 × 10–12
-        cue: "Feet high and wide. Stop before your tailbone lifts off the seat!"
-        critical: true
-        why: "If the pelvis tucks at the bottom, the lumbar spine bends under the whole sled's weight. Stopping short keeps L4–S1 neutral."
-      - key: leg-curl
-        name: Seated leg curl
-        images: [gym-leg-curl-a.jpg, gym-leg-curl-b.jpg]
+        cue: "Pull to your collarbone, chin tucked, eyes forward. Never behind the neck."
+        why: "Lat width is the top of the V-taper. Pulling to the front keeps your neck neutral; behind-the-neck pulls force the head forward and load the facet joints."
+      - key: machine-row
+        name: Chest-supported row (low row)
+        images: [gym-machine-row-a.jpg, gym-machine-row-b.jpg]
         target: 3 × 10–12
-        cue: "Thigh pad locked tight, grip the handles, feel the hamstrings."
-        why: "Seated with the pad locked, the pelvis can't tilt, so the hamstrings work without tugging on your lower back."
-      - key: hip-abductor
-        name: Seated hip abductor
-        images: [gym-hip-abductor-a.jpg, gym-hip-abductor-b.jpg]
+        cue: "Sternum glued to the chest pad, chin tucked, no swinging."
+        why: "The pad carries your upper body, so the discs at L4–S1 take no shear while your back muscles work. Pulling the shoulders back also opens up the chest."
+      - key: rear-delt-fly
+        name: Reverse pec deck (rear delt fly)
+        images: [gym-rear-delt-fly-a.jpg, gym-rear-delt-fly-b.jpg]
         target: 3 × 12–15
-        cue: "Sit tall, pause at the widest point."
-        why: "Glute medius steadies the pelvis when you walk and stand, which takes side-to-side load off the lower discs."
-      - key: leg-extension
-        name: Seated leg extension
-        images: [gym-leg-extension-a.jpg, gym-leg-extension-b.jpg]
+        cue: "Chest on the pad. Squeeze your shoulder blades back and down."
+        why: "Strong rear shoulders pull your head back over your spine, which takes strain off the neck. Separate from push day, so the shoulders and neck aren't tired twice in one session."
+      - key: incline-curl
+        name: Seated incline dumbbell curl
+        images: [gym-incline-curl-a.jpg, gym-incline-curl-b.jpg]
         target: 3 × 10–12
-        cue: "Lower for three seconds. Back stays against the pad."
-        why: "Builds the quads with no spinal load at all, as long as your back stays on the pad."
-      - key: suitcase-carry
-        name: Single-arm suitcase carry
-        images: [suitcase-carry-a.svg, suitcase-carry-b.svg]
-        target: 3 × 20 m each side
-        cue: "Dumbbell in one hand, walk slowly, don't lean."
-        repsLabel: Metres each side
-        why: "Resisting the side-bend trains the obliques and quadratus lumborum that brace your spine, with no twisting."
+        cue: "Bench at 60–75°, back and head on the pad. Arms hang straight, turn your palms out as you curl, elbows stay back."
+        why: "The bench stops you swinging your torso or arching your back to lift the weight, so the biceps do all the work. Machine preacher curl works too."
       - key: knee-raise
         name: Back-supported knee raise (stop at 90°)
         images: [gym-knee-raise-a.jpg, gym-knee-raise-b.jpg]
@@ -170,22 +158,72 @@ routines:
         critical: true
         weightLabel: Added
         why: "Lifting only to 90° keeps the lower back from rounding. The hip flexors still pull hard on L4–S1, so stop at the first twinge in your back or leg and swap it for a dead bug. Lower for three seconds."
-      - key: cardio
-        name: Recumbent bike or incline walk
-        images: [gym-cardio-a.jpg]
-        target: 25 min
-        cue: "Seated upright or walking hands-free. Chin tucked, eyes ahead."
-        weightLabel: Level
-        weightUnit: ""
+      - key: incline-walk
+        name: Incline treadmill walk
+        images: [gym-incline-walk-a.jpg]
+        target: 15–20 min · 4% · 5.2 km/h
+        cue: "Hands off the rails, chest proud, chin tucked. Look straight ahead."
+        weightLabel: Incline
+        weightUnit: "%"
         repsLabel: Minutes
-        why: "Going from 15 to 25 minutes burns roughly another 100 calories a session, with no load on the spine. The recumbent bike's backrest supports the lower back."
+        why: "Walking uphill burns fat with no impact or twisting. Holding the rails takes the work away; looking down or up at a screen strains the neck."
+
+  - id: legs
+    name: Legs
+    tab: Legs
+    day: Sat
+    summary: "Off-peak (2–3 pm), light and steady: your legs just need maintaining. Zero load down the spine."
+    warning:
+      title: Lower back rules
+      points:
+        - "Leg press: stop before your tailbone curls off the seat. That curl is loaded spinal flexion."
+        - "Grip the handles and keep your pelvis pinned on every seated machine."
+        - "No chasing big weights here: maintain, don't max."
+    busy:
+      - "Saturday afternoon is quiet, so queues are rare. If one is taken, do the next and come back."
+    exercises:
+      - key: leg-press
+        name: 45° or horizontal leg press
+        images: [gym-leg-press-a.jpg]
+        target: 3 × 10
+        cue: "Feet high and wide. Stop before your tailbone lifts off the seat!"
+        critical: true
+        why: "If the pelvis tucks at the bottom, the lumbar spine bends under the whole sled's weight. Stopping short keeps L4–S1 neutral."
+      - key: leg-curl
+        name: Seated leg curl
+        images: [gym-leg-curl-a.jpg, gym-leg-curl-b.jpg]
+        target: 3 × 12
+        cue: "Thigh pad locked tight, grip the handles, feel the hamstrings."
+        why: "Seated with the pad locked, the pelvis can't tilt, so the hamstrings work without tugging on your lower back."
+      - key: hip-abductor
+        name: Seated hip abductor
+        images: [gym-hip-abductor-a.jpg, gym-hip-abductor-b.jpg]
+        target: 3 × 15
+        cue: "Sit tall, pause at the widest point."
+        why: "Glute medius steadies the pelvis when you walk and stand, which takes side-to-side load off the lower discs."
+      - key: suitcase-carry
+        name: Single-arm suitcase carry
+        images: [suitcase-carry-a.svg, suitcase-carry-b.svg]
+        target: 3 × 30 s each side
+        cue: "Dumbbell in one hand, walk slowly, don't lean."
+        repsLabel: Seconds each side
+        why: "Resisting the side-bend trains the obliques and quadratus lumborum that brace your spine, with no twisting."
+      - key: incline-walk
+        name: Incline walk (or swim)
+        images: [gym-incline-walk-a.jpg]
+        target: 20 min · 4–5%, or go straight to the pool and spa
+        cue: "Hands off the rails, chest proud, chin tucked. Look straight ahead."
+        weightLabel: Incline
+        weightUnit: "%"
+        repsLabel: Minutes
+        why: "Walking uphill burns fat with no impact or twisting. Holding the rails takes the work away; looking down or up at a screen strains the neck."
 
 flexMix:
   title: Weekend flex mix
-  summary: "Saturday has a job: burn about 250 active calories with zero spine stress. Pick from these."
+  summary: "Extra cardio for rest days or after a session, all with zero spine stress. Pick from these."
   cards:
-    - id: saturday-burn
-      name: Saturday burn (45 min)
+    - id: burn
+      name: Burn session (45 min)
       summary: 25 min steady cardio, then 20 min swim and spa.
       points:
         - "Cardio: incline walk, brisk treadmill or a seated cycle class, high handlebars, sitting upright."

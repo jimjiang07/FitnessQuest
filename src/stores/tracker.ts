@@ -73,10 +73,10 @@ export const useTrackerStore = defineStore('tracker', () => {
   /** Copies last session's sets for one exercise into this one (RPE left for you to rate). */
   function copyPrevious(id: string, key: string) {
     const s = session(id);
-    const prev = s && previousSets(data.value.sessions, s.routine, key, s);
+    const prev = s && previousSets(data.value.sessions, key, s);
     if (s && prev) s.sets[key] = prev.map(p => ({weight: p.weight, reps: p.reps, rpe: null}));
   }
-  const previous = (s: StrengthSession, key: string) => previousSets(data.value.sessions, s.routine, key, s);
+  const previous = (s: StrengthSession, key: string) => previousSets(data.value.sessions, key, s);
   const best = computed(() => bestWeights(data.value.sessions));
 
   // ── body journal ──

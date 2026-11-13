@@ -65,10 +65,10 @@ export function parseNumber(raw: string, {min = -Infinity, max = Infinity, integ
 export const newestFirst = <T extends {date: string; id: string}>(list: T[]) =>
   [...list].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
 
-/** The most recent earlier session of this routine that logged anything for the exercise. */
-export function previousSets(sessions: StrengthSession[], routine: RoutineId, key: string,
+/** The most recent earlier session (any routine, so a move that changed day keeps its history) that logged the exercise. */
+export function previousSets(sessions: StrengthSession[], key: string,
   before: {date: string; id: string}): SetEntry[] | null {
-  const earlier = newestFirst(sessions).filter(s => s.routine === routine && s.id !== before.id &&
+  const earlier = newestFirst(sessions).filter(s => s.id !== before.id &&
     (s.date < before.date || (s.date === before.date && s.id < before.id)));
   for (const s of earlier) {
     const sets = (s.sets[key] ?? []).filter(hasValue);
@@ -92,6 +92,22 @@ export const newId = (now = Date.now()) => `${now.toString(36)}${Math.random().t
 
 export const emptyData = (now = today()): TrackerData => ({version: 1, startDate: mondayOf(now), habits: {}, sessions: [], body: []});
 
+const ROUTINE_IDS: readonly string[] = ['push', 'pull', 'legs'] satisfies RoutineId[];
+// the upper/lower split became push/pull/legs; old sessions keep their sets
+const LEGACY_ROUTINES: Record<string, RoutineId | undefined> = {upper: 'push', lower: 'legs'};
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export const weekday = (iso: string) => WEEKDAYS[parse(iso).getDay()];
+
+/** Today's routine, or else the next one coming up this week. */
+export function routineFor<T extends {day: string}>(routines: T[], iso: string): T | undefined {
+  for (let i = 0; i < 7; i++) {
+    const r = routines.find(x => x.day === weekday(addDays(iso, i)));
+    if (r) return r;
+  }
+  return routines[0];
+}
+
 // saved or imported data: keep what's valid, drop what isn't
 const num = (v: unknown, min: number, max: number): number | null =>
   typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : null;
@@ -110,11 +126,12 @@ export function sanitize(raw: unknown, now = today()): TrackerData {
   if (r.habits && typeof r.habits === 'object')
     for (const [k, v] of Object.entries(r.habits)) if (isIsoDate(k) && typeof v === 'string' && v) habits[k] = v;
   const sessions: StrengthSession[] = Array.isArray(r.sessions) ? r.sessions.flatMap((s: any) => {
-    if (!s || typeof s.id !== 'string' || !isIsoDate(s.date) || (s.routine !== 'upper' && s.routine !== 'lower')) return [];
+    const routine = ROUTINE_IDS.includes(s?.routine) ? s.routine as RoutineId : LEGACY_ROUTINES[s?.routine];
+    if (!s || typeof s.id !== 'string' || !isIsoDate(s.date) || !routine) return [];
     const sets: Record<string, SetEntry[]> = {};
     if (s.sets && typeof s.sets === 'object')
       for (const [k, v] of Object.entries(s.sets)) if (Array.isArray(v)) sets[k] = v.map(cleanSet);
-    return [{id: s.id, routine: s.routine, date: s.date, sets}];
+    return [{id: s.id, routine, date: s.date, sets}];
   }) : [];
   const body: BodyEntry[] = Array.isArray(r.body) ? r.body.flatMap((b: any) => {
     if (!b || typeof b.id !== 'string' || !isIsoDate(b.date)) return [];

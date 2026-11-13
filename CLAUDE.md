@@ -2,7 +2,7 @@
 
 A no-login web app that runs a 4-day spine rehab plan as voice-coached workouts, like an F45 or Fitstop class:
 pick a day, press Start, and the coach calls every exercise, set, rest and side switch. Plan data is YAML.
-It also has a gym tracker (Habits, Upper, Lower, Body and Data tabs) for machine sessions at the club; what you log stays
+It also has a gym tracker (Habits, Gym, Body and Data tabs; Gym holds the push, pull and legs days) for machine sessions at the club; what you log stays
 in this browser's localStorage. No accounts, no backend, no analytics. Main device: iPhone Duo, inner screen open in landscape.
 
 - What and why: `docs/plans/spec.md`

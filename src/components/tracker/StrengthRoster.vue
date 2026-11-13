@@ -33,6 +33,10 @@ const toggle = (key: string) => {
 
   <section v-if="part !== 'warning'" class="roster" aria-labelledby="roster-title">
     <h2 id="roster-title" class="r-title">Exercises</h2>
+    <aside v-if="routine.busy.length" class="busy" aria-label="Machine taken?">
+      <span class="fq-tag">Machine taken?</span>
+      <ul><li v-for="b in routine.busy" :key="b">{{ b }}</li></ul>
+    </aside>
     <ol class="list">
       <li v-for="(ex, i) in routine.exercises" :key="ex.key" class="ex" :class="{critical: ex.critical}" :data-key="ex.key">
         <ExercisePic v-if="ex.images.length" class="ex-pic" :images="ex.images" :alt="ex.name" />
@@ -75,6 +79,9 @@ const toggle = (key: string) => {
 
 .roster { display: flex; flex-direction: column; gap: 8px; }
 .r-title { font-size: 20px; font-weight: 800; color: var(--muted); }
+.busy { padding: 10px 12px; border-radius: 14px; background: var(--surface-2); display: flex; flex-direction: column; gap: 4px; }
+.busy .fq-tag { color: var(--rest); }
+.busy ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; font-size: 14px; }
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .ex { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .ex.critical { border-color: rgba(255, 92, 57, .6); }

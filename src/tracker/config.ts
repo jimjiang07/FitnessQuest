@@ -7,6 +7,8 @@ import trackerYaml from '@data/tracker.yaml';
 const text = z.string().min(1);
 const kg = z.number().positive().max(400);
 const grams = z.number().int().positive();
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
+const weekday = z.enum(WEEKDAYS);
 const isoDay = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const exercise = z.strictObject({
   key: z.string().regex(/^[a-z0-9-]+$/), name: text, cue: text, why: text,
@@ -21,7 +23,8 @@ const trackerSchema = z.strictObject({
   profile: z.strictObject({lumbar: text, cervical: text, goals: z.array(text)}),
   cut: z.strictObject({
     start: kg, from: isoDay, target: kg, by: text, pace: text,
-    nutrition: z.strictObject({kcal: grams, protein: grams, fat: grams, carbs: grams, note: text.optional()}),
+    fuel: z.array(z.strictObject({label: text, days: z.array(weekday).min(1), kcal: grams, protein: grams, fat: grams, carbs: grams, note: text.optional()}))
+      .refine(f => f.flatMap(x => x.days).sort().join() === [...WEEKDAYS].sort().join(), 'every weekday in exactly one fuel day'),
     milestones: z.array(z.strictObject({date: isoDay, weight: kg, note: text})),
   }).optional(),
   activities: z.array(z.strictObject({
@@ -29,8 +32,9 @@ const trackerSchema = z.strictObject({
     color: z.enum(['work', 'rest', 'ready', 'cool', 'muted']), counts: z.boolean(),
   })).min(1),
   routines: z.array(z.strictObject({
-    id: z.enum(['upper', 'lower']), name: text, tab: text, summary: text,
+    id: z.enum(['push', 'pull', 'legs']), name: text, tab: text, day: weekday, summary: text,
     warning: z.strictObject({title: text, points: z.array(text)}),
+    busy: z.array(text).default([]),
     exercises: z.array(exercise).min(1),
   })),
   flexMix: z.strictObject({

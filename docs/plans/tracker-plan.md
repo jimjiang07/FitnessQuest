@@ -34,3 +34,13 @@ The tracker is data-driven (`data/tracker.yaml`) and keeps everything in localSt
   incline walk (4%, 5.2 km/h). Reverse pec deck and Pallof press dropped out of the session.
 - `cut` in `data/tracker.yaml`: 75.4 → 68.5 kg by late Feb 2027, daily fuel (1,850 kcal, 150 g protein, 200 g carbs,
   50 g fat) and four milestones. The Body tab's "The cut" panel goes by the 7-day average weigh-in (`weeklyAverage`).
+
+## Update, 13 Nov 2026: push / pull / legs
+
+- Three strength days of 25–30 minutes each, so peak-hour queues can't stop a session finishing: Push (Tue),
+  Pull (Fri), Legs (Sat 2–3 pm, off-peak). Push and pull are split so the shoulders and neck aren't loaded twice in one day.
+- One Gym tab replaces Upper and Lower; it opens on today's day (or the next one) and has a Push | Pull | Legs switch.
+  `/upper` and `/lower` redirect. Saved `upper` sessions become `push` and `lower` become `legs` in `sanitize()`.
+- "Last" and "Best" follow the exercise key across days, so a move that changed day keeps its history.
+- Each routine has `busy` tips (what to do when a machine is taken).
+- Fuel cycles carbs: 1,950 kcal on strength days and 1,700 on the other four, about 1,807 a day on average.

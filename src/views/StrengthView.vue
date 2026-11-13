@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, nextTick, reactive, watch} from 'vue';
 import {today} from '@/tracker/logic';
-import {routine as findRoutine} from '@/tracker/config';
+import {routine as findRoutine, tracker} from '@/tracker/config';
 import {useTrackerStore} from '@/stores/tracker';
 import {useLayout} from '@/composables/useLayout';
 import type {RoutineId} from '@/types';
@@ -36,8 +36,14 @@ async function start() {
 <template>
   <main class="fq-page" :class="{book}" :data-routine="routine">
     <div class="fq-col">
+      <nav class="split" aria-label="Strength days">
+        <RouterLink v-for="x in tracker.routines" :key="x.id" :to="`/${x.id}`" class="seg" :class="{on: x.id === routine}"
+          :aria-current="x.id === routine ? 'page' : undefined">
+          <b>{{ x.tab }}</b><span class="fq-mini">{{ x.day }}</span>
+        </RouterLink>
+      </nav>
       <header class="fq-head">
-        <span class="fq-tag fq-muted">Strength log</span>
+        <span class="fq-tag fq-muted">Strength log · {{ r.day }}</span>
         <h1 class="fq-title">{{ r.name }}</h1>
         <p class="summary">{{ r.summary }}</p>
       </header>
@@ -69,6 +75,10 @@ async function start() {
 </template>
 
 <style scoped>
+.split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: var(--radius-pill); background: var(--surface); border: 1px solid var(--line); }
+.seg { min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-pill); color: var(--muted); text-decoration: none; line-height: 1.15; }
+.seg b { font-size: 16px; font-weight: 800; }
+.seg.on { background: var(--surface-2); color: var(--rest); box-shadow: inset 0 0 0 1.5px rgba(39, 196, 176, .5); }
 .summary { margin: 2px 0 0; color: var(--muted); font-size: 14.5px; }
 
 .start {

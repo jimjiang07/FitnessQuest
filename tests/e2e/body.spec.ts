@@ -123,7 +123,10 @@ test('the cut: weekly average, kg to go and the next milestone', async ({page}) 
   const goal = page.locator('section.goal');
   await expect(goal).toContainText('75.4 → 68.5 kg');
   await expect(goal.locator('[data-togo]')).toHaveText('6.9 kg to go');
-  await expect(goal).toContainText('1,850');
+  // carb cycling: the fake clock is a Monday, a lighter day
+  await expect(goal.locator('[data-fuel-day]')).toHaveText('Today · Lighter day');
+  await expect(goal.locator('.fuel')).toContainText('1,700');
+  await expect(goal.locator('.other')).toContainText('Strength day (Tue, Fri, Sat): 1,950 kcal');
   await addEntry(page, '2026-02-24', '74.0', '90', 1);
   await addEntry(page, '2026-03-01', '73.0', '89', 1);
   // goes by the 7-day average (73.5), not the last weigh-in

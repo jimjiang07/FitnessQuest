@@ -1,8 +1,10 @@
 /* Hash routes: GitHub Pages serves one file. `meta.tab` says which tab a screen belongs to; `fullscreen` hides the tab bar. */
 import {createRouter, createWebHashHistory} from 'vue-router';
+import {tracker} from '@/tracker/config';
+import {routineFor, today} from '@/tracker/logic';
 
 declare module 'vue-router' {
-  interface RouteMeta { tab?: 'coach' | 'habits' | 'upper' | 'lower' | 'body' | 'data'; fullscreen?: boolean; ownScroll?: boolean }
+  interface RouteMeta { tab?: 'coach' | 'habits' | 'gym' | 'body' | 'data'; fullscreen?: boolean; ownScroll?: boolean }
 }
 
 export const router = createRouter({
@@ -16,8 +18,11 @@ export const router = createRouter({
     {path: '/done/:dayId', component: () => import('@/views/CompleteView.vue'), props: true, meta: {fullscreen: true}},
     {path: '/about', component: () => import('@/views/AboutView.vue'), meta: {tab: 'coach'}},
     {path: '/habits', component: () => import('@/views/HabitsView.vue'), meta: {tab: 'habits', ownScroll: true}},
-    {path: '/upper', component: () => import('@/views/StrengthView.vue'), props: {routine: 'upper'}, meta: {tab: 'upper'}},
-    {path: '/lower', component: () => import('@/views/StrengthView.vue'), props: {routine: 'lower'}, meta: {tab: 'lower'}},
+    // the Gym tab opens on today's routine (or the next one this week)
+    {path: '/gym', redirect: () => `/${routineFor(tracker.routines, today())?.id ?? 'push'}`},
+    ...tracker.routines.map(r => ({path: `/${r.id}`, component: () => import('@/views/StrengthView.vue'), props: {routine: r.id}, meta: {tab: 'gym' as const}})),
+    {path: '/upper', redirect: '/push'},   // links saved before the push/pull/legs split
+    {path: '/lower', redirect: '/legs'},
     {path: '/body', component: () => import('@/views/BodyView.vue'), meta: {tab: 'body'}},
     {path: '/data', component: () => import('@/views/DataView.vue'), meta: {tab: 'data'}},
     {path: '/kit', component: () => import('@/views/KitView.vue'), meta: {fullscreen: true}},                // component gallery for building UI in isolation
@@ -27,7 +32,7 @@ export const router = createRouter({
 
 // opening the app lands on the tracker tab you used last; tapping Coach makes Coach the landing page again
 const LAST_TAB_KEY = 'fitness-quest:tab';
-const TRACKER_TABS = ['habits', 'upper', 'lower', 'body'];
+const TRACKER_TABS = ['habits', 'gym', 'body'];
 const storage = {
   get: () => { try { return localStorage.getItem(LAST_TAB_KEY); } catch { return null; } },
   set: (v: string | null) => { try { if (v) localStorage.setItem(LAST_TAB_KEY, v); else localStorage.removeItem(LAST_TAB_KEY); } catch { /* blocked */ } },

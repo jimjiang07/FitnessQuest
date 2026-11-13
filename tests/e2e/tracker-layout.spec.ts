@@ -5,7 +5,7 @@ test.use(NO_SW);
 test.beforeEach(async ({page}) => setup(page));
 
 // a short window used to squash panels inside the scrolling halves; 8px allows for big headings' glyph overhang
-for (const tab of ['habits', 'upper', 'lower', 'body', 'data']) {
+for (const tab of ['habits', 'push', 'pull', 'legs', 'body', 'data']) {
   test(`${tab}: no panel is squashed, even on a short screen`, async ({page}) => {
     await page.setViewportSize({width: 1009, height: 548});
     await open(page, `./#/${tab}`);
@@ -29,7 +29,7 @@ test('switches to the book layout on resize even when no media query fires', asy
 
 test('a one-column page fills a wide screen instead of leaving side gaps', async ({page}) => {
   await page.setViewportSize({width: 760, height: 1000});
-  await open(page, './#/upper');
+  await open(page, './#/push');
   const box = await page.locator('.fq-page').boundingBox();
   expect(box!.width).toBeGreaterThanOrEqual(760);
 });

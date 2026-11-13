@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from 'vue';
 import type {BodyEntry, CutPlan} from '@/types';
-import {formatDate, weeklyAverage} from '@/tracker/logic';
+import {formatDate, today, weekday, weeklyAverage} from '@/tracker/logic';
 
 const props = defineProps<{cut: CutPlan; entries: BodyEntry[]}>();
 
@@ -11,8 +11,12 @@ const toGo = computed(() => Math.max(0, now.value - props.cut.target));
 const done = computed(() => Math.min(1, Math.max(0, (props.cut.start - now.value) / (props.cut.start - props.cut.target))));
 const reached = (kg: number) => now.value <= kg;
 const next = computed(() => props.cut.milestones.find(m => !reached(m.weight)));
+// carb cycling: today's numbers up front, the other kind of day on one line
+const day = weekday(today());
+const fuelToday = computed(() => props.cut.fuel.find(f => f.days.includes(day)) ?? props.cut.fuel[0]);
+const others = computed(() => props.cut.fuel.filter(f => f !== fuelToday.value));
 const fuel = computed(() => {
-  const n = props.cut.nutrition;
+  const n = fuelToday.value;
   return [
     {label: 'Energy', value: n.kcal.toLocaleString('en-AU'), unit: 'kcal'},
     {label: 'Protein', value: n.protein, unit: 'g'},
@@ -45,14 +49,17 @@ const fuel = computed(() => {
       <p>{{ next.note }}</p>
     </div>
 
-    <div class="fuel-head"><span class="fq-tag lab">Every day</span></div>
+    <div class="fuel-head"><span class="fq-tag lab" data-fuel-day>Today · {{ fuelToday.label }}</span></div>
     <dl class="fuel">
       <div v-for="f in fuel" :key="f.label">
         <dt>{{ f.label }}</dt>
         <dd class="fq-num">{{ f.value }}<small>{{ f.unit }}</small></dd>
       </div>
     </dl>
-    <p v-if="cut.nutrition.note" class="fq-mini fq-muted">{{ cut.nutrition.note }}</p>
+    <p v-if="fuelToday.note" class="fq-mini fq-muted note">{{ fuelToday.note }}</p>
+    <p v-for="o in others" :key="o.label" class="fq-mini other fq-num">
+      <b>{{ o.label }}</b> ({{ o.days.join(', ') }}): {{ o.kcal.toLocaleString('en-AU') }} kcal · {{ o.protein }} g protein · {{ o.carbs }} g carbs · {{ o.fat }} g fat
+    </p>
 
     <ol class="miles">
       <li v-for="m in cut.milestones" :key="m.date" :class="{hit: reached(m.weight)}">
@@ -85,7 +92,8 @@ h2 { font-size: 22px; font-weight: 800; }
 dt { font-size: 12px; color: var(--muted); }
 dd { margin: 0; font-weight: 800; font-size: 17px; white-space: nowrap; }
 dd small { font-size: 12px; color: var(--muted); margin-left: 2px; font-weight: 700; }
-.fuel + p { margin: 0; }
+.note, .other { margin: 0; }
+.other { padding: 6px 10px; border-radius: 10px; background: var(--surface-2); }
 .miles { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .miles li { display: grid; grid-template-columns: 1fr auto 24px; gap: 8px; padding: 6px 2px; border-top: 1px solid var(--line); font-size: 14px; font-weight: 600; }
 .miles li.hit { color: var(--rest); }

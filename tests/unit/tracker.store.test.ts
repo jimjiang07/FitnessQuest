@@ -16,7 +16,7 @@ describe('tracker store', () => {
     const storage = memoryStorage();
     vi.stubGlobal('localStorage', storage);
     const t = useTrackerStore();
-    const s = t.addSession('upper');
+    const s = t.addSession('pull');
     expect(s.date).toBe(today());
     expect(Object.keys(s.sets)).toContain('machine-row');
     expect(t.data.habits[today()]).toBe('strength');
@@ -32,7 +32,7 @@ describe('tracker store', () => {
     expect(storage.setItem).toHaveBeenCalledTimes(1);
     setActivePinia(createPinia());
     const again = useTrackerStore();
-    expect(again.sessionsFor('upper')[0].sets['machine-row'][0].weight).toBe(40);
+    expect(again.sessionsFor('pull')[0].sets['machine-row'][0].weight).toBe(40);
     expect(JSON.parse(storage.map.get(TRACKER_KEY)!).version).toBe(1);
   });
 
@@ -40,7 +40,7 @@ describe('tracker store', () => {
     vi.stubGlobal('localStorage', memoryStorage());
     const t = useTrackerStore();
     t.setHabit(today(), 'swim');
-    t.addSession('lower');
+    t.addSession('legs');
     expect(t.data.habits[today()]).toBe('swim');
     t.setHabit(today(), null);
     expect(t.data.habits[today()]).toBeUndefined();
@@ -49,13 +49,13 @@ describe('tracker store', () => {
   it('copies the previous session without its RPE', () => {
     vi.stubGlobal('localStorage', memoryStorage());
     const t = useTrackerStore();
-    const first = t.addSession('lower', '2026-11-01');
+    const first = t.addSession('legs', '2026-11-01');
     t.updateSet(first.id, 'leg-press', 0, {weight: 80, reps: 12, rpe: 6});
-    const second = t.addSession('lower', '2026-11-05');
+    const second = t.addSession('legs', '2026-11-05');
     expect(t.previous(second, 'leg-press')).toEqual([{weight: 80, reps: 12, rpe: 6}]);
     t.copyPrevious(second.id, 'leg-press');
     expect(second.sets['leg-press']).toEqual([{weight: 80, reps: 12, rpe: null}]);
-    expect(t.sessionsFor('lower').map(s => s.id)).toEqual([second.id, first.id]);
+    expect(t.sessionsFor('legs').map(s => s.id)).toEqual([second.id, first.id]);
   });
 
   it('exports, clears and imports back; rejects files that are not tracker data', () => {

@@ -114,6 +114,7 @@ test('the habit wall shows the weekly plan with today marked', async ({page}, in
     await plan.getByRole('button', {name: 'Whole week'}).click();
   }
   await expect(plan.locator('li')).toHaveCount(7);
-  await expect(plan).toContainText('Saturday burn');
+  await expect(plan).toContainText('Pull (evening)');
+  await expect(plan).toContainText('Legs (2–3 pm, off-peak)');
   await expect(plan.locator('li[aria-current="date"]')).toHaveCount(1);
 });

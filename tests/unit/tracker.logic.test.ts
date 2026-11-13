@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import type {StrengthSession, TrackerActivity} from '../../src/types';
-import {weeklyAverage, addDays, bestWeights, formatDate, isIsoDate, mondayOf, parseNumber, previousSets, sanitize, streaks, today, weekNumber, weekSummary, weeksToShow} from '../../src/tracker/logic';
+import {routineFor, weekday, weeklyAverage, addDays, bestWeights, formatDate, isIsoDate, mondayOf, parseNumber, previousSets, sanitize, streaks, today, weekNumber, weekSummary, weeksToShow} from '../../src/tracker/logic';
 import {parseTracker, tracker} from '../../src/tracker/config';
 
 const acts: TrackerActivity[] = [
@@ -51,14 +51,14 @@ describe('weekly goal', () => {
 });
 
 describe('strength history', () => {
-  const s = (id: string, date: string, weight: number | null, routine: 'upper' | 'lower' = 'upper'): StrengthSession =>
+  const s = (id: string, date: string, weight: number | null, routine: 'push' | 'pull' | 'legs' = 'pull'): StrengthSession =>
     ({id, routine, date, sets: {row: [{weight, reps: 10, rpe: 7}]}});
-  it('finds the latest earlier session that logged the exercise', () => {
-    const list = [s('a', '2026-11-01', 30), s('b', '2026-11-04', null), s('c', '2026-11-04', 35, 'lower'), s('d', '2026-11-08', 40)];
+  it('finds the latest earlier session that logged the exercise, whichever day it was on', () => {
+    const list = [s('a', '2026-11-01', 30, 'push'), s('b', '2026-11-04', null), s('c', '2026-11-03', 35, 'legs'), s('d', '2026-11-08', 40)];
     // b logged reps only, which still counts as logged
-    expect(previousSets(list, 'upper', 'row', {id: 'd', date: '2026-11-08'})).toEqual([{weight: null, reps: 10, rpe: 7}]);
-    expect(previousSets(list, 'upper', 'row', {id: 'b', date: '2026-11-04'})?.[0].weight).toBe(30);
-    expect(previousSets(list, 'upper', 'row', {id: 'a', date: '2026-11-01'})).toBeNull();
+    expect(previousSets(list, 'row', {id: 'd', date: '2026-11-08'})).toEqual([{weight: null, reps: 10, rpe: 7}]);
+    expect(previousSets(list, 'row', {id: 'b', date: '2026-11-04'})?.[0].weight).toBe(35);
+    expect(previousSets(list, 'row', {id: 'a', date: '2026-11-01'})).toBeNull();
     expect(bestWeights(list)).toEqual({row: 40});
   });
 });
@@ -84,12 +84,12 @@ describe('sanitize', () => {
       version: 1, startDate: '2026-11-11',
       habits: {'2026-11-10': 'swim', bad: 'x', '2026-11-12': ''},
       sessions: [{id: 'a', routine: 'upper', date: '2026-11-10', sets: {row: [{weight: 40, reps: '10', rpe: 11}]}},
-        {id: 'b', routine: 'legs', date: '2026-11-10'}],
+        {id: 'b', routine: 'arms', date: '2026-11-10'}],
       body: [{id: 'x', date: '2026-11-10', weight: 82.5, waist: -1, lumbar: 3.6, neck: 'a', notes: 5}],
     }, '2026-11-11');
     expect(d.startDate).toBe('2026-11-09');
     expect(d.habits).toEqual({'2026-11-10': 'swim'});
-    expect(d.sessions).toEqual([{id: 'a', routine: 'upper', date: '2026-11-10', sets: {row: [{weight: 40, reps: null, rpe: null}]}}]);
+    expect(d.sessions).toEqual([{id: 'a', routine: 'push', date: '2026-11-10', sets: {row: [{weight: 40, reps: null, rpe: null}]}}]);
     expect(d.body).toEqual([{id: 'x', date: '2026-11-10', weight: 82.5, waist: null, lumbar: 4, neck: 0, notes: ''}]);
   });
   it('starts fresh from garbage', () => {
@@ -98,8 +98,8 @@ describe('sanitize', () => {
 });
 
 describe('tracker.yaml', () => {
-  it('loads both routines with unique exercise keys and a rest activity that does not count', () => {
-    expect(tracker.routines.map(r => r.id)).toEqual(['upper', 'lower']);
+  it('loads the three routines with unique exercise keys and a rest activity that does not count', () => {
+    expect(tracker.routines.map(r => r.id)).toEqual(['push', 'pull', 'legs']);
     for (const r of tracker.routines) expect(new Set(r.exercises.map(e => e.key)).size).toBe(r.exercises.length);
     expect(tracker.activities.find(a => a.id === 'rest')?.counts).toBe(false);
     expect(tracker.activities.find(a => a.id === 'strength')?.counts).toBe(true);
@@ -138,5 +138,29 @@ describe('gym pictures', () => {
       expect(ex.images.length, ex.key).toBeGreaterThan(0);
       for (const f of ex.images) expect(existsSync(`public/${f}`), f).toBe(true);
     }
+  });
+});
+
+describe('push, pull, legs', () => {
+  it('moves old upper and lower sessions to push and legs, keeping their sets', () => {
+    const d = sanitize({sessions: [
+      {id: 'a', routine: 'upper', date: '2026-11-10', sets: {'machine-row': [{weight: 40, reps: 10, rpe: 7}]}},
+      {id: 'b', routine: 'lower', date: '2026-11-13', sets: {}},
+      {id: 'c', routine: 'arms', date: '2026-11-13', sets: {}},
+    ]});
+    expect(d.sessions.map(s => s.routine)).toEqual(['push', 'legs']);
+    expect(d.sessions[0].sets['machine-row'][0].weight).toBe(40);
+  });
+  it('picks today\'s routine, or the next one this week', () => {
+    expect(weekday('2026-11-17')).toBe('Tue');
+    expect(routineFor(tracker.routines, '2026-11-17')?.id).toBe('push');   // Tue
+    expect(routineFor(tracker.routines, '2026-11-18')?.id).toBe('pull');   // Wed → Fri
+    expect(routineFor(tracker.routines, '2026-11-21')?.id).toBe('legs');   // Sat
+    expect(routineFor(tracker.routines, '2026-11-22')?.id).toBe('push');   // Sun → Tue
+  });
+  it('every weekday has exactly one fuel day, and the week averages about 1,800 kcal', () => {
+    const fuel = tracker.cut!.fuel;
+    const avg = fuel.reduce((a, f) => a + f.kcal * f.days.length, 0) / 7;
+    expect(Math.round(avg)).toBe(1807);
   });
 });
