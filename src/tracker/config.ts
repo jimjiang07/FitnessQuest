@@ -12,6 +12,7 @@ const exercise = z.strictObject({
   key: z.string().regex(/^[a-z0-9-]+$/), name: text, cue: text, why: text,
   critical: z.boolean().optional(), target: text.optional(), repsLabel: text.optional(),
   weightLabel: text.default('Weight'), weightUnit: z.string().default('kg'),
+  images: z.array(z.string().regex(/^[\w.-]+$/)).max(2).default([]).transform(fs => fs.map(f => `exercises/${f}`)),
 });
 const trackerSchema = z.strictObject({
   weeklyTarget: z.number().int().min(1).max(7),

@@ -4,6 +4,7 @@ import type {SetEntry, StrengthSession, TrackerRoutine} from '@/types';
 import {useTrackerStore} from '@/stores/tracker';
 import {formatDate, hasValue, isIsoDate} from '@/tracker/logic';
 import StrengthNumber from './StrengthNumber.vue';
+import ExercisePic from '@/components/ExercisePic.vue';
 
 const props = defineProps<{session: StrengthSession; routine: TrackerRoutine; open: boolean}>();
 const emit = defineEmits<{toggle: []}>();
@@ -59,6 +60,7 @@ const upd = (key: string, i: number, field: keyof SetEntry, n: number | null) =>
     <div v-if="open" :id="`body-${session.id}`" class="body">
       <section v-for="ex in routine.exercises" :key="ex.key" class="ex" :data-key="ex.key" :aria-label="ex.name">
         <div class="ex-top">
+          <ExercisePic v-if="ex.images.length" class="thumb" :images="ex.images" :alt="ex.name" />
           <h3 class="ex-name">{{ ex.name }}</h3>
           <span v-if="ex.weightUnit === 'kg' && store.best[ex.key] != null" class="best fq-mini">Best {{ store.best[ex.key] }} kg</span>
         </div>
@@ -126,8 +128,9 @@ const upd = (key: string, i: number, field: keyof SetEntry, n: number | null) =>
 
 .body { display: flex; flex-direction: column; gap: 10px; padding: 0 10px 12px; }
 .ex { border-top: 1px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-.ex-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.ex-name { font-size: 18px; font-weight: 800; min-width: 0; overflow-wrap: anywhere; }
+.ex-top { display: flex; align-items: center; gap: 10px; }
+.thumb { width: 84px; border-radius: 10px; }
+.ex-name { flex: 1; font-size: 18px; font-weight: 800; min-width: 0; overflow-wrap: anywhere; }
 .best { flex: none; color: var(--rest); font-weight: 800; }
 .cue { margin: 0; color: var(--muted); }
 .target { margin: 0; color: var(--rest); font-weight: 800; }

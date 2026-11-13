@@ -130,3 +130,13 @@ describe('the cut', () => {
     expect(w.at(-1)).toBe(cut.target);
   });
 });
+
+describe('gym pictures', () => {
+  it('every tracker exercise has a picture, and every file exists', async () => {
+    const {existsSync} = await import('node:fs');
+    for (const r of tracker.routines) for (const ex of r.exercises) {
+      expect(ex.images.length, ex.key).toBeGreaterThan(0);
+      for (const f of ex.images) expect(existsSync(`public/${f}`), f).toBe(true);
+    }
+  });
+});

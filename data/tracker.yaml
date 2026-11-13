@@ -1,4 +1,5 @@
 # Gym tracker: what the Habits, Upper, Lower and Body tabs show. Edit here, not in code.
+# images: start and end photos in public/exercises/ (one is fine); credits in public/exercises/CREDITS.md.
 # Safety cues are written for L4/L5 + L5/S1 disc protrusion and sensitive neck facet joints.
 
 weeklyTarget: 3          # sessions a week for "Target achieved"
@@ -66,36 +67,43 @@ routines:
     exercises:
       - key: machine-row
         name: Chest-supported machine row
+        images: [gym-machine-row-a.jpg, gym-machine-row-b.jpg]
         target: 3 × 10
         cue: "Sternum glued to the chest pad, chin tucked, no swinging."
         why: "The pad carries your upper body, so the discs at L4–S1 take no shear while your back muscles work. Pulling the shoulders back also opens up the chest."
       - key: incline-press
         name: 30° incline machine chest press
+        images: [gym-incline-press-a.jpg, gym-incline-press-b.jpg]
         target: 3 × 10
         cue: "Handles level with your upper sternum. Drive your inner elbows together and squeeze one second at the top."
         why: "The incline works the upper (clavicular) chest that fills the line under the collarbone; a flat press mostly builds the middle and lower chest. Lower back and head stay on the pad, so the press can't turn into a back arch."
       - key: lat-pulldown
         name: Lat pulldown (neutral grip)
+        images: [gym-lat-pulldown-a.jpg, gym-lat-pulldown-b.jpg]
         target: 3 × 10
         cue: "Pull to your collarbone, chin tucked, eyes forward. Never behind the neck."
         why: "Lat width is the top of the V-taper. Pulling to the front keeps your neck neutral; behind-the-neck pulls force the head forward and load the facet joints."
       - key: lateral-raise
         name: Cable or machine lateral raise
+        images: [gym-lateral-raise-a.jpg, gym-lateral-raise-b.jpg]
         target: 3 × 12–15
         cue: "Sweep your hands out toward the walls, not up. Stop at shoulder height. Shoulders down, away from your ears."
         why: "The side delt caps the shoulder and makes the waist look narrower. Hold the cable ball or use a wrist cuff instead of gripping hard. If you shrug, the upper traps take over and pinch the neck, so drop the weight."
       - key: triceps-pushdown
         name: "Superset A: rope triceps pushdown"
+        images: [gym-triceps-pushdown-a.jpg, gym-triceps-pushdown-b.jpg]
         target: 3 × 12, then straight to B
         cue: "Elbows pinned to your ribs. Spread the rope at the bottom, then 3 seconds back up."
         why: "The triceps are most of the upper arm, and spreading the rope works the outer (lateral) head that makes the horseshoe. Stand with soft knees and a rigid neutral spine; if your back complains, stand closer and go lighter rather than leaning in."
       - key: incline-curl
         name: "Superset B: seated incline dumbbell curl"
+        images: [gym-incline-curl-a.jpg, gym-incline-curl-b.jpg]
         target: 3 × 10, 60 s rest after the pair
         cue: "Bench at 60–75°, back and head on the pad. Arms hang straight, turn your palms out as you curl, elbows stay back."
         why: "The bench stops you swinging your torso or arching your back to lift the weight, so the biceps do all the work. The machine preacher curl works too."
       - key: rkc-plank
         name: RKC plank
+        images: [gym-rkc-plank-a.jpg]
         target: 3 × 20 s, all-out tension
         cue: "Squeeze your glutes as hard as you can, pull your elbows toward your toes, kneecaps up. Look at the floor."
         weightLabel: Added
@@ -103,6 +111,7 @@ routines:
         why: "Maximum ab tension with the spine flat and still: rectus abdominis work with no bending. Eyes on the floor keeps the neck neutral. Short and shaking beats long and sagging."
       - key: incline-walk
         name: Incline treadmill walk
+        images: [gym-incline-walk-a.jpg]
         target: 20 min · 4% · 5.2 km/h
         cue: "Hands off the rails, chest proud, chin tucked. Look straight ahead."
         weightLabel: Incline
@@ -123,33 +132,39 @@ routines:
     exercises:
       - key: leg-press
         name: 45° or horizontal leg press
+        images: [gym-leg-press-a.jpg]
         target: 3 × 10–12
         cue: "Feet high and wide. Stop before your tailbone lifts off the seat!"
         critical: true
         why: "If the pelvis tucks at the bottom, the lumbar spine bends under the whole sled's weight. Stopping short keeps L4–S1 neutral."
       - key: leg-curl
         name: Seated leg curl
+        images: [gym-leg-curl-a.jpg, gym-leg-curl-b.jpg]
         target: 3 × 10–12
         cue: "Thigh pad locked tight, grip the handles, feel the hamstrings."
         why: "Seated with the pad locked, the pelvis can't tilt, so the hamstrings work without tugging on your lower back."
       - key: hip-abductor
         name: Seated hip abductor
+        images: [gym-hip-abductor-a.jpg, gym-hip-abductor-b.jpg]
         target: 3 × 12–15
         cue: "Sit tall, pause at the widest point."
         why: "Glute medius steadies the pelvis when you walk and stand, which takes side-to-side load off the lower discs."
       - key: leg-extension
         name: Seated leg extension
+        images: [gym-leg-extension-a.jpg, gym-leg-extension-b.jpg]
         target: 3 × 10–12
         cue: "Lower for three seconds. Back stays against the pad."
         why: "Builds the quads with no spinal load at all, as long as your back stays on the pad."
       - key: suitcase-carry
         name: Single-arm suitcase carry
+        images: [suitcase-carry-a.svg, suitcase-carry-b.svg]
         target: 3 × 20 m each side
         cue: "Dumbbell in one hand, walk slowly, don't lean."
         repsLabel: Metres each side
         why: "Resisting the side-bend trains the obliques and quadratus lumborum that brace your spine, with no twisting."
       - key: knee-raise
         name: Back-supported knee raise (stop at 90°)
+        images: [gym-knee-raise-a.jpg, gym-knee-raise-b.jpg]
         target: 3 × 10–12, 3 s down
         cue: "Back flat on the pad. Exhale, knees up to hip height. Stop at 90°, never curl your pelvis up."
         critical: true
@@ -157,6 +172,7 @@ routines:
         why: "Lifting only to 90° keeps the lower back from rounding. The hip flexors still pull hard on L4–S1, so stop at the first twinge in your back or leg and swap it for a dead bug. Lower for three seconds."
       - key: cardio
         name: Recumbent bike or incline walk
+        images: [gym-cardio-a.jpg]
         target: 25 min
         cue: "Seated upright or walking hands-free. Chin tucked, eyes ahead."
         weightLabel: Level

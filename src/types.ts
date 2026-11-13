@@ -161,6 +161,7 @@ export interface TrackerExercise {
   weightLabel: string;   // "Weight", or "Incline" for the treadmill
   weightUnit: string;    // "kg", "%", or "" for a level
   repsLabel?: string;    // defaults to "Reps"
+  images: string[];      // [start, end] or one, e.g. "exercises/gym-leg-press-a.jpg"; may be empty
 }
 
 export interface TrackerRoutine {

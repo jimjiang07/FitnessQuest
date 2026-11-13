@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue';
 import type {TrackerRoutine} from '@/types';
+import ExercisePic from '@/components/ExercisePic.vue';
 
 // part: compact layouts place the warning and the exercise list apart; there the warning folds to one line
 const props = defineProps<{routine: TrackerRoutine; part?: 'warning' | 'exercises'}>();
@@ -34,6 +35,7 @@ const toggle = (key: string) => {
     <h2 id="roster-title" class="r-title">Exercises</h2>
     <ol class="list">
       <li v-for="(ex, i) in routine.exercises" :key="ex.key" class="ex" :class="{critical: ex.critical}" :data-key="ex.key">
+        <ExercisePic v-if="ex.images.length" class="ex-pic" :images="ex.images" :alt="ex.name" />
         <div class="ex-head">
           <span class="ex-num fq-num" aria-hidden="true">{{ i + 1 }}</span>
           <div class="ex-text">
@@ -76,6 +78,7 @@ const toggle = (key: string) => {
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .ex { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .ex.critical { border-color: rgba(255, 92, 57, .6); }
+.ex-pic { max-height: 240px; }
 .ex-head { display: flex; gap: 10px; align-items: flex-start; }
 .ex-num {
   flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;

@@ -188,3 +188,15 @@ test('outer screen: tabs open at the top, rules fold away, and a second tap cont
   await start.click();
   await expect(page.locator('article[data-session]')).toHaveCount(1);
 });
+
+test('every exercise shows a picture you can open full screen', async ({page}) => {
+  await open(page, './#/lower');
+  const pics = page.locator('.roster .ex .pic img:not(.b)');
+  await expect(pics).toHaveCount(7);
+  await expect.poll(() => pics.evaluateAll(els => els.every(e => (e as HTMLImageElement).naturalWidth > 0))).toBe(true);
+  await page.locator('.roster [data-key="leg-press"] .pic').click();
+  await expect(page.getByRole('button', {name: 'Close picture'})).toBeVisible();
+  await page.getByRole('button', {name: 'Close picture'}).click();
+  await page.getByRole('button', {name: /Start today/}).click();
+  await expect(page.locator('[data-session] [data-key="leg-press"] .thumb')).toBeVisible();
+});
