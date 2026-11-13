@@ -151,8 +151,10 @@ test('the plan additions: lateral raise, RKC plank, knee raise and cardio with t
   await expect(roster.locator('[data-key="rkc-plank"]')).toContainText('3 × 20 s');
   // the definition order: compounds, side delts, then the arms superset
   const keys = await roster.locator('[data-key]').evaluateAll(els => els.map(e => e.getAttribute('data-key')));
-  expect(keys).toEqual(['machine-row', 'incline-press', 'lat-pulldown', 'lateral-raise', 'triceps-pushdown', 'incline-curl', 'rkc-plank', 'incline-walk']);
-  await expect(roster.locator('[data-key="incline-curl"]')).toContainText('Superset B');
+  expect(keys).toEqual(['machine-row', 'incline-press', 'lat-pulldown', 'lateral-raise', 'triceps-pushdown', 'rope-curl', 'rkc-plank', 'incline-walk']);
+  await expect(roster.locator('[data-key="rope-curl"]')).toContainText('Superset B');
+  // both halves of the superset happen at one cable station
+  await expect(roster.locator('[data-key="rope-curl"]')).toContainText('Same rope, same station');
   await page.getByRole('button', {name: /Start today/}).click();
   const card = page.locator('[data-session]').first();
   await expect(card.locator('[data-key="incline-walk"] .h').nth(1)).toHaveText('Incline (%)');

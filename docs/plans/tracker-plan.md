@@ -30,7 +30,7 @@ The tracker is data-driven (`data/tracker.yaml`) and keeps everything in localSt
 ## Update, 12 Nov 2026: upper definition and the cut
 
 - Tuesday is now "Upper definition" (about 45 min): chest-supported row, 30° incline press, neutral-grip pulldown,
-  cable or machine lateral raise, then a triceps pushdown + incline curl superset, RKC plank 3 × 20 s and a 20 min
+  cable or machine lateral raise, then a rope triceps pushdown + rope hammer curl superset (one cable station, one rope, so you never leave it in a busy gym), RKC plank 3 × 20 s and a 20 min
   incline walk (4%, 5.2 km/h). Reverse pec deck and Pallof press dropped out of the session.
 - `cut` in `data/tracker.yaml`: 75.4 → 68.5 kg by late Feb 2027, daily fuel (1,850 kcal, 150 g protein, 200 g carbs,
   50 g fat) and four milestones. The Body tab's "The cut" panel goes by the 7-day average weigh-in (`weeklyAverage`).

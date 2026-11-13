@@ -19,7 +19,7 @@ profile:
 # The weekly plan, shown on the habit wall. Monday is first.
 week:
   - { day: Mon, plan: "Pilates (noon) + swim (evening)", note: "Draw your navel in through the whole class." }
-  - { day: Tue, plan: "Upper definition + 20 min incline walk", note: "About 45 minutes. Arms superset at the end, then plank and walk." }
+  - { day: Tue, plan: "Upper definition + 20 min incline walk", note: "About 45 minutes. Arms superset at one cable station with one rope, then plank and walk." }
   - { day: Wed, plan: Rest, note: "8,000 steps of easy walking." }
   - { day: Thu, plan: "Pilates (noon) + swim (evening)", note: "Active recovery and decompression." }
   - { day: Fri, plan: "Lower strength + 25 min cardio" }
@@ -93,14 +93,14 @@ routines:
         name: "Superset A: rope triceps pushdown"
         images: [gym-triceps-pushdown-a.jpg, gym-triceps-pushdown-b.jpg]
         target: 3 × 12, then straight to B
-        cue: "Elbows pinned to your ribs. Spread the rope at the bottom, then 3 seconds back up."
-        why: "The triceps are most of the upper arm, and spreading the rope works the outer (lateral) head that makes the horseshoe. Stand with soft knees and a rigid neutral spine; if your back complains, stand closer and go lighter rather than leaning in."
-      - key: incline-curl
-        name: "Superset B: seated incline dumbbell curl"
-        images: [gym-incline-curl-a.jpg, gym-incline-curl-b.jpg]
+        cue: "Rope on the high pulley. Elbows pinned to your ribs, spread the rope at the bottom, 3 seconds back up."
+        why: "The triceps are most of the upper arm, and spreading the rope works the outer (lateral) head that makes the horseshoe. Stand tall with soft knees and a rigid neutral spine; if you have to lean in, the weight is too heavy."
+      - key: rope-curl
+        name: "Superset B: rope hammer curl"
+        images: [gym-rope-curl-a.jpg, gym-rope-curl-b.jpg]
         target: 3 × 10, 60 s rest after the pair
-        cue: "Bench at 60–75°, back and head on the pad. Arms hang straight, turn your palms out as you curl, elbows stay back."
-        why: "The bench stops you swinging your torso or arching your back to lift the weight, so the biceps do all the work. The machine preacher curl works too."
+        cue: "Same rope, same station: move the pulley to the bottom (or use the low pulley beside it). Elbows pinned, curl without leaning back."
+        why: "Both halves of the superset use one rope at one cable station, so you never leave it in a busy gym. Hammer curls build the biceps and the brachialis, which pushes the biceps up for the peak and the line against the triceps. Glutes squeezed and ribs down: if your lower back arches to finish a rep, drop the weight."
       - key: rkc-plank
         name: RKC plank
         images: [gym-rkc-plank-a.jpg]
